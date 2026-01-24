@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>MaaSarthi | Skill Training Result</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body>
+
+<div class="card">
+
+    <!-- ✅ HEADER -->
+    <div class="card-header">
+        <div class="brand">
+            <div>
+                <h1>📚 Skill Training Plan</h1>
+                <p>Roadmap + links based on your selected skill</p>
+            </div>
+            <div class="chip">✅ Personalized</div>
+        </div>
+    </div>
+
+    <!-- ✅ BODY -->
+    <div class="card-body">
+        <div class="grid">
+
+            <!-- ✅ LEFT PANEL -->
+            <div>
+                <p class="sub">Selected Skill</p>
+
+                <!-- ✅ Works if backend sends skill OR work -->
+                <div class="big-title">
+                    {% if skill %}
+                        {{ skill }}
+                    {% elif work %}
+                        {{ work }}
+                    {% else %}
+                        Skill Training
+                    {% endif %}
+                </div>
+
+                <!-- ✅ Plan info -->
+                <div class="income-card" style="background: rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.18);">
+                    <div class="label" style="color:#3730a3;">Your Plan</div>
+
+                    <div class="value" style="color:#4f46e5;">
+                        {% if level %}{{ level }}{% else %}Beginner{% endif %}
+                        •
+                        {% if hours %}{{ hours }}{% else %}1{% endif %} hrs/day
+                        •
+                        {% if language %}{{ language }}{% else %}Hindi{% endif %}
+                    </div>
+                </div>
+
+                <!-- ✅ Optional income section if backend provides low/high -->
+                {% if low is not none and high is not none %}
+                <div class="income-card">
+                    <div class="label">Expected Monthly Income</div>
+                    <div class="value">₹{{ low }} – ₹{{ high }}</div>
+                </div>
+                {% endif %}
+
+                <!-- ✅ Buttons -->
+                <div class="footer-actions">
+                    <a class="btn" href="/skills">🔁 Choose Another Skill</a>
+                    <a class="btn-outline" href="/jobs">🔍 Find Jobs</a>
+                </div>
+            </div>
+
+            <!-- ✅ RIGHT PANEL -->
+            <div class="section">
+
+                <h3>🧭 Step-by-Step Roadmap</h3>
+
+                <ul class="skill-list">
+
+                    <!-- ✅ Works if backend sends roadmap -->
+                    {% if roadmap %}
+                        {% for step in roadmap %}
+                        <li class="skill-item">
+                            <span>{{ step }}</span>
+                            <small>Step</small>
+                        </li>
+                        {% endfor %}
+
+                    <!-- ✅ Works if backend sends skills list -->
+                    {% elif skills %}
+                        {% for step in skills %}
+                        <li class="skill-item">
+                            <span>{{ step }}</span>
+                            <small>Recommended</small>
+                        </li>
+                        {% endfor %}
+
+                    {% else %}
+                        <li class="skill-item">
+                            <span>Start with basics</span>
+                            <small>Step</small>
+                        </li>
+                        <li class="skill-item">
+                            <span>Practice daily</span>
+                            <small>Step</small>
+                        </li>
+                        <li class="skill-item">
+                            <span>Create portfolio / samples</span>
+                            <small>Step</small>
+                        </li>
+                        <li class="skill-item">
+                            <span>Apply for jobs / start freelancing</span>
+                            <small>Step</small>
+                        </li>
+                    {% endif %}
+
+                </ul>
+
+                <div style="height:14px;"></div>
+
+                <h3>🔗 Best Learning Links</h3>
+
+                <div class="btn-row">
+                    {% if links %}
+                        {% for name, url in links %}
+                            <a class="btn-secondary" href="{{ url }}" target="_blank">{{ name }}</a>
+                        {% endfor %}
+                    {% else %}
+                        <a class="btn-secondary" href="https://www.youtube.com" target="_blank">YouTube</a>
+                        <a class="btn-secondary" href="https://www.google.com" target="_blank">Google</a>
+                    {% endif %}
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!-- ✅ MaaSarthi Chatbot Widget -->
+<div class="chatbot-float">
+  <button class="chatbot-btn" id="chatbotOpenBtn">💬</button>
+
+  <div class="chatbot-box" id="chatbotBox">
+    <div class="chatbot-header">
+      <div>
+        <strong>🤖 MaaSarthi Assistant</strong>
+        <div class="chatbot-status">Online</div>
+      </div>
+      <div class="chatbot-actions">
+        <button id="chatbotMinBtn">–</button>
+        <button id="chatbotCloseBtn">×</button>
+      </div>
+    </div>
+
+    <div class="chatbot-messages" id="chatbotMessages">
+      <div class="msg bot">
+        Hi! 👋 I'm MaaSarthi Assistant. Ask me about jobs, skills or earning options.
+      </div>
+    </div>
+
+    <div class="chatbot-input">
+      <input type="text" id="chatbotText" placeholder="Type your question..." />
+      <button id="chatbotSendBtn">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const chatbotBox = document.getElementById("chatbotBox");
+  const openBtn = document.getElementById("chatbotOpenBtn");
+  const closeBtn = document.getElementById("chatbotCloseBtn");
+  const minBtn = document.getElementById("chatbotMinBtn");
+  const sendBtn = document.getElementById("chatbotSendBtn");
+  const input = document.getElementById("chatbotText");
+  const messages = document.getElementById("chatbotMessages");
+
+  function addMsg(text, type) {
+    const div = document.createElement("div");
+    div.className = "msg " + type;
+    div.innerText = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  openBtn.onclick = () => chatbotBox.style.display = "flex";
+  closeBtn.onclick = () => chatbotBox.style.display = "none";
+  minBtn.onclick = () => chatbotBox.classList.toggle("minimized");
+
+  async function sendMessage() {
+    const userText = input.value.trim();
+    if (!userText) return;
+
+    addMsg(userText, "user");
+    input.value = "";
+
+    addMsg("Typing...", "bot");
+
+    try {
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText })
+      });
+
+      const data = await res.json();
+
+      // remove typing
+      const lastBot = messages.querySelector(".msg.bot:last-child");
+      if (lastBot && lastBot.innerText === "Typing...") lastBot.remove();
+
+      addMsg(data.reply, "bot");
+
+    } catch (err) {
+      const lastBot = messages.querySelector(".msg.bot:last-child");
+      if (lastBot && lastBot.innerText === "Typing...") lastBot.remove();
+
+      addMsg("⚠️ Sorry, chatbot is not working right now.", "bot");
+      console.error(err);
+    }
+  }
+
+  sendBtn.onclick = sendMessage;
+
+  input.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") sendMessage();
+  });
+</script>

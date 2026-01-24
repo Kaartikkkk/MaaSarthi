@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ t.result_title }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+
+</head>
+<body>
+
+<div class="card">
+
+    <div class="card-header">
+        <div class="brand">
+            <div>
+                <h1>{{ t.title }} ✅ {{ t.result_title }}</h1>
+                <p>{{ t.personalized_desc }}</p>
+            </div>
+            <div class="chip">🎯 {{ t.best_match }}</div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="grid">
+
+            <div>
+                <p class="sub">{{ t.recommended_work }}</p>
+                <div class="big-title">{{ work }}</div>
+
+                <div class="income-card">
+                    <div class="label">{{ t.expected_income }}</div>
+                    <div class="value">
+                        ₹{{ "{:,}".format(low) }} – ₹{{ "{:,}".format(high) }}
+                    </div>
+                </div>
+
+                <div class="footer-actions">
+                    <a class="btn" href="/jobs">🔁 {{ t.try_again }}</a>
+                    <a class="btn-outline" href="/skills">📚 {{ t.train_skill }}</a>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📌 {{ t.skills_learn }}</h3>
+
+                <ul class="skill-list">
+                    {% for s in skills %}
+                    <li class="skill-item">
+                        <span>{{ s }}</span>
+                        <small>{{ t.recommended }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <div style="height:14px;"></div>
+
+                <h3>🔗 {{ t.helpful_links }}</h3>
+                <div class="btn-row">
+                    {% for name, url in links %}
+                        <a class="btn-secondary" href="{{ url }}" target="_blank">{{ name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>

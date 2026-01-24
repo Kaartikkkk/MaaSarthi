@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t.title }}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- ========================================
+     NAVIGATION BAR
+     ======================================== -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-icon" alt="MaaSarthi Logo">
+            <span class="logo-text">MaaSarthi</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="/" class="nav-link active">Home</a>
+            <a href="/jobs" class="nav-link">Find Jobs</a>
+            <a href="/skills" class="nav-link">Train a Skill</a>
+            <a href="#about" class="nav-link">About Us</a>
+            <a href="#contact" class="nav-link">Contact</a>
+            
+            <div class="lang-switch">
+                <a class="lang-btn" href="/set-language/en">English</a>
+                <a class="lang-btn" href="/set-language/hi">हिंदी</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ========================================
+     HERO SECTION
+     ======================================== -->
+<section class="hero">
+    <div class="hero-background"></div>
+    <div class="container">
+        <div class="hero-content">
+            <div class="pill">✨ {{ t.smart_tag }}</div>
+            
+            <h1 class="hero-title">
+                Helping Mothers find
+                <span class="highlight">Work</span> and
+                <span class="highlight">Skills</span><br>
+                to Earn from Home
+            </h1>
+            
+            <p class="hero-description">
+                MaaSarthi recommends the best earning options based on your skills,
+                time availability, education and location.
+            </p>
+            
+            <div class="hero-buttons">
+                <a href="/jobs" class="btn btn-primary">
+                    <span class="btn-icon">💼</span>
+                    Find Jobs
+                </a>
+                <a href="/skills" class="btn btn-secondary">
+                    <span class="btn-icon">📚</span>
+                    Train a Skill
+                </a>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">10,000+</div>
+                    <div class="stat-label">Mothers Empowered</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">150+</div>
+                    <div class="stat-label">Skills Available</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">₹25,000</div>
+                    <div class="stat-label">Avg Monthly Income</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating Cards for Visual Interest -->
+        <div class="hero-illustration">
+            <div class="floating-card card-1">
+                <span class="card-emoji">💻</span>
+                <span class="card-text">Work From Home</span>
+            </div>
+            <div class="floating-card card-2">
+                <span class="card-emoji">📈</span>
+                <span class="card-text">Grow Your Income</span>
+            </div>
+            <div class="floating-card card-3">
+                <span class="card-emoji">🎓</span>
+                <span class="card-text">Learn New Skills</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================
+     FEATURES SECTION
+     ======================================== -->
+<section class="features">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Why Choose MaaSarthi?</h2>
+            <p class="section-subtitle">We provide personalized career guidance and training opportunities tailored for mothers</p>
+        </div>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🎯</span>
+                <h3>Personalized Job Matching</h3>
+                <p>Our smart algorithm matches you with jobs that fit your skills, schedule, and location perfectly.</p>
+                <a href="/jobs" class="feature-link">Explore Jobs →</a>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">📚</span>
+                <h3>Free Skill Training</h3>
+                <p>Access over 150+ free courses and training programs to enhance your skills and increase earning potential.</p>
+                <a href="/skills" class="feature-link">Browse Courses →</a>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">💰</span>
+                <h3>Flexible Work Options</h3>
+                <p>Choose from part-time, full-time, or freelance opportunities that work around your family schedule.</p>
+                <a href="/jobs" class="feature-link">View Options →</a>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🤝</span>
+                <h3>Community Support</h3>
+                <p>Join a supportive community of mothers who understand your journey and share valuable experiences.</p>
+                <a href="#community" class="feature-link">Join Community →</a>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🏆</span>
+                <h3>Certification Programs</h3>
+                <p>Earn recognized certifications that boost your credibility and help you land better opportunities.</p>
+                <a href="/skills" class="feature-link">Get Certified →</a>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">📞</span>
+                <h3>24/7 Career Guidance</h3>
+                <p>Get personalized career advice and support from our experts whenever you need it.</p>
+                <a href="#contact" class="feature-link">Contact Us →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================
+     HOW IT WORKS SECTION
+     ======================================== -->
+<section class="how-it-works">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Start your journey to financial independence in just 3 simple steps</p>
+        </div>
+        
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Create Your Profile</h3>
+                    <p>Tell us about your skills, experience, and what you're looking for</p>
+                </div>
+            </div>
+            
+            <div class="step-connector"></div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Get Personalized Matches</h3>
+                    <p>Receive job and training recommendations tailored just for you</p>
+                </div>
+            </div>
+            
+            <div class="step-connector"></div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Start Earning & Growing</h3>
+                    <p>Begin your work-from-home journey and unlock your potential</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================
+     POPULAR SKILLS SECTION
+     ======================================== -->
+<section class="popular-skills">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Popular Skills to Learn</h2>
+            <p class="section-subtitle">Start learning these in-demand skills today and increase your earning potential</p>
+        </div>
+        
+        <div class="skills-grid">
+            <div class="skill-tag">💻 Data Entry</div>
+            <div class="skill-tag">✍️ Content Writing</div>
+            <div class="skill-tag">🎨 Graphic Design</div>
+            <div class="skill-tag">📱 Social Media Management</div>
+            <div class="skill-tag">🧵 Tailoring & Stitching</div>
+            <div class="skill-tag">🍳 Cooking & Baking</div>
+            <div class="skill-tag">👶 Childcare Services</div>
+            <div class="skill-tag">🎓 Online Tutoring</div>
+            <div class="skill-tag">💄 Beauty & Makeup</div>
+            <div class="skill-tag">🛍️ E-commerce Management</div>
+            <div class="skill-tag">📊 Bookkeeping</div>
+            <div class="skill-tag">🎤 Voice Over Artist</div>
+            <div class="skill-tag">🌐 Translation Services</div>
+            <div class="skill-tag">📸 Photography</div>
+            <div class="skill-tag">🧘 Yoga Instruction</div>
+        </div>
+        
+        <div class="text-center">
+            <a href="/skills" class="btn btn-primary btn-large">View All Skills</a>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================
+     TESTIMONIALS SECTION
+     ======================================== -->
+<section class="testimonials">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Success Stories</h2>
+            <p class="section-subtitle">Hear from mothers who transformed their lives with MaaSarthi</p>
+        </div>
+        
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                <p class="testimonial-text">"MaaSarthi helped me start my content writing career from home. Now I earn ₹30,000 per month while taking care of my kids!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">👩</div>
+                    <div>
+                        <div class="author-name">Priya Sharma</div>
+                        <div class="author-role">Content Writer, Mumbai</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                <p class="testimonial-text">"The free training courses are amazing! I learned graphic design and now work as a freelancer earning ₹45,000 monthly."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">👩</div>
+                    <div>
+                        <div class="author-name">Anjali Verma</div>
+                        <div class="author-role">Graphic Designer, Delhi</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                <p class="testimonial-text">"I started with data entry and now manage social media for 5 clients. MaaSarthi gave me financial independence!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">👩</div>
+                    <div>
+                        <div class="author-name">Sneha Patel</div>
+                        <div class="author-role">Social Media Manager, Bangalore</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================
+     CALL TO ACTION SECTION
+     ======================================== -->
+<section class="cta">
+    <div class="cta-content">
+        <h2>Ready to Start Your Journey?</h2>
+        <p>Join thousands of mothers who are earning from home with MaaSarthi</p>
+        <div class="cta-buttons">
+            <a href="/jobs" class="btn btn-primary btn-large">Get Started Today</a>
+            <a href="#contact" class="btn btn-secondary btn-large">Talk to an Expert</a>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================
+     FOOTER
+     ======================================== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <h3 class="footer-title">🌸 MaaSarthi</h3>
+                <p class="footer-desc">Empowering mothers across India to achieve financial independence through flexible work-from-home opportunities and skill development.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">📘</a>
+                    <a href="#" class="social-link">📷</a>
+                    <a href="#" class="social-link">🐦</a>
+                    <a href="#" class="social-link">💼</a>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="footer-title">Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/jobs">Find Jobs</a></li>
+                    <li><a href="/skills">Training Programs</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="footer-title">Categories</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Data Entry Jobs</a></li>
+                    <li><a href="#">Content Writing</a></li>
+                    <li><a href="#">Graphic Design</a></li>
+                    <li><a href="#">Online Tutoring</a></li>
+                    <li><a href="#">Freelance Work</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="footer-title">Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Career Guidance</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 MaaSarthi. All rights reserved. Made with ❤️ for Mothers</p>
+        </div>
+    </div>
+</footer>
+
+<!-- ========================================
+     CHATBOT WIDGET
+     ======================================== -->
+<div class="chat-widget" id="chatWidget" style="display: none;">
+    <div class="chat-header">
+        <div>
+            <div class="chat-title">🤖 MaaSarthi Assistant</div>
+            <div class="chat-status">Online</div>
+        </div>
+        <div class="chat-actions">
+            <button class="chat-btn" id="minimizeBtn">−</button>
+            <button class="chat-btn close" id="closeBtn">×</button>
+        </div>
+    </div>
+    
+    <div class="chat-messages">
+        <div class="chat-message bot-message">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+                <p>Hi! 👋 I'm MaaSarthi Assistant. How can I help you today?</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="chat-input">
+        <input type="text" placeholder="Type your question..." id="chatInput">
+        <button id="sendBtn">Send</button>
+    </div>
+</div>
+
+<button class="chat-toggle" id="openChatBtn">💬</button>
+
+<!-- ========================================
+     JAVASCRIPT
+     ======================================== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const chatWidget = document.getElementById("chatWidget");
+    const openChatBtn = document.getElementById("openChatBtn");
+    const closeBtn = document.getElementById("closeBtn");
+    const minimizeBtn = document.getElementById("minimizeBtn");
+    const chatMessages = chatWidget.querySelector(".chat-messages");
+    const chatInput = document.getElementById("chatInput");
+    const sendBtn = document.getElementById("sendBtn");
+    
+    // Open Chat
+    openChatBtn.addEventListener("click", function() {
+        chatWidget.style.display = "flex";
+        openChatBtn.style.display = "none";
+    });
+    
+    // Close Chat
+    closeBtn.addEventListener("click", function() {
+        chatWidget.style.display = "none";
+        openChatBtn.style.display = "block";
+    });
+    
+    // Minimize Chat
+    minimizeBtn.addEventListener("click", function() {
+        const isMinimized = chatMessages.style.display === "none";
+        chatMessages.style.display = isMinimized ? "block" : "none";
+        chatWidget.querySelector(".chat-input").style.display = isMinimized ? "flex" : "none";
+        minimizeBtn.textContent = isMinimized ? "−" : "+";
+    });
+    
+    // Send Message
+    function sendMessage() {
+        const message = chatInput.value.trim();
+        if (message) {
+            // Add user message
+            const userMsg = document.createElement("div");
+            userMsg.className = "chat-message user-message";
+            userMsg.innerHTML = `
+                <div class="message-avatar">👤</div>
+                <div class="message-content"><p>${message}</p></div>
+            `;
+            chatMessages.appendChild(userMsg);
+            chatInput.value = "";
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Simulate bot response
+            setTimeout(() => {
+                const botMsg = document.createElement("div");
+                botMsg.className = "chat-message bot-message";
+                botMsg.innerHTML = `
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content"><p>Thanks for your message! Our team will assist you shortly.</p></div>
+                `;
+                chatMessages.appendChild(botMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+    }
+    
+    sendBtn.addEventListener("click", sendMessage);
+    chatInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") sendMessage();
+    });
+});
+</script>
+
+</body>
+</html>

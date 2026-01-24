@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ t.title }} | {{ t.find_jobs }}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    
+</head>
+<!-- Chatbot removed -->
+
+
+<body>
+
+<div class="page-wrap">
+
+    <div class="top-mini">
+        <a href="/" class="back-link">← {{ t.back }}</a>
+        <span class="chip">🔍 {{ t.find_jobs }}</span>
+    </div>
+
+    <div class="form-card">
+        <h2>{{ t.job_heading }}</h2>
+        <p>{{ t.job_sub }}</p>
+
+        <form action="/predict" method="POST">
+            <div class="grid-form">
+
+                <div class="field">
+                    <label>{{ t.age }}</label>
+                    <input type="number" name="age" placeholder="e.g. 22" required>
+                </div>
+
+                <div class="field">
+                    <label>{{ t.kids }}</label>
+                    <input type="number" name="kids" placeholder="0 - 4" required>
+                </div>
+
+                <div class="field">
+                    <label>{{ t.hours }}</label>
+                    <input type="number" name="hours" placeholder="e.g. 2" required>
+                </div>
+
+                <div class="field">
+                    <label>{{ t.domain }}</label>
+                    <select name="domain" required>
+                        <option value="">{{ t.choose }}</option>
+
+                        <!-- ✅ Domain options bilingual -->
+                        {% for d in t.domain_list %}
+                          <option value="{{ d }}">{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field full">
+                    <label>{{ t.main_skill }}</label>
+                    <input type="text" name="skill" placeholder="e.g. Excel, Baking, Stitching" required>
+                </div>
+
+                <div class="field">
+                    <label>{{ t.education }}</label>
+                    <select name="education" required>
+                        <option value="">{{ t.choose }}</option>
+
+                        {% for key, value in t.education_list.items() %}
+                          <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>{{ t.city_type }}</label>
+                    <select name="city_type" required>
+                        <option value="">{{ t.choose }}</option>
+
+                        {% for key, value in t.city_type_list.items() %}
+                          <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>{{ t.language }}</label>
+                    <select name="language" required>
+                        <option value="">{{ t.choose }}</option>
+
+                        {% for key, value in t.language_list.items() %}
+                          <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>{{ t.device }}</label>
+                    <select name="device" required>
+                        <option value="">{{ t.choose }}</option>
+
+                        {% for key, value in t.device_list.items() %}
+                          <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field full">
+                    <label>{{ t.work_mode }}</label>
+                    <select name="work_mode" required>
+                        <option value="">{{ t.choose }}</option>
+
+                        {% for key, value in t.work_mode_list.items() %}
+                          <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field full">
+                    <label>{{ t.location_optional }}</label>
+                    <input type="text" name="location" placeholder="e.g. Greater Noida, Delhi">
+                </div>
+
+                <div class="field full">
+                    <button class="btn" type="submit">{{ t.get_rec }}</button>
+                    <a class="btn-outline" href="/skills">{{ t.train_instead }}</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+</div>
+
+
+
+</body>
+</html>

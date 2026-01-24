@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ t.title }} | {{ t.train_skill }}</title>
+
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body>
+
+  <div class="page-wrap">
+
+    <div class="top-mini">
+      <a href="/" class="back-link">← {{ t.back }}</a>
+      <span class="chip">🎯 {{ t.train_skill }}</span>
+    </div>
+
+    <div class="form-card">
+      <h2>{{ t.skill_heading }}</h2>
+      <p>{{ t.skill_sub }}</p>
+
+      <!-- ✅ Progress Bar -->
+      <div class="progress-wrap">
+        <div class="progress-steps">
+          <div class="step active">
+            <span class="dot">1</span>
+            <span class="label">{{ t.skill }}</span>
+          </div>
+          <div class="line"></div>
+          <div class="step" id="step2">
+            <span class="dot">2</span>
+            <span class="label">{{ t.select }}</span>
+          </div>
+          <div class="line"></div>
+          <div class="step" id="step3">
+            <span class="dot">3</span>
+            <span class="label">{{ t.get_training }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ TRAINING FORM -->
+      <form action="/skills-result" method="POST">
+
+        <div class="field">
+          <label>{{ t.skill }}</label>
+
+          <select name="skill_select" id="skill_select" required
+                  onchange="toggleOtherSkill(); updateSkillInfo(); moveStep(2);">
+            <option value="">{{ t.choose }}</option>
+
+            {% for key, value in t.skills_map.items() %}
+              <option value="{{ key }}">{{ value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- ✅ Skill Info Card -->
+        <div class="mini-card" id="skillInfoCard" style="display:none;">
+          <div class="mini-head">
+            <h4 id="skillTitle">{{ t.skill }}</h4>
+            <span class="badge" id="earningBadge">₹</span>
+          </div>
+
+          <p id="skillDesc"></p>
+
+          <div class="mini-metrics">
+            <div class="metric">
+              <span class="metric-title">Difficulty</span>
+              <span class="metric-value" id="difficulty">Easy</span>
+            </div>
+            <div class="metric">
+              <span class="metric-title">Time</span>
+              <span class="metric-value" id="learnTime">2-4 weeks</span>
+            </div>
+          </div>
+
+          <div class="mini-tags" id="skillTags"></div>
+        </div>
+
+        <!-- ✅ If OTHER selected -->
+        <div class="field" id="otherSkillBox" style="display:none;">
+          <label>{{ t.skill }}</label>
+          <input type="text" name="skill_other" placeholder="{{ t.choose }}..." />
+        </div>
+
+        <div class="grid-form">
+
+          <!-- ✅ LEVEL -->
+          <div class="field">
+            <label>{{ t.level }}</label>
+            <select name="level" required onchange="moveStep(2);">
+              {% for key, value in t.level_list.items() %}
+                <option value="{{ key }}">{{ value }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- ✅ HOURS -->
+          <div class="field">
+            <label>{{ t.hours }}</label>
+            <select name="hours" required onchange="moveStep(2);">
+              {% for key, value in t.hours_list.items() %}
+                <option value="{{ key }}">{{ value }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- ✅ GOAL -->
+          <div class="field">
+            <label>{{ t.goal }}</label>
+            <select name="goal" required onchange="moveStep(3);">
+              {% for key, value in t.goal_list.items() %}
+                <option value="{{ key }}">{{ value }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- ✅ LEARNING MODE -->
+          <div class="field">
+            <label>{{ t.learning_mode }}</label>
+            <select name="learning_mode" required onchange="moveStep(3);">
+              {% for key, value in t.learning_mode_list.items() %}
+                <option value="{{ key }}">{{ value }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- ✅ Preferred Language -->
+          <div class="field full">
+            <label>{{ t.preferred_language }}</label>
+            <select name="language" required onchange="moveStep(3);">
+              <option value="Hindi">Hindi</option>
+              <option value="English">English</option>
+              <option value="Both">Both</option>
+            </select>
+          </div>
+
+          <!-- ✅ What you will get -->
+          <div class="full">
+            <div class="mini-card">
+              <h4>✅ {{ t.what_you_get }}</h4>
+              <ul class="mini-list">
+                {% for item in t.what_list %}
+                  <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+
+          <div class="field full">
+            <button class="btn" type="submit">{{ t.get_training }}</button>
+            <a class="btn-outline" href="/jobs">{{ t.find_jobs }}</a>
+          </div>
+
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <script>
+    function toggleOtherSkill() {
+      const selected = document.getElementById("skill_select").value;
+      const otherBox = document.getElementById("otherSkillBox");
+
+      if (selected === "OTHER") {
+        otherBox.style.display = "block";
+      } else {
+        otherBox.style.display = "none";
+      }
+    }
+
+    function moveStep(stepNo) {
+      const s2 = document.getElementById("step2");
+      const s3 = document.getElementById("step3");
+
+      if (stepNo >= 2) s2.classList.add("active");
+      if (stepNo >= 3) s3.classList.add("active");
+    }
+
+    function updateSkillInfo() {
+      const skill = document.getElementById("skill_select").value;
+      const card = document.getElementById("skillInfoCard");
+
+      if (!skill || skill === "OTHER") {
+        card.style.display = "none";
+        return;
+      }
+
+      card.style.display = "block";
+      document.getElementById("skillTitle").innerText = skill;
+      document.getElementById("skillDesc").innerText =
+        "✅ " + skill + " selected. You will get a roadmap + best resources.";
+
+      document.getElementById("difficulty").innerText = "Easy";
+      document.getElementById("learnTime").innerText = "2-6 weeks";
+      document.getElementById("earningBadge").innerText = "₹ Income";
+
+      const tags = document.getElementById("skillTags");
+      tags.innerHTML = "";
+
+      ["High Demand", "Beginner Friendly", "Good Income"].forEach(t => {
+        const span = document.createElement("span");
+        span.className = "tag";
+        span.innerText = t;
+        tags.appendChild(span);
+      });
+    }
+  </script>
+
+</body>
+</html>
