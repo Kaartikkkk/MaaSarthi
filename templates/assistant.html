@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MaaSathi AI Assistant</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { display: flex; justify-content: center; margin-top: 30px; font-family: Arial; }
+    #chatbox { width: 400px; height: 540px; border: 1px solid #ccc; border-radius: 14px; padding: 12px; background: white; }
+    #messages { height: 450px; overflow-y: auto; margin-bottom: 10px; padding: 5px; }
+    .user { text-align: right; margin: 8px; padding: 8px 10px; background: #e6f0ff; border-radius: 10px; display: inline-block; }
+    .bot  { text-align: left;  margin: 8px; padding: 8px 10px; background: #eaffea; border-radius: 10px; display: inline-block; }
+    #inputArea { display: flex; gap: 6px; }
+    input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
+    button { padding: 10px 14px; border-radius: 8px; border: none; background: black; color: white; cursor: pointer; }
+  </style>
+</head>
+
+<body>
+
+  <div id="chatbox">
+    <h3>MaaSathi AI Assistant 🤖</h3>
+    <div id="messages"></div>
+
+    <div id="inputArea">
+      <input id="input" placeholder="Ask anything..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+<script>
+  async function sendMessage() {
+    let input = document.getElementById("input");
+    let msg = input.value.trim();
+    if (!msg) return;
+
+    let messages = document.getElementById("messages");
+    messages.innerHTML += `<div class="user">${msg}</div>`;
+    input.value = "";
+
+    let res = await fetch("/chat", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({message: msg})
+    });
+
+    let data = await res.json();
+    messages.innerHTML += `<div class="bot">${data.reply}</div>`;
+    messages.scrollTop = messages.scrollHeight;
+  }
+</script>
+
+</body>
+</html>

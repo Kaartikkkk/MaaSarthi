@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>{{ t.title }}</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -20,11 +23,11 @@
         </div>
         
         <div class="nav-links">
-            <a href="/" class="nav-link active">Home</a>
-            <a href="/jobs" class="nav-link">Find Jobs</a>
-            <a href="/skills" class="nav-link">Train a Skill</a>
-            <a href="#about" class="nav-link">About Us</a>
-            <a href="#contact" class="nav-link">Contact</a>
+            <a href="/" class="nav-link active">{{ t.home }}</a>
+            <a href="/jobs" class="nav-link">{{ t.find_jobs }}</a>
+            <a href="/skills" class="nav-link">{{ t.train_skill }}</a>
+            <a href="#about" class="nav-link">{{ t.about_us }}</a>
+            <a href="#contact" class="nav-link">{{ t.contact }}</a>
             
             <div class="lang-switch">
                 <a class="lang-btn" href="/set-language/en">English</a>
@@ -44,40 +47,39 @@
             <div class="pill">✨ {{ t.smart_tag }}</div>
             
             <h1 class="hero-title">
-                Helping Mothers find
-                <span class="highlight">Work</span> and
-                <span class="highlight">Skills</span><br>
-                to Earn from Home
+                {{ t.hero_line1 }}
+                <span class="highlight">{{ t.hero_work }}</span> {{ t.hero_and }}
+                <span class="highlight">{{ t.hero_skills }}</span><br>
+                {{ t.hero_line2 }}
             </h1>
             
             <p class="hero-description">
-                MaaSarthi recommends the best earning options based on your skills,
-                time availability, education and location.
+                {{ t.hero_desc }}
             </p>
             
             <div class="hero-buttons">
                 <a href="/jobs" class="btn btn-primary">
-                    <span class="btn-icon">💼</span>
-                    Find Jobs
+                    <span class="btn-icon">🔍</span>
+                    {{ t.find_jobs }}
                 </a>
                 <a href="/skills" class="btn btn-secondary">
                     <span class="btn-icon">📚</span>
-                    Train a Skill
+                    {{ t.train_skill }}
                 </a>
             </div>
             
             <div class="hero-stats">
                 <div class="stat-item">
                     <div class="stat-number">10,000+</div>
-                    <div class="stat-label">Mothers Empowered</div>
+                    <div class="stat-label">{{ t.mothers_empowered }}</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">150+</div>
-                    <div class="stat-label">Skills Available</div>
+                    <div class="stat-label">{{ t.skills_available }}</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">₹25,000</div>
-                    <div class="stat-label">Avg Monthly Income</div>
+                    <div class="stat-label">{{ t.avg_income }}</div>
                 </div>
             </div>
         </div>
@@ -106,51 +108,51 @@
 <section class="features">
     <div class="container">
         <div class="section-header">
-            <h2 class="section-title">Why Choose MaaSarthi?</h2>
-            <p class="section-subtitle">We provide personalized career guidance and training opportunities tailored for mothers</p>
+            <h2 class="section-title">{{ t.why_choose }}</h2>
+            <p class="section-subtitle">{{ t.why_choose_desc }}</p>
         </div>
         
         <div class="feature-grid">
             <div class="feature-card">
                 <span class="feature-icon">🎯</span>
-                <h3>Personalized Job Matching</h3>
-                <p>Our smart algorithm matches you with jobs that fit your skills, schedule, and location perfectly.</p>
-                <a href="/jobs" class="feature-link">Explore Jobs →</a>
+                <h3>{{ t.personalized_matching }}</h3>
+                <p>{{ t.matching_desc }}</p>
+                <a href="/jobs" class="feature-link">{{ t.explore_jobs }}</a>
             </div>
             
             <div class="feature-card">
                 <span class="feature-icon">📚</span>
-                <h3>Free Skill Training</h3>
-                <p>Access over 150+ free courses and training programs to enhance your skills and increase earning potential.</p>
-                <a href="/skills" class="feature-link">Browse Courses →</a>
+                <h3>{{ t.free_training }}</h3>
+                <p>{{ t.training_desc }}</p>
+                <a href="/skills" class="feature-link">{{ t.browse_courses }}</a>
             </div>
             
             <div class="feature-card">
                 <span class="feature-icon">💰</span>
-                <h3>Flexible Work Options</h3>
-                <p>Choose from part-time, full-time, or freelance opportunities that work around your family schedule.</p>
-                <a href="/jobs" class="feature-link">View Options →</a>
+                <h3>{{ t.flexible_work }}</h3>
+                <p>{{ t.flexible_desc }}</p>
+                <a href="/jobs" class="feature-link">{{ t.view_options }}</a>
             </div>
             
             <div class="feature-card">
                 <span class="feature-icon">🤝</span>
-                <h3>Community Support</h3>
-                <p>Join a supportive community of mothers who understand your journey and share valuable experiences.</p>
-                <a href="#community" class="feature-link">Join Community →</a>
+                <h3>{{ t.community }}</h3>
+                <p>{{ t.community_desc }}</p>
+                <a href="#community" class="feature-link">{{ t.join_community }}</a>
             </div>
             
             <div class="feature-card">
                 <span class="feature-icon">🏆</span>
-                <h3>Certification Programs</h3>
-                <p>Earn recognized certifications that boost your credibility and help you land better opportunities.</p>
-                <a href="/skills" class="feature-link">Get Certified →</a>
+                <h3>{{ t.certification }}</h3>
+                <p>{{ t.certification_desc }}</p>
+                <a href="/skills" class="feature-link">{{ t.get_certified }}</a>
             </div>
             
             <div class="feature-card">
                 <span class="feature-icon">📞</span>
-                <h3>24/7 Career Guidance</h3>
-                <p>Get personalized career advice and support from our experts whenever you need it.</p>
-                <a href="#contact" class="feature-link">Contact Us →</a>
+                <h3>{{ t.guidance_24_7 }}</h3>
+                <p>{{ t.guidance_desc }}</p>
+                <a href="#contact" class="feature-link">{{ t.contact_us }}</a>
             </div>
         </div>
     </div>
@@ -162,16 +164,16 @@
 <section class="how-it-works">
     <div class="container">
         <div class="section-header">
-            <h2 class="section-title">How It Works</h2>
-            <p class="section-subtitle">Start your journey to financial independence in just 3 simple steps</p>
+            <h2 class="section-title">{{ t.how_it_works }}</h2>
+            <p class="section-subtitle">{{ t.how_it_works_desc }}</p>
         </div>
         
         <div class="steps-container">
             <div class="step">
                 <div class="step-number">1</div>
                 <div class="step-content">
-                    <h3>Create Your Profile</h3>
-                    <p>Tell us about your skills, experience, and what you're looking for</p>
+                    <h3>{{ t.create_profile }}</h3>
+                    <p>{{ t.profile_desc }}</p>
                 </div>
             </div>
             
@@ -180,8 +182,8 @@
             <div class="step">
                 <div class="step-number">2</div>
                 <div class="step-content">
-                    <h3>Get Personalized Matches</h3>
-                    <p>Receive job and training recommendations tailored just for you</p>
+                    <h3>{{ t.get_matches }}</h3>
+                    <p>{{ t.matches_desc }}</p>
                 </div>
             </div>
             
@@ -190,8 +192,8 @@
             <div class="step">
                 <div class="step-number">3</div>
                 <div class="step-content">
-                    <h3>Start Earning & Growing</h3>
-                    <p>Begin your work-from-home journey and unlock your potential</p>
+                    <h3>{{ t.start_earning }}</h3>
+                    <p>{{ t.earning_desc }}</p>
                 </div>
             </div>
         </div>
@@ -204,8 +206,8 @@
 <section class="popular-skills">
     <div class="container">
         <div class="section-header">
-            <h2 class="section-title">Popular Skills to Learn</h2>
-            <p class="section-subtitle">Start learning these in-demand skills today and increase your earning potential</p>
+            <h2 class="section-title">{{ t.popular_skills }}</h2>
+            <p class="section-subtitle">{{ t.popular_skills_desc }}</p>
         </div>
         
         <div class="skills-grid">
@@ -227,7 +229,7 @@
         </div>
         
         <div class="text-center">
-            <a href="/skills" class="btn btn-primary btn-large">View All Skills</a>
+            <a href="/skills" class="btn btn-primary btn-large">{{ t.view_all_skills }}</a>
         </div>
     </div>
 </section>
@@ -238,8 +240,8 @@
 <section class="testimonials">
     <div class="container">
         <div class="section-header">
-            <h2 class="section-title">Success Stories</h2>
-            <p class="section-subtitle">Hear from mothers who transformed their lives with MaaSarthi</p>
+            <h2 class="section-title">{{ t.success_stories }}</h2>
+            <p class="section-subtitle">{{ t.success_desc }}</p>
         </div>
         
         <div class="testimonial-grid">
@@ -287,11 +289,11 @@
      ======================================== -->
 <section class="cta">
     <div class="cta-content">
-        <h2>Ready to Start Your Journey?</h2>
-        <p>Join thousands of mothers who are earning from home with MaaSarthi</p>
+        <h2>{{ t.ready_to_start }}</h2>
+        <p>{{ t.join_thousands }}</p>
         <div class="cta-buttons">
-            <a href="/jobs" class="btn btn-primary btn-large">Get Started Today</a>
-            <a href="#contact" class="btn btn-secondary btn-large">Talk to an Expert</a>
+            <a href="/jobs" class="btn btn-primary btn-large">{{ t.get_started_today }}</a>
+            <a href="#contact" class="btn btn-secondary btn-large">{{ t.talk_to_expert }}</a>
         </div>
     </div>
 </section>
@@ -304,7 +306,7 @@
         <div class="footer-grid">
             <div>
                 <h3 class="footer-title">🌸 MaaSarthi</h3>
-                <p class="footer-desc">Empowering mothers across India to achieve financial independence through flexible work-from-home opportunities and skill development.</p>
+                <p class="footer-desc">{{ t.footer_desc }}</p>
                 <div class="social-links">
                     <a href="#" class="social-link">📘</a>
                     <a href="#" class="social-link">📷</a>
@@ -314,147 +316,46 @@
             </div>
             
             <div>
-                <h3 class="footer-title">Quick Links</h3>
+                <h3 class="footer-title">{{ t.quick_links }}</h3>
                 <ul class="footer-links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/jobs">Find Jobs</a></li>
-                    <li><a href="/skills">Training Programs</a></li>
-                    <li><a href="#about">About Us</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="/">{{ t.home }}</a></li>
+                    <li><a href="/jobs">{{ t.find_jobs }}</a></li>
+                    <li><a href="/skills">{{ t.train_skill }}</a></li>
+                    <li><a href="#about">{{ t.about_us }}</a></li>
+                    <li><a href="#contact">{{ t.contact }}</a></li>
                 </ul>
             </div>
             
             <div>
-                <h3 class="footer-title">Categories</h3>
+                <h3 class="footer-title">{{ t.categories }}</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Data Entry Jobs</a></li>
-                    <li><a href="#">Content Writing</a></li>
-                    <li><a href="#">Graphic Design</a></li>
-                    <li><a href="#">Online Tutoring</a></li>
-                    <li><a href="#">Freelance Work</a></li>
+                    <li><a href="#">{{ t.data_entry }}</a></li>
+                    <li><a href="#">{{ t.content_writing }}</a></li>
+                    <li><a href="#">{{ t.graphic_design }}</a></li>
+                    <li><a href="#">{{ t.online_tutoring }}</a></li>
+                    <li><a href="#">{{ t.freelance_work }}</a></li>
                 </ul>
             </div>
             
             <div>
-                <h3 class="footer-title">Support</h3>
+                <h3 class="footer-title">{{ t.support }}</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Help Center</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms of Service</a></li>
-                    <li><a href="#">FAQs</a></li>
-                    <li><a href="#">Career Guidance</a></li>
+                    <li><a href="#">{{ t.help_center }}</a></li>
+                    <li><a href="#">{{ t.privacy_policy }}</a></li>
+                    <li><a href="#">{{ t.terms_service }}</a></li>
+                    <li><a href="#">{{ t.faqs }}</a></li>
+                    <li><a href="#">{{ t.career_guidance }}</a></li>
                 </ul>
             </div>
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; 2025 MaaSarthi. All rights reserved. Made with ❤️ for Mothers</p>
+            <p>{{ t.copyright }}</p>
         </div>
     </div>
 </footer>
 
-<!-- ========================================
-     CHATBOT WIDGET
-     ======================================== -->
-<div class="chat-widget" id="chatWidget" style="display: none;">
-    <div class="chat-header">
-        <div>
-            <div class="chat-title">🤖 MaaSarthi Assistant</div>
-            <div class="chat-status">Online</div>
-        </div>
-        <div class="chat-actions">
-            <button class="chat-btn" id="minimizeBtn">−</button>
-            <button class="chat-btn close" id="closeBtn">×</button>
-        </div>
-    </div>
-    
-    <div class="chat-messages">
-        <div class="chat-message bot-message">
-            <div class="message-avatar">🤖</div>
-            <div class="message-content">
-                <p>Hi! 👋 I'm MaaSarthi Assistant. How can I help you today?</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="chat-input">
-        <input type="text" placeholder="Type your question..." id="chatInput">
-        <button id="sendBtn">Send</button>
-    </div>
-</div>
-
-<button class="chat-toggle" id="openChatBtn">💬</button>
-
-<!-- ========================================
-     JAVASCRIPT
-     ======================================== -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const chatWidget = document.getElementById("chatWidget");
-    const openChatBtn = document.getElementById("openChatBtn");
-    const closeBtn = document.getElementById("closeBtn");
-    const minimizeBtn = document.getElementById("minimizeBtn");
-    const chatMessages = chatWidget.querySelector(".chat-messages");
-    const chatInput = document.getElementById("chatInput");
-    const sendBtn = document.getElementById("sendBtn");
-    
-    // Open Chat
-    openChatBtn.addEventListener("click", function() {
-        chatWidget.style.display = "flex";
-        openChatBtn.style.display = "none";
-    });
-    
-    // Close Chat
-    closeBtn.addEventListener("click", function() {
-        chatWidget.style.display = "none";
-        openChatBtn.style.display = "block";
-    });
-    
-    // Minimize Chat
-    minimizeBtn.addEventListener("click", function() {
-        const isMinimized = chatMessages.style.display === "none";
-        chatMessages.style.display = isMinimized ? "block" : "none";
-        chatWidget.querySelector(".chat-input").style.display = isMinimized ? "flex" : "none";
-        minimizeBtn.textContent = isMinimized ? "−" : "+";
-    });
-    
-    // Send Message
-    function sendMessage() {
-        const message = chatInput.value.trim();
-        if (message) {
-            // Add user message
-            const userMsg = document.createElement("div");
-            userMsg.className = "chat-message user-message";
-            userMsg.innerHTML = `
-                <div class="message-avatar">👤</div>
-                <div class="message-content"><p>${message}</p></div>
-            `;
-            chatMessages.appendChild(userMsg);
-            chatInput.value = "";
-            
-            // Scroll to bottom
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            // Simulate bot response
-            setTimeout(() => {
-                const botMsg = document.createElement("div");
-                botMsg.className = "chat-message bot-message";
-                botMsg.innerHTML = `
-                    <div class="message-avatar">🤖</div>
-                    <div class="message-content"><p>Thanks for your message! Our team will assist you shortly.</p></div>
-                `;
-                chatMessages.appendChild(botMsg);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 1000);
-        }
-    }
-    
-    sendBtn.addEventListener("click", sendMessage);
-    chatInput.addEventListener("keypress", function(e) {
-        if (e.key === "Enter") sendMessage();
-    });
-});
-</script>
+{% include 'chatbot.html' %}
 
 </body>
 </html>

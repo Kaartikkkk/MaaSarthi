@@ -3,13 +3,17 @@ import joblib
 import pandas as pd
 from flask import send_from_directory
 import os
-from dotenv import load_dotenv
-from openai import OpenAI
-from pathlib import Path
 
-# ✅ Load environment variables
-load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+from pathlib import Path
+from flask import Flask, request, jsonify, render_template
+import requests
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+
+
+
+
 
 # ✅ Safe model loader
 def safe_load_model(path: str):
@@ -24,6 +28,17 @@ def safe_load_model(path: str):
 # ✅ Initialize Flask app
 app = Flask(__name__)
 app.secret_key = "maasarthi_secret_key_123"
+# ✅ Load dataset.csv (FREE search system)
+df = pd.read_csv("dataset.csv")
+df.fillna("", inplace=True)
+
+# Convert each row into one text string
+rows_text = df.astype(str).agg(" | ".join, axis=1).tolist()
+
+# Create vectorizer
+vectorizer = TfidfVectorizer(stop_words="english")
+X = vectorizer.fit_transform(rows_text)
+
 
 # ✅ Load trained models (make sure these exist)
 work_model = safe_load_model("work_model.pkl")
@@ -109,6 +124,68 @@ TEXT = {
         "feature3_desc": "Learn skills using YouTube + Google + Instagram links.",
         "find_jobs": "Find Jobs",
         "train_skill": "Train a Skill",
+        "home": "Home",
+        "about_us": "About Us",
+        "contact": "Contact",
+        "mothers_empowered": "Mothers Empowered",
+        "skills_available": "Skills Available",
+        "avg_income": "Avg Monthly Income",
+        "how_it_works": "How It Works",
+        "popular_skills": "Popular Skills to Learn",
+        "success_stories": "Success Stories",
+        "get_started_today": "Get Started Today",
+        "talk_to_expert": "Talk to an Expert",
+        "view_all_skills": "View All Skills",
+        "why_choose": "Why Choose MaaSarthi?",
+        "why_choose_desc": "We provide personalized career guidance and training opportunities tailored for mothers",
+        "personalized_matching": "Personalized Job Matching",
+        "matching_desc": "Our smart algorithm matches you with jobs that fit your skills, schedule, and location perfectly.",
+        "explore_jobs": "Explore Jobs →",
+        "free_training": "Free Skill Training",
+        "training_desc": "Access over 150+ free courses and training programs to enhance your skills and increase earning potential.",
+        "browse_courses": "Browse Courses →",
+        "flexible_work": "Flexible Work Options",
+        "flexible_desc": "Choose from part-time, full-time, or freelance opportunities that work around your family schedule.",
+        "view_options": "View Options →",
+        "community": "Community Support",
+        "community_desc": "Join a supportive community of mothers who understand your journey and share valuable experiences.",
+        "join_community": "Join Community →",
+        "certification": "Certification Programs",
+        "certification_desc": "Earn recognized certifications that boost your credibility and help you land better opportunities.",
+        "get_certified": "Get Certified →",
+        "guidance_24_7": "24/7 Career Guidance",
+        "guidance_desc": "Get personalized career advice and support from our experts whenever you need it.",
+        "contact_us": "Contact Us →",
+        "create_profile": "Create Your Profile",
+        "profile_desc": "Tell us about your skills, experience, and what you're looking for",
+        "get_matches": "Get Personalized Matches",
+        "matches_desc": "Receive job and training recommendations tailored just for you",
+        "start_earning": "Start Earning & Growing",
+        "earning_desc": "Begin your work-from-home journey and unlock your potential",
+        "how_it_works_desc": "Start your journey to financial independence in just 3 simple steps",
+        "popular_skills_desc": "Start learning these in-demand skills today and increase your earning potential",
+        "success_desc": "Hear from mothers who transformed their lives with MaaSarthi",
+        "ready_to_start": "Ready to Start Your Journey?",
+        "join_thousands": "Join thousands of mothers who are earning from home with MaaSarthi",
+        "footer_desc": "Empowering mothers across India to achieve financial independence through flexible work-from-home opportunities and skill development.",
+        "quick_links": "Quick Links",
+        "categories": "Categories",
+        "support": "Support",
+        "help_center": "Help Center",
+        "privacy_policy": "Privacy Policy",
+        "terms_service": "Terms of Service",
+        "faqs": "FAQs",
+        "copyright": "© 2025 MaaSarthi. All rights reserved. Made with ❤️ for Mothers",
+        "data_entry": "Data Entry Jobs",
+        "content_writing": "Content Writing",
+        "graphic_design": "Graphic Design",
+        "online_tutoring": "Online Tutoring",
+        "freelance_work": "Freelance Work",
+        "help_center": "Help Center",
+        "privacy_policy": "Privacy Policy",
+        "terms_service": "Terms of Service",
+        "faqs": "FAQs",
+        "career_guidance": "Career Guidance",
         "back": "Back",
         "job_heading": "Find Your Best Work Option",
         "job_sub": "Fill your details and MaaSarthi will suggest the best job + income estimate.",
@@ -252,6 +329,68 @@ TEXT = {
         "feature3_desc": "YouTube + Google + Instagram लिंक से स्किल सीखें।",
         "find_jobs": "नौकरी खोजें",
         "train_skill": "स्किल सीखें",
+        "home": "होम",
+        "about_us": "हमारे बारे में",
+        "contact": "संपर्क करें",
+        "mothers_empowered": "माताओं को सशक्त बनाया गया",
+        "skills_available": "उपलब्ध कौशल",
+        "avg_income": "औसत मासिक आय",
+        "how_it_works": "यह कैसे काम करता है",
+        "popular_skills": "सीखने के लिए लोकप्रिय कौशल",
+        "success_stories": "सफलता की कहानियां",
+        "get_started_today": "आज ही शुरू करें",
+        "talk_to_expert": "किसी विशेषज्ञ से बात करें",
+        "view_all_skills": "सभी कौशल देखें",
+        "why_choose": "MaaSarthi को क्यों चुनें?",
+        "why_choose_desc": "हम माताओं के लिए व्यक्तिगत करियर मार्गदर्शन और प्रशिक्षण अवसर प्रदान करते हैं",
+        "personalized_matching": "व्यक्तिगत नौकरी मिलान",
+        "matching_desc": "हमारा स्मार्ट एल्गोरिदम आपको उन नौकरियों से मेल खाता है जो आपके कौशल, समय और स्थान के अनुरूप हों।",
+        "explore_jobs": "नौकरियों का अन्वेषण करें →",
+        "free_training": "मुफ्त कौशल प्रशिक्षण",
+        "training_desc": "150+ से अधिक मुफ्त पाठ्यक्रमों और प्रशिक्षण कार्यक्रमों तक पहुंचें।",
+        "browse_courses": "पाठ्यक्रम देखें →",
+        "flexible_work": "लचकदार काम विकल्प",
+        "flexible_desc": "अंशकालीन, पूर्णकालीन या फ्रीलांस अवसरों में से चुनें।",
+        "view_options": "विकल्प देखें →",
+        "community": "सामुदायिक समर्थन",
+        "community_desc": "उन माताओं के समुदाय में शामिल हों जो आपकी यात्रा को समझते हैं।",
+        "join_community": "समुदाय में शामिल हों →",
+        "certification": "प्रमाणन कार्यक्रम",
+        "certification_desc": "मान्यता प्राप्त प्रमाणपत्र अर्जित करें जो आपकी विश्वसनीयता बढ़ाते हैं।",
+        "get_certified": "प्रमाणित हों →",
+        "guidance_24_7": "24/7 करियर मार्गदर्शन",
+        "guidance_desc": "हमारे विशेषज्ञों से व्यक्तिगत करियर सलाह प्राप्त करें।",
+        "contact_us": "संपर्क करें →",
+        "create_profile": "अपनी प्रोफाइल बनाएं",
+        "profile_desc": "हमें अपने कौशल और अनुभव के बारे में बताएं",
+        "get_matches": "व्यक्तिगत मेल प्राप्त करें",
+        "matches_desc": "आपके लिए तैयार किए गए नौकरी और प्रशिक्षण सुझाव प्राप्त करें",
+        "start_earning": "कमाई करना शुरू करें और बढ़ें",
+        "earning_desc": "अपनी घर से काम की यात्रा शुरू करें और अपनी क्षमता को अनलॉक करें",
+        "how_it_works_desc": "बस 3 सरल चरणों में वित्तीय स्वतंत्रता की ओर अपनी यात्रा शुरू करें",
+        "popular_skills_desc": "आज ही इन मांग वाले कौशल को सीखना शुरू करें",
+        "success_desc": "उन माताओं की कहानियां सुनें जिन्होंने MaaSarthi के साथ अपना जीवन बदल दिया",
+        "ready_to_start": "क्या आप अपनी यात्रा शुरू करने के लिए तैयार हैं?",
+        "join_thousands": "हजारों माताओं के साथ शामिल हों जो MaaSarthi के साथ घर से कमा रही हैं",
+        "footer_desc": "भारत की माताओं को लचकदार घर से काम के अवसरों और कौशल विकास के माध्यम से वित्तीय स्वतंत्रता प्राप्त करने में सक्षम बनाना।",
+        "quick_links": "त्वरित लिंक",
+        "categories": "श्रेणियां",
+        "support": "समर्थन",
+        "help_center": "सहायता केंद्र",
+        "privacy_policy": "गोपनीयता नीति",
+        "terms_service": "सेवा की शर्तें",
+        "faqs": "अक्सर पूछे जाने वाले प्रश्न",
+        "copyright": "© 2025 MaaSarthi। सर्वाधिकार सुरक्षित। माताओं के लिए ❤️ से बनाया गया",
+        "data_entry": "डेटा एंट्री नौकरियां",
+        "content_writing": "कंटेंट राइटिंग",
+        "graphic_design": "ग्राफिक डिजाइन",
+        "online_tutoring": "ऑनलाइन ट्यूटोरिंग",
+        "freelance_work": "फ्रीलांस काम",
+        "help_center": "सहायता केंद्र",
+        "privacy_policy": "गोपनीयता नीति",
+        "terms_service": "सेवा की शर्तें",
+        "faqs": "अक्सर पूछे जाने वाले प्रश्न",
+        "career_guidance": "करियर मार्गदर्शन",
         "back": "वापस",
         "job_heading": "अपने लिए सबसे अच्छा काम चुनें",
         "job_sub": "अपनी जानकारी भरें और माँ सारथी आपको सही काम + अनुमानित कमाई बताएगा।",
@@ -323,6 +462,42 @@ TEXT = {
 def get_text():
     lang = session.get("lang", "en")
     return TEXT.get(lang, TEXT["en"])
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_msg = request.json.get("message", "").strip()
+
+    if not user_msg:
+        return jsonify({"reply": "Please type something 🙂"})
+
+    # 🔍 Find best matching rows from CSV
+    query_vec = vectorizer.transform([user_msg])
+    similarities = cosine_similarity(query_vec, X).flatten()
+
+    # Top 3 matches
+    top_indices = similarities.argsort()[-3:][::-1]
+    context = "\n".join([rows_text[i] for i in top_indices])
+
+    # 🤖 Ask Ollama with dataset context
+    prompt = f"""
+You are MaaSathi AI Assistant.
+Answer using the dataset context given below.
+If dataset does not contain answer, reply normally.
+
+Dataset Context:
+{context}
+
+User Question: {user_msg}
+Assistant:
+"""
+
+    url = "http://localhost:11434/api/generate"
+    payload = {"model": "phi3", "prompt": prompt, "stream": False}
+
+    response = requests.post(url, json=payload)
+    data = response.json()
+
+    return jsonify({"reply": data.get("response", "Sorry, I couldn't reply right now.")})
+
 
 # ✅ Language route
 @app.route("/set-language/<lang>")
@@ -341,124 +516,9 @@ def favicon():
 def home():
     t = get_text()
     return render_template("home.html", t=t)
-# ✅ Chatbot API (FREE Offline - No Billing Needed)
-@app.route("/chat", methods=["POST"])
-def chat():
-    data = request.get_json(force=True)
-    user_message = data.get("message", "").strip()
 
-    if not user_message:
-        return jsonify({"reply": "Please type a message 😊"})
+# ✅ Skills page
 
-    msg = user_message.lower()
-
-    # ✅ Website language support
-    lang = session.get("lang", "en")
-
-    # ✅ Smart replies (English + Hindi)
-    if lang == "hi":
-        if "job" in msg or "काम" in msg or "नौकरी" in msg or "work" in msg:
-            reply = (
-                "✅ आपके लिए कुछ अच्छे काम:\n"
-                "1) डेटा एंट्री\n"
-                "2) होम ट्यूटर\n"
-                "3) टिफिन सर्विस\n"
-                "4) सिलाई / टेलरिंग\n"
-                "5) रीसेलिंग (Meesho)\n\n"
-                "आपको कौन सा काम पसंद है?"
-            )
-
-        elif "skill" in msg or "सीख" in msg or "training" in msg:
-            reply = (
-                "📚 आप ये स्किल सीख सकते हैं:\n"
-                "1) Canva\n"
-                "2) Excel\n"
-                "3) Cooking/Baking बिजनेस\n"
-                "4) Beauty/Mehndi\n"
-                "5) Social Media\n\n"
-                "आप किसमें interested हैं?"
-            )
-
-        elif "income" in msg or "salary" in msg or "कमाई" in msg or "earn" in msg:
-            reply = (
-                "💰 कमाई आपके hours/day और skill पर depend करती है:\n"
-                "• डेटा एंट्री: ₹8k–₹15k\n"
-                "• होम ट्यूटर: ₹10k–₹25k\n"
-                "• टिफिन सर्विस: ₹8k–₹30k\n"
-                "• सिलाई: ₹6k–₹20k\n\n"
-                "आप daily कितने घंटे दे सकते हैं?"
-            )
-
-        elif "hello" in msg or "hi" in msg or "namaste" in msg or "नमस्ते" in msg:
-            reply = "नमस्ते 👋 मैं MaaSarthi Assistant हूँ। आप jobs, skills या income के बारे में पूछ सकते हैं।"
-
-        elif "contact" in msg or "help" in msg or "support" in msg:
-            reply = "📩 आप Contact पेज पर जाकर हमसे connect कर सकते हैं। मैं आपको jobs और skills में भी guide कर सकता हूँ 🙂"
-
-        else:
-            reply = (
-                "😊 मैं आपकी मदद कर सकता हूँ:\n"
-                "✅ Jobs / Work\n"
-                "📚 Skill Training\n"
-                "💰 Income Guidance\n\n"
-                "आप लिख सकते हैं: 'jobs', 'skills', 'income'"
-            )
-
-    else:
-        # ✅ English replies
-        if "job" in msg or "work" in msg:
-            reply = (
-                "✅ Best job options for you:\n"
-                "1) Data Entry\n"
-                "2) Home Tutor\n"
-                "3) Tiffin Service\n"
-                "4) Tailoring / Stitching\n"
-                "5) Reselling (Meesho)\n\n"
-                "Which one do you like?"
-            )
-
-        elif "skill" in msg or "learn" in msg or "training" in msg:
-            reply = (
-                "📚 You can learn these skills:\n"
-                "1) Canva\n"
-                "2) Excel\n"
-                "3) Cooking/Baking business\n"
-                "4) Beauty/Mehndi\n"
-                "5) Social Media\n\n"
-                "Tell me your interest and I will guide you."
-            )
-
-        elif "income" in msg or "salary" in msg or "earn" in msg:
-            reply = (
-                "💰 Income depends on hours/day and your skill:\n"
-                "• Data Entry: ₹8k–₹15k\n"
-                "• Home Tutor: ₹10k–₹25k\n"
-                "• Tiffin Service: ₹8k–₹30k\n"
-                "• Tailoring: ₹6k–₹20k\n\n"
-                "How many hours/day can you work?"
-            )
-
-        elif "hello" in msg or "hi" in msg:
-            reply = "Hi 👋 I’m MaaSarthi Assistant. Ask me about jobs, skills, or income options!"
-
-        elif "contact" in msg or "help" in msg or "support" in msg:
-            reply = "📩 You can contact us from the Contact page. I can also guide you with jobs and skill training 🙂"
-
-        else:
-            reply = (
-                "😊 I can help with:\n"
-                "✅ Jobs / Work\n"
-                "📚 Skill Training\n"
-                "💰 Income Guidance\n\n"
-                "Type: 'jobs' or 'skills' or 'income'"
-            )
-
-    return jsonify({"reply": reply})
-
-
-
-
-    
 # ✅ Skills page
 @app.route("/skills")
 def skills():
@@ -626,4 +686,4 @@ def predict():
 
 # ✅ Run the app
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

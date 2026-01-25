@@ -153,8 +153,10 @@
           </div>
 
           <div class="field full">
-            <button class="btn" type="submit">{{ t.get_training }}</button>
-            <a class="btn-outline" href="/jobs">{{ t.find_jobs }}</a>
+            <div class="button-group">
+              <button class="btn btn-primary" type="submit">{{ t.get_training }}</button>
+              <a class="btn btn-secondary" href="/jobs">{{ t.find_jobs }}</a>
+            </div>
           </div>
 
         </div>
@@ -212,6 +214,8 @@
       });
     }
   </script>
+
+{% include 'chatbot.html' %}
 
 </body>
 </html>
