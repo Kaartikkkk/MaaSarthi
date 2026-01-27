@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sign Up | MaaSarthi</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="signup-page">
+        
+        <!-- LEFT SIDE - BRANDING -->
+        <div class="signup-branding">
+            <div class="brand-section">
+                <div class="brand-logo">
+                    <div class="logo-icon">👩</div>
+                    <h1>MaaSarthi</h1>
+                </div>
+
+                <p class="brand-subtitle">Your Career Partner - Empowering women to find flexible work opportunities and develop professional skills</p>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">10K+</div>
+                        <div class="stat-text">Active Users</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">500+</div>
+                        <div class="stat-text">Job Listings</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">95%</div>
+                        <div class="stat-text">Success Rate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">150+</div>
+                        <div class="stat-text">Training Programs</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-section">
+                <p class="testimonial-text">"I love how easy it is to find work that fits my lifestyle. MaaSarthi connects me with meaningful opportunities!"</p>
+                <p class="testimonial-author">— Anjali Patel, Bangalore</p>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE - SIGNUP FORM -->
+        <div class="signup-form-side">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Get Started</h2>
+                    <p>Create your account and find your perfect opportunity</p>
+                </div>
+
+                {% if error %}
+                <div class="error-message">{{ error }}</div>
+                {% endif %}
+
+                <form method="POST" action="/signup" class="auth-form">
+                    <div class="form-group">
+                        <label for="fullname">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="fullname" 
+                            name="fullname" 
+                            placeholder="Your full name" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="your.email@example.com" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            placeholder="+91 XXXXX XXXXX" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Create a password" 
+                                required
+                            >
+                            <div class="password-requirement">Min 8 characters, 1 uppercase, 1 number</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm Password</label>
+                            <input 
+                                type="password" 
+                                id="confirm_password" 
+                                name="confirm_password" 
+                                placeholder="Confirm password" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <label class="terms-checkbox">
+                        <input type="checkbox" name="terms" required>
+                        <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                    </label>
+
+                    <button type="submit" class="submit-btn">Create Account</button>
+                </form>
+
+                <div class="divider">or sign up with</div>
+
+                <div class="social-buttons">
+                    <button type="button" class="social-btn">Google</button>
+                    <button type="button" class="social-btn">Facebook</button>
+                </div>
+
+                <div class="login-prompt">
+                    Already have an account? <a href="/login">Sign in here</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

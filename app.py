@@ -28,6 +28,21 @@ def safe_load_model(path: str):
 # ✅ Initialize Flask app
 app = Flask(__name__)
 app.secret_key = "maasarthi_secret_key_123"
+
+# ✅ Simple in-memory user storage (for development)
+users_db = {}
+
+# ✅ Login required decorator
+from functools import wraps
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_email' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 # ✅ Load dataset.csv (FREE search system)
 df = pd.read_csv("dataset.csv")
 df.fillna("", inplace=True)
@@ -457,6 +472,73 @@ TEXT = {
         }
     }
 }
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+        
+        # Validate input
+        if not email or not password:
+            return render_template('login.html', error='Email and password are required')
+        
+        # Check if user exists and password is correct
+        if email in users_db and users_db[email]['password'] == password:
+            session['user_email'] = email
+            session['user_name'] = users_db[email]['name']
+            return redirect('/dashboard')
+        else:
+            return render_template('login.html', error='Invalid email or password')
+    
+    return render_template('login.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        fullname = request.form.get('fullname', '').strip()
+        email = request.form.get('email', '').strip()
+        phone = request.form.get('phone', '').strip()
+        password = request.form.get('password', '').strip()
+        confirm_password = request.form.get('confirm_password', '').strip()
+        
+        # Validation
+        if not all([fullname, email, phone, password, confirm_password]):
+            return render_template('signup.html', error='All fields are required')
+        
+        if len(password) < 6:
+            return render_template('signup.html', error='Password must be at least 6 characters')
+        
+        if password != confirm_password:
+            return render_template('signup.html', error='Passwords do not match')
+        
+        if email in users_db:
+            return render_template('signup.html', error='Email already registered')
+        
+        # Register new user
+        users_db[email] = {
+            'name': fullname,
+            'phone': phone,
+            'password': password
+        }
+        
+        return redirect('/login?success=Account+created+successfully')
+    
+    return render_template('signup.html')
+
+@app.route('/forgot-password')
+def forgot_password():
+    return render_template('forgot_password.html')
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user_email' not in session:
+        return redirect('/login')
+    return render_template('dashboard.html', user_name=session.get('user_name', 'User'))
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
 
 # ✅ Helper function to get language text
 def get_text():
@@ -521,6 +603,7 @@ def home():
 
 # ✅ Skills page
 @app.route("/skills")
+@login_required
 def skills():
     t = get_text()
     return render_template("skill_form.html", t=t)
@@ -528,6 +611,7 @@ def skills():
 # ✅ Skills result
 @app.route("/skills-result", methods=["POST"])
 @app.route("/skills_result", methods=["POST"])
+@login_required
 def skills_result():
     t = get_text()
 
@@ -631,12 +715,14 @@ def find_jobs_nearby():
 
 # ✅ Jobs page
 @app.route("/jobs")
+@login_required
 def jobs():
     t = get_text()
     return render_template("form.html", t=t)
 
 # ✅ Predict job recommendation
 @app.route("/predict", methods=["POST"])
+@login_required
 def predict():
     t = get_text()
 
