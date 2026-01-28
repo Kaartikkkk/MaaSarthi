@@ -2908,6 +2908,17 @@ body {
 .dashboard-card a:hover {
     background-color: #e63956;
 }
+
+/* Brand Logo Link Styling */
+.brand-logo-link {
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.3s ease;
+}
+
+.brand-logo-link:hover {
+    opacity: 0.9;
+}
 /* ========================================
    PROFESSIONAL DASHBOARD STYLES
    Add this to the end of your style.css
