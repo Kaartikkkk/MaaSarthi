@@ -1,4 +1,4 @@
-<!-- Reusable Navbar Component -->
+<!-- Universal Navbar Component -->
 <nav class="navbar">
     <div class="nav-container">
         <div class="logo">
@@ -10,16 +10,23 @@
         
         <div class="nav-links">
             <a href="{{ url_for('home') }}" class="nav-link {% if request.endpoint == 'home' %}active{% endif %}">Home</a>
-            <a href="{{ url_for('jobs') }}" class="nav-link {% if request.endpoint == 'jobs' %}active{% endif %}">Find Jobs</a>
-            <a href="{{ url_for('skills') }}" class="nav-link {% if request.endpoint == 'skills' %}active{% endif %}">Skill Analysis</a>
+            <a href="{{ url_for('jobs') }}" class="nav-link {% if request.endpoint in ['jobs', 'result'] %}active{% endif %}">Find Jobs</a>
+            <a href="{{ url_for('skills') }}" class="nav-link {% if request.endpoint in ['skills', 'skills_result'] %}active{% endif %}">Train a Skill</a>
+            <a href="/#about" class="nav-link">About Us</a>
             <a href="{{ url_for('contact') }}" class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}">Contact</a>
+            
+            <!-- Language Switcher -->
+            <div class="lang-switch">
+                <a class="lang-btn {% if session.get('lang', 'en') == 'en' %}active{% endif %}" href="/set-language/en">English</a>
+                <a class="lang-btn {% if session.get('lang') == 'hi' %}active{% endif %}" href="/set-language/hi">हिंदी</a>
+            </div>
             
             {% if user %}
             <!-- Logged in - Show Profile Dropdown -->
             <div class="profile-dropdown">
                 <button class="profile-btn" onclick="toggleDropdown()">
                     <span class="profile-avatar">{{ user.initials }}</span>
-                    <span class="profile-name">{{ user.name.split()[0] }}</span>
+                    <span class="profile-name">{{ user.name.split()[0] if user.name else 'User' }}</span>
                     <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>

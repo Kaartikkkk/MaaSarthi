@@ -15,29 +15,7 @@
 </head>
 <body>
 
-<!-- ========================================
-     NAVIGATION BAR (Same as Home)
-     ======================================== -->
-<nav class="navbar">
-    <div class="nav-container">
-        <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-icon" alt="MaaSarthi Logo">
-            <span class="logo-text">MaaSarthi</span>
-        </div>
-        
-        <div class="nav-links">
-            <a href="/" class="nav-link">{{ t.home }}</a>
-            <a href="/jobs" class="nav-link active">{{ t.find_jobs }}</a>
-            <a href="/skills" class="nav-link">{{ t.train_skill }}</a>
-            <a href="/contact" class="nav-link">{{ t.contact }}</a>
-            
-            <div class="auth-buttons">
-                <a href="/login" class="btn-login">Login</a>
-                <a href="/signup" class="btn-signup">Sign Up</a>
-            </div>
-        </div>
-    </div>
-</nav>
+{% include '_navbar.html' %}
 
 <!-- ========================================
      RESULT HERO SECTION

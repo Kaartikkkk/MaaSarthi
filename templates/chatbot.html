@@ -30,6 +30,9 @@ document.addEventListener("DOMContentLoaded", function() {
   const chatSend = document.getElementById("chatSend");
   const chatBody = document.getElementById("chatBody");
 
+  // Ensure widget is closed by default
+  chatWidget.classList.remove("active");
+
   // Toggle chat visibility
   chatToggle.addEventListener("click", function() {
     chatWidget.classList.toggle("active");

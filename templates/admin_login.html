@@ -46,26 +46,7 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <a href="{{ url_for('home') }}">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MaaSarthi Logo" class="logo-img">
-                </a>
-            </div>
-            <div class="nav-links">
-                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
-                <a href="{{ url_for('jobs') }}" class="nav-link">Find Jobs</a>
-                <a href="{{ url_for('skills') }}" class="nav-link">Skill Analysis</a>
-                <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
-            </div>
-            <div class="auth-buttons">
-                <a href="{{ url_for('login') }}" class="btn btn-outline">Login</a>
-                <a href="{{ url_for('signup') }}" class="btn btn-primary">Sign Up</a>
-            </div>
-        </div>
-    </nav>
+    {% include '_navbar.html' %}
 
     <!-- Admin Login Section -->
     <section class="login-section">
