@@ -2,7 +2,11 @@
 <html>
 <head>
   <title>MaaSathi AI Assistant</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
+  <!-- Modular CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/assistant.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
   <style>
     body { display: flex; justify-content: center; margin-top: 30px; font-family: Arial; }
     #chatbox { width: 400px; height: 540px; border: 1px solid #ccc; border-radius: 14px; padding: 12px; background: white; }
@@ -18,7 +22,7 @@
 <body>
 
   <div id="chatbox">
-    <h3>MaaSathi AI Assistant 🤖</h3>
+    <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><rect x="3" y="8" width="18" height="12" rx="2"/><circle cx="9" cy="14" r="2" fill="white"/><circle cx="15" cy="14" r="2" fill="white"/><path d="M8 4h8v4H8z"/></svg>MaaSarthi AI Assistant</h3>
     <div id="messages"></div>
 
     <div id="inputArea">
@@ -49,5 +53,6 @@
   }
 </script>
 
+<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
 </body>
 </html>

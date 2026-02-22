@@ -1,0 +1,665 @@
+/* ========================================
+   MaaSarthi - Result Page CSS
+   Consistent with Home Page UI/UX
+   ======================================== */
+
+/* ========================================
+   RESULT HERO SECTION
+   ======================================== */
+.result-hero {
+    margin-top: 80px;
+    padding: 4rem 2rem 5rem;
+    background: linear-gradient(135deg, #fff0f3 0%, #ffe5ec 100%);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.result-hero .hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.15;
+    background-image: 
+        radial-gradient(circle at 20% 30%, var(--primary-pink) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, var(--secondary-pink) 0%, transparent 50%);
+}
+
+.result-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.match-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(34, 197, 94, 0.15);
+    border: 2px solid rgba(34, 197, 94, 0.3);
+    padding: 0.625rem 1.25rem;
+    border-radius: 50px;
+    color: #16a34a;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.match-pill svg {
+    color: #16a34a;
+}
+
+.result-title {
+    font-size: 2.75rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.result-title .highlight {
+    display: block;
+    background: linear-gradient(135deg, #ff4d6d 0%, #ff85a1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.result-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
+
+.earnings-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    padding: 1.25rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(255, 77, 109, 0.15);
+    border: 2px solid rgba(255, 77, 109, 0.1);
+}
+
+.earnings-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #ff4d6d 0%, #ff85a1 100%);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.earnings-icon svg {
+    color: white;
+}
+
+.earnings-info {
+    text-align: left;
+}
+
+.earnings-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.earnings-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #16a34a;
+}
+
+/* ========================================
+   RESULT CONTENT SECTION
+   ======================================== */
+.result-content {
+    padding: 3rem 2rem;
+    background: #fafafa;
+}
+
+.result-content .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+}
+
+/* ========================================
+   JOBS SECTION
+   ======================================== */
+.jobs-section {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 2px solid var(--border-color);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.section-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.section-header h2 svg {
+    color: var(--primary-pink);
+}
+
+.job-count {
+    background: linear-gradient(135deg, #ff4d6d 0%, #ff85a1 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ========================================
+   JOB CARDS
+   ======================================== */
+.jobs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.job-card {
+    background: #fafafa;
+    border: 2px solid #eee;
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.job-card:hover {
+    border-color: var(--primary-pink);
+    background: white;
+    box-shadow: 0 8px 30px rgba(255, 77, 109, 0.12);
+    transform: translateY(-3px);
+}
+
+.job-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.company-logo {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, #ff4d6d 0%, #ff85a1 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.company-logo svg {
+    color: white;
+}
+
+.job-main-info {
+    flex: 1;
+}
+
+.job-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.company-name {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.job-salary {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.job-salary .salary-value {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #16a34a;
+}
+
+.job-salary .salary-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.job-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.meta-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0.375rem 0.75rem;
+    background: rgba(255, 77, 109, 0.08);
+    border-radius: 50px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.meta-tag svg {
+    color: var(--primary-pink);
+}
+
+.job-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+/* ========================================
+   APPLY SECTION
+   ======================================== */
+.apply-section {
+    padding-top: 1rem;
+    border-top: 1px dashed #e0e0e0;
+}
+
+.apply-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+}
+
+.portal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.portal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.5rem 0.875rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.portal-btn.linkedin {
+    background: #0077B5;
+}
+
+.portal-btn.linkedin:hover {
+    background: #005885;
+    transform: translateY(-2px);
+}
+
+.portal-btn.naukri {
+    background: #4A90D9;
+}
+
+.portal-btn.naukri:hover {
+    background: #3578c5;
+    transform: translateY(-2px);
+}
+
+.portal-btn.indeed {
+    background: #2164f3;
+}
+
+.portal-btn.indeed:hover {
+    background: #1a4fc7;
+    transform: translateY(-2px);
+}
+
+.portal-btn.internshala {
+    background: #00a5ec;
+}
+
+.portal-btn.internshala:hover {
+    background: #0089c4;
+    transform: translateY(-2px);
+}
+
+/* ========================================
+   ACTION BUTTONS
+   ======================================== */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+.action-buttons .btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn-secondary {
+    background: #f5f5f5;
+    color: var(--text-primary);
+    border: 2px solid #eee;
+}
+
+.action-buttons .btn-secondary:hover {
+    background: #eee;
+    border-color: #ddd;
+}
+
+.action-buttons .btn-primary {
+    background: linear-gradient(135deg, #ff4d6d 0%, #ff85a1 100%);
+    color: white;
+    border: none;
+}
+
+.action-buttons .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 77, 109, 0.35);
+}
+
+/* ========================================
+   SIDEBAR
+   ======================================== */
+.result-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.sidebar-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 2px solid var(--border-color);
+}
+
+.sidebar-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.sidebar-card h3 svg {
+    color: var(--primary-pink);
+}
+
+/* Skill List */
+.skill-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.skill-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: linear-gradient(135deg, rgba(255, 77, 109, 0.05), rgba(255, 77, 109, 0.1));
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-pink);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.skill-list li svg {
+    color: #16a34a;
+    flex-shrink: 0;
+}
+
+/* Resource Links */
+.resource-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.resource-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    background: #f8f8f8;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.resource-link:hover {
+    background: var(--primary-pink);
+    color: white;
+    transform: translateX(5px);
+}
+
+.resource-link svg {
+    color: var(--text-light);
+    transition: color 0.3s;
+}
+
+.resource-link:hover svg {
+    color: white;
+}
+
+/* Share Card */
+.share-card {
+    background: linear-gradient(135deg, #fff0f3 0%, #ffe5ec 100%);
+}
+
+.share-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.share-btn {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.share-btn.whatsapp {
+    background: #25D366;
+}
+
+.share-btn.linkedin-share {
+    background: #0077B5;
+}
+
+.share-btn.copy-link {
+    background: #333;
+}
+
+.share-btn:hover {
+    transform: scale(1.1);
+}
+
+/* ========================================
+   FOOTER (Simple)
+   ======================================== */
+.footer {
+    background: #1a1a2e;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.footer-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+}
+
+.footer-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1024px) {
+    .result-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .result-sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .share-card {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .result-hero {
+        padding: 3rem 1.5rem 4rem;
+    }
+    
+    .result-title {
+        font-size: 2rem;
+    }
+    
+    .earnings-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .earnings-info {
+        text-align: center;
+    }
+    
+    .job-card-header {
+        flex-wrap: wrap;
+    }
+    
+    .job-salary {
+        width: 100%;
+        text-align: left;
+        margin-top: 0.5rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .result-sidebar {
+        grid-template-columns: 1fr;
+    }
+    
+    .share-card {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .result-content {
+        padding: 1.5rem 1rem;
+    }
+    
+    .jobs-section {
+        padding: 1.25rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+    
+    .portal-links {
+        gap: 0.375rem;
+    }
+    
+    .portal-btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+    }
+}

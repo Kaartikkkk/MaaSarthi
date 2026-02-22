@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>{{ t.title }}</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -18,7 +18,7 @@
 <nav class="navbar">
     <div class="nav-container">
         <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-icon" alt="MaaSarthi Logo">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}" class="logo-icon" alt="MaaSarthi Logo">
             <span class="logo-text">MaaSarthi</span>
         </div>
         
@@ -27,7 +27,7 @@
             <a href="/jobs" class="nav-link">{{ t.find_jobs }}</a>
             <a href="/skills" class="nav-link">{{ t.train_skill }}</a>
             <a href="#about" class="nav-link">{{ t.about_us }}</a>
-            <a href="#contact" class="nav-link">{{ t.contact }}</a>
+            <a href="/contact" class="nav-link">{{ t.contact }}</a>
             
             <div class="lang-switch">
                 <a class="lang-btn" href="/set-language/en">English</a>
@@ -35,8 +35,19 @@
             </div>
             
             <div class="auth-buttons">
+                {% if session.get('user_email') %}
+                <div class="profile-dropdown">
+                    <button class="btn-profile">My Profile ▼</button>
+                    <div class="dropdown-content">
+                        <a href="/dashboard">Dashboard</a>
+                        <a href="/profile">Profile</a>
+                        <a href="/logout">Logout</a>
+                    </div>
+                </div>
+                {% else %}
                 <a href="/login" class="btn-login">Login</a>
                 <a href="/signup" class="btn-signup">Sign Up</a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -157,7 +168,7 @@
                 <span class="feature-icon">📞</span>
                 <h3>{{ t.guidance_24_7 }}</h3>
                 <p>{{ t.guidance_desc }}</p>
-                <a href="#contact" class="feature-link">{{ t.contact_us }}</a>
+                <a href="/contact" class="feature-link">{{ t.contact_us }}</a>
             </div>
         </div>
     </div>
@@ -298,7 +309,7 @@
         <p>{{ t.join_thousands }}</p>
         <div class="cta-buttons">
             <a href="/jobs" class="btn btn-primary btn-large">{{ t.get_started_today }}</a>
-            <a href="#contact" class="btn btn-secondary btn-large">{{ t.talk_to_expert }}</a>
+            <a href="/contact" class="btn btn-secondary btn-large">{{ t.talk_to_expert }}</a>
         </div>
     </div>
 </section>
@@ -327,7 +338,7 @@
                     <li><a href="/jobs">{{ t.find_jobs }}</a></li>
                     <li><a href="/skills">{{ t.train_skill }}</a></li>
                     <li><a href="#about">{{ t.about_us }}</a></li>
-                    <li><a href="#contact">{{ t.contact }}</a></li>
+                    <li><a href="/contact">{{ t.contact }}</a></li>
                 </ul>
             </div>
             

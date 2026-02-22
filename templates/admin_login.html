@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - MaaSarthi</title>
+    <title>Admin Login - MaaSarthi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,6 +12,38 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <style>
+        .login-icon {
+            background: linear-gradient(135deg, #374151, #1f2937) !important;
+            color: white !important;
+        }
+        .login-container::before {
+            background: linear-gradient(90deg, #374151, #6b7280, #374151) !important;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #374151, #1f2937) !important;
+            box-shadow: 0 4px 15px rgba(31, 41, 55, 0.3) !important;
+        }
+        .btn-submit:hover {
+            box-shadow: 0 8px 25px rgba(31, 41, 55, 0.4) !important;
+        }
+        .form-input:focus {
+            border-color: #374151 !important;
+            box-shadow: 0 0 0 4px rgba(55, 65, 81, 0.1) !important;
+        }
+        .back-link {
+            color: #6b7280;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .back-link:hover {
+            color: #374151;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -29,24 +61,23 @@
                 <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
             </div>
             <div class="auth-buttons">
-                <a href="{{ url_for('login') }}" class="btn btn-outline active">Login</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline">Login</a>
                 <a href="{{ url_for('signup') }}" class="btn btn-primary">Sign Up</a>
             </div>
         </div>
     </nav>
 
-    <!-- Login Section -->
+    <!-- Admin Login Section -->
     <section class="login-section">
         <div class="login-container animate-fade-in">
             <div class="login-header">
                 <div class="login-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
                 </div>
-                <h1 class="login-title">Welcome Back</h1>
-                <p class="login-subtitle">Sign in to continue your journey with MaaSarthi</p>
+                <h1 class="login-title">Admin Access</h1>
+                <p class="login-subtitle">Enter admin credentials to access the dashboard</p>
             </div>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -59,61 +90,43 @@
                 {% endif %}
             {% endwith %}
 
-            <form action="{{ url_for('login') }}" method="POST" class="login-form">
+            <form action="{{ url_for('admin_login') }}" method="POST" class="login-form">
                 <div class="form-group animate-slide-up" style="animation-delay: 0.1s;">
-                    <label for="email" class="form-label">
+                    <label for="admin_username" class="form-label">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        Email Address
+                        Admin Username
                     </label>
-                    <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+                    <input type="text" id="admin_username" name="admin_username" class="form-input" placeholder="Enter admin username" required>
                 </div>
 
                 <div class="form-group animate-slide-up" style="animation-delay: 0.2s;">
-                    <label for="password" class="form-label">
+                    <label for="admin_password" class="form-label">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
-                        Password
+                        Admin Password
                     </label>
-                    <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required>
+                    <input type="password" id="admin_password" name="admin_password" class="form-input" placeholder="Enter admin password" required>
                 </div>
 
-                <div class="form-options animate-slide-up" style="animation-delay: 0.3s;">
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="remember">
-                        <span class="checkmark"></span>
-                        Remember me
-                    </label>
-                    <a href="#" class="forgot-link">Forgot Password?</a>
-                </div>
-
-                <button type="submit" class="btn-submit animate-slide-up" style="animation-delay: 0.4s;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                        <polyline points="10 17 15 12 10 7"></polyline>
-                        <line x1="15" y1="12" x2="3" y2="12"></line>
-                    </svg>
-                    Sign In
-                </button>
-            </form>
-
-            <div class="login-footer animate-slide-up" style="animation-delay: 0.5s;">
-                <p>Don't have an account? <a href="{{ url_for('signup') }}" class="signup-link">Create Account</a></p>
-            </div>
-
-            <div class="admin-login-section animate-slide-up" style="animation-delay: 0.6s;">
-                <div class="divider">
-                    <span>or</span>
-                </div>
-                <a href="{{ url_for('admin_login') }}" class="btn-admin">
+                <button type="submit" class="btn-submit animate-slide-up" style="animation-delay: 0.3s;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
-                    Admin Login
+                    Access Dashboard
+                </button>
+            </form>
+
+            <div class="login-footer animate-slide-up" style="animation-delay: 0.4s;">
+                <a href="{{ url_for('login') }}" class="back-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                    Back to User Login
                 </a>
             </div>
         </div>

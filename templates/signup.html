@@ -1,145 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Sign Up | MaaSarthi</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - MaaSarthi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
 </head>
-
 <body>
-    <div class="signup-page">
-        
-        <!-- LEFT SIDE - BRANDING -->
-        <div class="signup-branding">
-            <div class="brand-section">
-                <a href="/" class="brand-logo-link">
-                    <div class="brand-logo">
-                        <div class="logo-icon">👩</div>
-                        <h1>MaaSarthi</h1>
-                    </div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MaaSarthi Logo" class="logo-img">
                 </a>
-
-                <p class="brand-subtitle">Your Career Partner - Empowering women to find flexible work opportunities and develop professional skills</p>
-
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value">10K+</div>
-                        <div class="stat-text">Active Users</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">500+</div>
-                        <div class="stat-text">Job Listings</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">95%</div>
-                        <div class="stat-text">Success Rate</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">150+</div>
-                        <div class="stat-text">Training Programs</div>
-                    </div>
-                </div>
             </div>
-
-            <div class="testimonial-section">
-                <p class="testimonial-text">"I love how easy it is to find work that fits my lifestyle. MaaSarthi connects me with meaningful opportunities!"</p>
-                <p class="testimonial-author">— Anjali Patel, Bangalore</p>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                <a href="{{ url_for('jobs') }}" class="nav-link">Find Jobs</a>
+                <a href="{{ url_for('skills') }}" class="nav-link">Skill Analysis</a>
+                <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="{{ url_for('login') }}" class="btn btn-outline">Login</a>
+                <a href="{{ url_for('signup') }}" class="btn btn-primary active">Sign Up</a>
             </div>
         </div>
+    </nav>
 
-        <!-- RIGHT SIDE - SIGNUP FORM -->
-        <div class="signup-form-side">
-            <div class="form-container">
-                <div class="form-header">
-                    <h2>Get Started</h2>
-                    <p>Create your account and find your perfect opportunity</p>
+    <!-- Signup Section -->
+    <section class="signup-section">
+        <div class="signup-container animate-fade-in">
+            <div class="signup-header">
+                <div class="signup-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="19" y1="8" x2="19" y2="14"></line>
+                        <line x1="22" y1="11" x2="16" y2="11"></line>
+                    </svg>
                 </div>
+                <h1 class="signup-title">Create Account</h1>
+                <p class="signup-subtitle">Join MaaSarthi and start your career journey today</p>
+            </div>
 
-                {% if error %}
-                <div class="error-message">{{ error }}</div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} animate-slide-up">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
                 {% endif %}
+            {% endwith %}
 
-                <form method="POST" action="/signup" class="auth-form">
-                    <div class="form-group">
-                        <label for="fullname">Full Name</label>
-                        <input 
-                            type="text" 
-                            id="fullname" 
-                            name="fullname" 
-                            placeholder="Your full name" 
-                            required
-                        >
+            {% if error %}
+                <div class="alert alert-error animate-slide-up">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <form action="{{ url_for('signup') }}" method="POST" class="signup-form">
+                <div class="form-row">
+                    <div class="form-group animate-slide-up" style="animation-delay: 0.1s;">
+                        <label for="fullname" class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            Full Name
+                        </label>
+                        <input type="text" id="fullname" name="fullname" class="form-input" placeholder="Enter your full name" required>
                     </div>
 
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            placeholder="your.email@example.com" 
-                            required
-                        >
+                    <div class="form-group animate-slide-up" style="animation-delay: 0.15s;">
+                        <label for="email" class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                            </svg>
+                            Email Address
+                        </label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group animate-slide-up" style="animation-delay: 0.2s;">
+                        <label for="phone" class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                            Phone Number
+                        </label>
+                        <input type="tel" id="phone" name="phone" class="form-input" placeholder="Enter your phone number" required>
                     </div>
 
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input 
-                            type="tel" 
-                            id="phone" 
-                            name="phone" 
-                            placeholder="+91 XXXXX XXXXX" 
-                            required
-                        >
+                    <div class="form-group animate-slide-up" style="animation-delay: 0.25s;">
+                        <label for="age" class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Age
+                        </label>
+                        <input type="number" id="age" name="age" class="form-input" placeholder="Enter your age" min="18" max="100" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group animate-slide-up" style="animation-delay: 0.3s;">
+                        <label for="password" class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            Password
+                        </label>
+                        <input type="password" id="password" name="password" class="form-input" placeholder="Create a password" required>
                     </div>
 
-                    <div class="form-group-row">
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                placeholder="Create a password" 
-                                required
-                            >
-                            <div class="password-requirement">Min 8 characters, 1 uppercase, 1 number</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="confirm_password">Confirm Password</label>
-                            <input 
-                                type="password" 
-                                id="confirm_password" 
-                                name="confirm_password" 
-                                placeholder="Confirm password" 
-                                required
-                            >
-                        </div>
+                    <div class="form-group animate-slide-up" style="animation-delay: 0.35s;">
+                        <label for="confirm_password" class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            Confirm Password
+                        </label>
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-input" placeholder="Confirm your password" required>
                     </div>
+                </div>
 
-                    <label class="terms-checkbox">
+                <div class="form-options animate-slide-up" style="animation-delay: 0.4s;">
+                    <label class="checkbox-label">
                         <input type="checkbox" name="terms" required>
-                        <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                        <span class="checkmark"></span>
+                        I agree to the <a href="#" class="terms-link">Terms & Conditions</a>
                     </label>
-
-                    <button type="submit" class="submit-btn">Create Account</button>
-                </form>
-
-                <div class="divider">or sign up with</div>
-
-                <div class="social-buttons">
-                    <button type="button" class="social-btn">Google</button>
-                    <button type="button" class="social-btn">Facebook</button>
                 </div>
 
-                <div class="login-prompt">
-                    Already have an account? <a href="/login">Sign in here</a>
-                </div>
+                <button type="submit" class="btn-submit animate-slide-up" style="animation-delay: 0.45s;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="19" y1="8" x2="19" y2="14"></line>
+                        <line x1="22" y1="11" x2="16" y2="11"></line>
+                    </svg>
+                    Create Account
+                </button>
+            </form>
+
+            <div class="signup-footer animate-slide-up" style="animation-delay: 0.5s;">
+                <p>Already have an account? <a href="{{ url_for('login') }}" class="login-link">Sign In</a></p>
             </div>
         </div>
+    </section>
 
-    </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 MaaSarthi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
 </body>
 </html>

@@ -1,0 +1,28 @@
+✅ Database tables created successfully!
+🚀 Starting MaaSarthi Server...
+🔐 Security features enabled:
+   ✓ Password hashing with SHA-256 + salt
+   ✓ Input validation & sanitization
+   ✓ Rate limiting (5 attempts / 5 minutes)
+   ✓ Secure session management
+   ✓ Security headers (XSS, Clickjacking protection)
+   ✓ CSRF protection via SameSite cookies
+🗄️  Database: SQLite (maasarthi.db)
+   ✓ Tables: users, tasks, reminders, contact_messages, user_skills
+   ✓ Tables: job_recommendations, user_profiles, job_search_history, skill_search_history
+📊 API Endpoints:
+   ✓ /api/job-history - Get job search history
+   ✓ /api/skill-history - Get skill search history
+   ✓ /api/user-profile - Get/Update user profile
+   ✓ /api/dashboard-stats - Get dashboard statistics
+🤖 ML Features enabled:
+   ✓ Quantile-based income range calculation
+   ✓ Confidence score from RandomForest prediction variance
+   ✓ Model retraining pipeline (/admin/retrain-model)
+   ✓ Model statistics endpoint (/admin/model-stats)
+
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+[33mPress CTRL+C to quit[0m

@@ -1,0 +1,107 @@
+/* ========================================
+   MaaSarthi - Footer CSS
+   ======================================== */
+
+.footer {
+    background: linear-gradient(135deg, #1a0a0e 0%, #2d1417 100%);
+    color: #ffb3c1;
+    padding: 4.5rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 77, 109, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 133, 161, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 3.5rem;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-title {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.footer-desc {
+    color: var(--accent-pink);
+    line-height: 1.8;
+    margin-bottom: 1.75rem;
+    font-weight: 500;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-link {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 77, 109, 0.15);
+    border: 2px solid rgba(255, 77, 109, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.375rem;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.social-link:hover {
+    background: var(--gradient-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(255, 77, 109, 0.4);
+    border-color: transparent;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 1rem;
+}
+
+.footer-links a {
+    color: var(--accent-pink);
+    text-decoration: none;
+    transition: all 0.3s;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.footer-links a:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2.5rem;
+    border-top: 2px solid rgba(255, 77, 109, 0.2);
+    color: var(--soft-pink);
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}

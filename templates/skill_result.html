@@ -3,145 +3,178 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>MaaSarthi | Skill Training Result</title>
-
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
+    <!-- Modular CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
 </head>
 
 <body>
 
-<div class="card">
+<!-- Back Button -->
+<a href="/skills" class="back-btn">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    Back
+</a>
 
-    <!-- ✅ HEADER -->
-    <div class="card-header">
-        <div class="brand">
-            <div>
-                <h1>📚 Skill Training Plan</h1>
-                <p>Roadmap + links based on your selected skill</p>
-            </div>
-            <div class="chip">✅ Personalized</div>
-        </div>
-    </div>
-
-    <!-- ✅ BODY -->
-    <div class="card-body">
-        <div class="grid">
-
-            <!-- ✅ LEFT PANEL -->
-            <div>
-                <p class="sub">Selected Skill</p>
-
-                <!-- ✅ Works if backend sends skill OR work -->
-                <div class="big-title">
-                    {% if skill %}
-                        {{ skill }}
-                    {% elif work %}
-                        {{ work }}
-                    {% else %}
-                        Skill Training
-                    {% endif %}
+<div class="results-page">
+    <!-- Header Section -->
+    <div class="results-header" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #3730a3 100%);">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="match-badge">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+                    <span>Personalized Training</span>
                 </div>
-
-                <!-- ✅ Plan info -->
-                <div class="income-card" style="background: rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.18);">
-                    <div class="label" style="color:#3730a3;">Your Plan</div>
-
-                    <div class="value" style="color:#4f46e5;">
-                        {% if level %}{{ level }}{% else %}Beginner{% endif %}
-                        •
-                        {% if hours %}{{ hours }}{% else %}1{% endif %} hrs/day
-                        •
-                        {% if language %}{{ language }}{% else %}Hindi{% endif %}
+                <h1 class="page-title">Your Training Plan: 
+                    <span>
+                        {% if skill %}{{ skill }}{% elif work %}{{ work }}{% else %}Skill Training{% endif %}
+                    </span>
+                </h1>
+                <p class="page-subtitle">Custom learning roadmap based on your preferences and goals</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Your Plan</span>
+                        <span class="stat-value">{% if level %}{{ level }}{% else %}Beginner{% endif %} • {% if hours %}{{ hours }}{% else %}1{% endif %} hrs/day</span>
                     </div>
                 </div>
-
-                <!-- ✅ Optional income section if backend provides low/high -->
-                {% if low is not none and high is not none %}
-                <div class="income-card">
-                    <div class="label">Expected Monthly Income</div>
-                    <div class="value">₹{{ low }} – ₹{{ high }}</div>
-                </div>
-                {% endif %}
-
-                <!-- ✅ Buttons -->
-                <div class="footer-actions">
-                    <a class="btn" href="/skills">🔁 Choose Another Skill</a>
-                    <a class="btn-outline" href="/jobs">🔍 Find Jobs</a>
-                </div>
             </div>
-
-            <!-- ✅ RIGHT PANEL -->
-            <div class="section">
-
-                <h3>🧭 Step-by-Step Roadmap</h3>
-
-                <ul class="skill-list">
-
-                    <!-- ✅ Works if backend sends roadmap -->
-                    {% if roadmap %}
-                        {% for step in roadmap %}
-                        <li class="skill-item">
-                            <span>{{ step }}</span>
-                            <small>Step</small>
-                        </li>
-                        {% endfor %}
-
-                    <!-- ✅ Works if backend sends skills list -->
-                    {% elif skills %}
-                        {% for step in skills %}
-                        <li class="skill-item">
-                            <span>{{ step }}</span>
-                            <small>Recommended</small>
-                        </li>
-                        {% endfor %}
-
-                    {% else %}
-                        <li class="skill-item">
-                            <span>Start with basics</span>
-                            <small>Step</small>
-                        </li>
-                        <li class="skill-item">
-                            <span>Practice daily</span>
-                            <small>Step</small>
-                        </li>
-                        <li class="skill-item">
-                            <span>Create portfolio / samples</span>
-                            <small>Step</small>
-                        </li>
-                        <li class="skill-item">
-                            <span>Apply for jobs / start freelancing</span>
-                            <small>Step</small>
-                        </li>
-                    {% endif %}
-
-                </ul>
-
-                <div style="height:14px;"></div>
-
-                <h3>🔗 Best Learning Links</h3>
-
-                <div class="btn-row">
-                    {% if links %}
-                        {% for name, url in links %}
-                            <a class="btn-secondary" href="{{ url }}" target="_blank">{{ name }}</a>
-                        {% endfor %}
-                    {% else %}
-                        <a class="btn-secondary" href="https://www.youtube.com" target="_blank">YouTube</a>
-                        <a class="btn-secondary" href="https://www.google.com" target="_blank">Google</a>
-                    {% endif %}
-                </div>
-
-            </div>
-
         </div>
     </div>
 
+    <!-- Main Content -->
+    <div class="results-content">
+        <!-- Roadmap Section -->
+        <div class="jobs-section">
+            <div class="section-header">
+                <h2>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    Step-by-Step Roadmap
+                </h2>
+            </div>
+
+            <div class="roadmap-list">
+                {% if roadmap %}
+                    {% for step in roadmap %}
+                    <div class="roadmap-item">
+                        <div class="step-number">{{ loop.index }}</div>
+                        <div class="step-content">
+                            <span class="step-text">{{ step }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% elif skills %}
+                    {% for step in skills %}
+                    <div class="roadmap-item">
+                        <div class="step-number">{{ loop.index }}</div>
+                        <div class="step-content">
+                            <span class="step-text">{{ step }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="roadmap-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content"><span class="step-text">Start with basics</span></div>
+                    </div>
+                    <div class="roadmap-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content"><span class="step-text">Practice daily</span></div>
+                    </div>
+                    <div class="roadmap-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content"><span class="step-text">Create portfolio / samples</span></div>
+                    </div>
+                    <div class="roadmap-item">
+                        <div class="step-number">4</div>
+                        <div class="step-content"><span class="step-text">Apply for jobs / start freelancing</span></div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a class="action-btn secondary" href="/skills">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                    Choose Another Skill
+                </a>
+                <a class="action-btn primary" href="/jobs">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                    Find Jobs
+                </a>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="results-sidebar">
+            <!-- Income Estimate -->
+            {% if low is not none and high is not none %}
+            <div class="sidebar-card">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+                    Expected Income
+                </h3>
+                <div class="income-display">
+                    <span class="income-value">₹{{ low }} – ₹{{ high }}</span>
+                    <span class="income-label">per month</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Learning Resources -->
+            <div class="sidebar-card">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+                    Best Learning Links
+                </h3>
+                <div class="resource-links">
+                    {% if links %}
+                        {% for name, url in links %}
+                        <a href="{{ url }}" target="_blank" class="resource-link">
+                            <span>{{ name }}</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <a href="https://www.youtube.com" target="_blank" class="resource-link">
+                            <span>YouTube</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+                        </a>
+                        <a href="https://www.google.com" target="_blank" class="resource-link">
+                            <span>Google</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="sidebar-card">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+                    Quick Tips
+                </h3>
+                <ul class="tips-list">
+                    <li>Practice consistently every day</li>
+                    <li>Build projects to showcase skills</li>
+                    <li>Join online communities</li>
+                    <li>Create a portfolio website</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% include 'chatbot.html' %}
 
+<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
 </body>
 </html>

@@ -1,213 +1,15 @@
 <!-- ========================================
      CHATBOT WIDGET (OLLAMA)
      ======================================== -->
-<style>
-#chatbotContainer {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    z-index: 9999;
-    pointer-events: none;
-}
-
-#chatbotContainer * {
-    box-sizing: border-box;
-}
-
-#chatToggleBtn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #FF4D6D 0%, #FF1744 100%);
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 1.5rem;
-    box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
-    z-index: 9999;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: auto;
-}
-
-#chatToggleBtn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(255, 77, 109, 0.5);
-}
-
-#chatWidgetBox {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 380px;
-    max-height: 500px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 40px rgba(0, 0, 0, 0.16);
-    display: flex;
-    flex-direction: column;
-    z-index: 9998;
-    opacity: 0;
-    transform: scale(0.8) translateY(20px);
-    pointer-events: none;
-    transition: all 0.3s ease;
-    visibility: hidden;
-}
-
-#chatWidgetBox.active {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-    pointer-events: auto;
-    visibility: visible;
-}
-
-.chat-header {
-    background: linear-gradient(135deg, #FF4D6D 0%, #FF1744 100%);
-    color: white;
-    padding: 1.25rem;
-    border-radius: 12px 12px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    flex-shrink: 0;
-}
-
-.chat-title {
-    font-weight: 700;
-    font-size: 1.125rem;
-}
-
-.chat-close {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: background 0.2s ease;
-}
-
-.chat-close:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.chat-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.875rem;
-    background: #f8f9fa;
-    min-height: 200px;
-}
-
-.chat-msg {
-    padding: 0.875rem 1rem;
-    border-radius: 8px;
-    max-width: 85%;
-    word-wrap: break-word;
-    line-height: 1.4;
-    font-size: 0.9375rem;
-}
-
-.chat-msg.user {
-    align-self: flex-end;
-    background: #FF4D6D;
-    color: white;
-    border-radius: 8px 0 8px 8px;
-}
-
-.chat-msg.bot {
-    align-self: flex-start;
-    background: white;
-    color: #333;
-    border: 1px solid #e0e0e0;
-    border-radius: 0 8px 8px 8px;
-}
-
-.chat-msg.bot.error {
-    background: #ffe5e5;
-    color: #d32f2f;
-}
-
-.chat-input-area {
-    display: flex;
-    gap: 0.625rem;
-    padding: 1rem;
-    background: white;
-    border-top: 1px solid #e0e0e0;
-    border-radius: 0 0 12px 12px;
-}
-
-.chat-input-area input {
-    flex: 1;
-    padding: 0.75rem 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 0.9375rem;
-    transition: border-color 0.2s ease;
-}
-
-.chat-input-area input:focus {
-    outline: none;
-    border-color: #FF4D6D;
-}
-
-.chat-input-area button {
-    padding: 0.75rem 1.25rem;
-    background: #FF4D6D;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.chat-input-area button:hover {
-    background: #ff1744;
-    transform: translateY(-2px);
-}
-
-.chat-input-area button:active {
-    transform: translateY(0);
-}
-
-@media (max-width: 480px) {
-    #chatWidgetBox {
-        width: calc(100vw - 40px);
-        max-height: 60vh;
-        bottom: 80px;
-    }
-    
-    .chat-msg {
-        max-width: 90%;
-    }
-}
-</style>
-
 <div id="chatbotContainer">
   <div id="chatWidgetBox">
     <div class="chat-header">
-      <span class="chat-title">🤖 MaaSarthi AI</span>
-      <button class="chat-close" id="chatClose">✕</button>
+      <span class="chat-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><rect x="3" y="8" width="18" height="12" rx="2"/><circle cx="9" cy="14" r="2" fill="white"/><circle cx="15" cy="14" r="2" fill="white"/><path d="M8 4h8v4H8z"/></svg>MaaSarthi AI</span>
+      <button class="chat-close" id="chatClose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     
     <div class="chat-body" id="chatBody">
-      <div class="chat-msg bot">Hi 👋 I'm MaaSarthi AI Assistant. Ask me about jobs, skills, or earning opportunities!</div>
+      <div class="chat-msg bot">Hi! I'm MaaSarthi AI Assistant. Ask me about jobs, skills, or earning opportunities!</div>
     </div>
     
     <div class="chat-input-area">
@@ -216,7 +18,7 @@
     </div>
   </div>
 
-  <button id="chatToggleBtn">💬</button>
+  <button id="chatToggleBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg></button>
 </div>
 
 <script>
@@ -276,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
       console.error("Error:", error);
       const errorMsg = document.createElement("div");
       errorMsg.className = "chat-msg bot error";
-      errorMsg.textContent = "⚠️ Error connecting to server.";
+      errorMsg.textContent = "Error connecting to server. Please try again.";
       chatBody.appendChild(errorMsg);
     }
   }

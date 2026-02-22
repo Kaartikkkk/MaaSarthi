@@ -4,19 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ t.title }} | {{ t.train_skill }}</title>
-
-  <link rel="stylesheet" href="/static/style.css">
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
+  <!-- Modular CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
 </head>
 
 <body>
 
-  <div class="page-wrap">
+  {% include '_navbar.html' %}
+
+  <div class="page-wrap" style="padding-top: 80px;">
 
     <div class="top-mini">
-      <a href="/" class="back-link">← {{ t.back }}</a>
-      <span class="chip">🎯 {{ t.train_skill }}</span>
+      <a href="/" class="back-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;vertical-align:middle;"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>{{ t.back }}</a>
+      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2"/></svg>{{ t.train_skill }}</span>
     </div>
 
     <div class="form-card">
@@ -143,7 +147,7 @@
           <!-- ✅ What you will get -->
           <div class="full">
             <div class="mini-card">
-              <h4>✅ {{ t.what_you_get }}</h4>
+              <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="#10B981" style="margin-right:6px;vertical-align:middle;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>{{ t.what_you_get }}</h4>
               <ul class="mini-list">
                 {% for item in t.what_list %}
                   <li>{{ item }}</li>
@@ -197,7 +201,7 @@
       card.style.display = "block";
       document.getElementById("skillTitle").innerText = skill;
       document.getElementById("skillDesc").innerText =
-        "✅ " + skill + " selected. You will get a roadmap + best resources.";
+        skill + " selected. You will get a personalized roadmap and best resources.";
 
       document.getElementById("difficulty").innerText = "Easy";
       document.getElementById("learnTime").innerText = "2-6 weeks";
@@ -217,5 +221,6 @@
 
 {% include 'chatbot.html' %}
 
+<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
 </body>
 </html>
