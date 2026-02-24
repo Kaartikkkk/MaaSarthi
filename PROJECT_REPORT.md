@@ -1,90 +1,172 @@
+
 # MaaSarthi - Project Report
 
-## 📌 Executive Summary
+## 📌 What is MaaSarthi?
 
-**MaaSarthi** (meaning "Mother's Companion" in Hindi) is an AI-powered career platform specifically designed to empower women, particularly mothers and homemakers, by connecting them with flexible work-from-home opportunities and skill development resources. The platform uses machine learning to provide personalized job recommendations based on individual skills, education, availability, and preferences.
+**MaaSarthi** is an AI-powered career and skill development platform dedicated to empowering Indian women—especially mothers, homemakers, and those returning to work—by connecting them to flexible, remote job opportunities and personalized upskilling. MaaSarthi means "Mother's Companion" in Hindi, reflecting our mission to support women in their career journeys.
 
 ---
 
-## 🎯 Problem Statement
+## 🚀 Vision & Mission
 
-Millions of women in India, especially mothers, face challenges in:
-- Finding flexible work that accommodates family responsibilities
-- Identifying jobs matching their existing skills
-- Accessing skill training to increase earning potential
+- **Vision:** Enable every woman in India to achieve financial independence and career growth from home.
+- **Mission:** Use technology and data to break barriers for women in the workforce.
+
+---
+
+## 🎯 Problems MaaSarthi Solves
+
+- Social and economic barriers for women’s employment
+- Lack of flexible, skill-matched jobs
+- Difficulty accessing training and career guidance
 - Navigating complex job portals
 
-**MaaSarthi solves these problems** by providing a simple, personalized, and AI-driven platform tailored for women seeking work-from-home opportunities.
+MaaSarthi provides a simple, personalized, and AI-driven platform tailored for women seeking work-from-home opportunities.
 
 ---
 
-## 🌟 Key Features
+## 🌟 How MaaSarthi Works: User Journey
 
-### 1. AI-Powered Job Recommendations
-- Machine learning model analyzes user profile (age, education, skills, domain expertise)
-- Provides personalized job matches with confidence scores
-- Estimates salary ranges using quantile-based calculations
-- Direct links to apply on LinkedIn, Naukri, Indeed, and Internshala
-
-### 2. Skill Development Platform
-- Curated skill training recommendations
-- Progress tracking for ongoing skill development
-- Resources and courses for popular skills (data entry, content writing, graphic design, etc.)
-
-### 3. User Dashboard
-- Personal overview with statistics
-- Task management system
-- Skill progress tracking
-- Reminder notifications
-
-### 4. AI Career Assistant
-- Intelligent chatbot for career guidance
-- Answers questions about jobs, skills, and opportunities
-- Available 24/7 on every page
-
-### 5. Secure Authentication
-- Secure signup/login with password hashing
-- Profile management with dropdown menu
-- Session-based authentication with automatic expiry
+1. **Sign up and create a profile** (age, education, skills, preferences, etc.)
+2. **Get personalized job recommendations** using AI/ML
+3. **Access curated skill development resources**
+4. **Track progress, set reminders, and manage tasks**
+5. **Use the AI chatbot for career guidance**
 
 ---
 
-## 🛠️ Technology Stack
+## ✨ Key Features
+
+- AI-powered job and skill recommendations
+- Dashboard with statistics, reminders, and progress tracking
+- Secure authentication and user management
+- Admin dashboard for platform management
+- Modern, accessible UI/UX with animations and responsive design
+
+---
+
+## 🗃️ Dataset Evolution & Structure
+
+### Old Dataset
+- Focused on basic user/job matching (columns: age, kids, hours, domain, skill, education, city_type, language, device, work_mode, work_type, income)
+
+### New Datasets (2026)
+- **companies_india.csv:** Company details (name, size, location, description, etc.)
+- **company_industries_india.csv:** Industry mapping for companies
+- **company_specialities_india.csv:** Specializations offered by companies
+- **employee_counts_india.csv:** Company size and follower stats
+- **gender_stats_female_india.csv:** Female employment and demographic stats
+
+#### Example User Data Columns
+| Column         | Description                                      |
+|---------------|--------------------------------------------------|
+| age           | Age of the user                                  |
+| kids          | Number of children                               |
+| hours         | Hours available per week                         |
+| domain        | Area of expertise                                |
+| skill         | Primary skill                                    |
+| education     | Highest qualification                            |
+| city_type     | Urban/rural classification                       |
+| language      | Preferred language                               |
+| device        | Device used (mobile, desktop, etc.)              |
+| work_mode     | Remote, hybrid, or on-site                       |
+| work_type     | Full-time, part-time, freelance                  |
+| income        | Expected/actual income                           |
+
+#### Potential New Columns
+- Digital literacy
+- Internet access
+- Preferred job platforms
+- Upskilling interests
+- Previous employment gaps
+- Support needs (childcare, flexible hours)
+- Disability status
+
+#### Company Data Columns
+- company_id, name, description, company_size, state, country, city, zip_code, address, url
+- industry, speciality, employee_count, follower_count, time_recorded
+
+#### Gender Stats Columns
+- CountryCode, SeriesCode, DESCRIPTION (e.g., female labor force participation, employment rates)
+
+---
+
+## 🔍 How Data is Used
+
+- To personalize job and skill recommendations
+- To analyze trends in women’s employment and skill gaps
+- To help companies find suitable female candidates
+
+---
+
+## 🏗️ System Architecture
+
+...existing code...
 
 ### Backend
-| Technology | Purpose |
-|------------|---------|
-| **Python 3.14** | Primary programming language |
-| **Flask** | Web framework for routing and API |
-| **SQLAlchemy** | ORM for database operations |
-| **SQLite** | Lightweight relational database |
-| **Jinja2** | Template engine for HTML rendering |
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Python** | 3.14.2 (venv) | Primary programming language |
+| **Flask** | 3.1.2 | Web framework for routing and API |
+| **Flask-SQLAlchemy** | 3.1.1 | ORM for database operations |
+| **SQLAlchemy** | 2.0.46 | Advanced ORM features |
+| **Werkzeug** | 3.1.5 | WSGI server, security utils |
+| **Jinja2** | 3.1.6 | Template engine for HTML rendering |
+| **SQLite** | - | Lightweight relational database |
+| **Flask-Dance** | 7.1.0 | OAuth/social login (future) |
 
-### Machine Learning
-| Technology | Purpose |
-|------------|---------|
-| **scikit-learn** | ML library for model training |
-| **RandomForestClassifier** | Job recommendation algorithm |
-| **TF-IDF Vectorizer** | Text feature extraction |
-| **pandas** | Data manipulation and analysis |
-| **NumPy** | Numerical computations |
+### Machine Learning & Data
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **scikit-learn** | 1.8.0 | ML model training & inference |
+| **RandomForestClassifier** | - | Job recommendation algorithm |
+| **TF-IDF Vectorizer** | - | Text feature extraction |
+| **pandas** | 3.0.0 | Data manipulation and analysis |
+| **NumPy** | 2.4.2 | Numerical computations |
+| **joblib** | 1.5.3 | Model serialization |
+| **matplotlib** | - | Data visualization (notebook/EDA) |
 
 ### Frontend
 | Technology | Purpose |
 |------------|---------|
 | **HTML5** | Page structure |
-| **CSS3** | Styling with modular architecture |
+| **CSS3** | Modular styling (base, navbar, dashboard, etc.) |
 | **JavaScript** | Interactive functionality |
 | **SVG Icons** | Professional iconography |
 
-### Security
-| Feature | Implementation |
-|---------|----------------|
-| Password Hashing | SHA-256 with unique salt per user |
-| Rate Limiting | 5 login attempts per 5 minutes |
+### Security & Utilities
+| Feature/Library | Purpose |
+|-----------------|---------|
+| Password Hashing (Werkzeug) | SHA-256 with unique salt per user |
 | Session Security | HTTPOnly cookies, SameSite=Lax |
 | Input Sanitization | XSS and injection prevention |
 | CSRF Protection | SameSite cookie policy |
+| Rate Limiting | 5 login attempts per 5 minutes |
+| requests | API calls, integrations |
+
+### Python Environment
+- **Type:** venv (virtual environment)
+- **Location:** `/Users/kartik/Documents/MaaSarthi/.venv/`
+- **Python Executable:** `.venv/bin/python`
+- **How to activate:** `source .venv/bin/activate`
+- **How to run:** `.venv/bin/python app.py`
+
+#### Main Installed Packages
+```
+Flask, Flask-SQLAlchemy, SQLAlchemy, Werkzeug, Jinja2, pandas, numpy, scikit-learn, joblib, requests, Flask-Dance, matplotlib, ipython, ipykernel, etc.
+```
+
+---
+
+## 🗂️ Visual Diagrams
+
+### System Architecture
+![MaaSarthi Architecture](static/images/maasarthi_architecture.png)
+
+### Database Schema (ER Diagram)
+![Database Schema](static/images/db_schema.png)
+
+---
 
 ---
 

@@ -21,7 +21,15 @@
                 <a class="lang-btn {% if session.get('lang') == 'hi' %}active{% endif %}" href="/set-language/hi">हिंदी</a>
             </div>
             
-            {% if user %}
+            {% if admin %}
+            <!-- Admin logged in - Show Admin Name -->
+            <div class="profile-dropdown">
+                <span class="profile-avatar">A</span>
+                <span class="profile-name">Admin: {{ admin.name }}</span>
+                <a href="{{ url_for('admin_dashboard') }}" class="dropdown-item">Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="dropdown-item dropdown-logout">Logout</a>
+            </div>
+            {% elif user %}
             <!-- Logged in - Show Profile Dropdown -->
             <div class="profile-dropdown">
                 <button class="profile-btn" onclick="toggleDropdown()">
