@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
-    <!-- Modular CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
@@ -30,11 +29,17 @@
             </div>
             
             <h1 class="result-title">
-                Your Perfect Match:
-                <span class="highlight">{{ work }}</span>
+                Your Best Match:
+                <span class="highlight">
+                    {% if results.job_predictions %}
+                        {{ results.job_predictions[0].label }}
+                    {% else %}
+                        {{ domain }}
+                    {% endif %}
+                </span>
             </h1>
             
-            <p class="result-subtitle">Based on your skills and preferences, we found the best opportunities for you</p>
+            <p class="result-subtitle">AI-powered analysis based on your skills, preferences, and 8 prediction models</p>
             
             <div class="earnings-card">
                 <div class="earnings-icon">
@@ -50,12 +55,114 @@
 </section>
 
 <!-- ========================================
-     MAIN CONTENT
+     AI INSIGHTS - ALL 8 MODEL OUTPUTS
+     ======================================== -->
+<section class="ai-insights">
+    <div class="container">
+        <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            AI-Powered Insights
+        </h2>
+
+        <div class="insights-grid">
+            <!-- Income Prediction -->
+            <div class="insight-card income-card">
+                <div class="insight-icon">💰</div>
+                <div class="insight-body">
+                    <h3>Income Prediction</h3>
+                    <p class="insight-value">₹{{ "{:,}".format(income_prediction) }}/mo</p>
+                    <p class="insight-detail">Range: ₹{{ "{:,}".format(low) }} – ₹{{ "{:,}".format(high) }}</p>
+                </div>
+            </div>
+
+            <!-- Career Path -->
+            <div class="insight-card career-card">
+                <div class="insight-icon">🚀</div>
+                <div class="insight-body">
+                    <h3>Career Path</h3>
+                    <p class="insight-value">{{ results.career_path }}</p>
+                    <p class="insight-detail">Predicted growth trajectory</p>
+                </div>
+            </div>
+
+            <!-- Work-Life Balance -->
+            <div class="insight-card wlb-card">
+                <div class="insight-icon">⚖️</div>
+                <div class="insight-body">
+                    <h3>Work-Life Balance</h3>
+                    <p class="insight-value">{{ results.work_life_balance }}</p>
+                    <p class="insight-detail">Based on your work preferences</p>
+                </div>
+            </div>
+
+            <!-- Mother Suitability -->
+            <div class="insight-card mother-card">
+                <div class="insight-icon">👩‍👧</div>
+                <div class="insight-body">
+                    <h3>Mother Suitability</h3>
+                    <p class="insight-value">{{ results.mother_suitability }}</p>
+                    <p class="insight-detail">{{ (results.mother_suitability_confidence * 100)|int }}% confidence</p>
+                </div>
+            </div>
+
+            <!-- Skill Match -->
+            <div class="insight-card skill-card">
+                <div class="insight-icon">🎯</div>
+                <div class="insight-body">
+                    <h3>Skill-Job Match</h3>
+                    <p class="insight-value">{{ results.skill_match }}</p>
+                    <p class="insight-detail">Your skills vs job requirements</p>
+                </div>
+            </div>
+
+            <!-- Skill Gap / Training -->
+            <div class="insight-card gap-card">
+                <div class="insight-icon">📚</div>
+                <div class="insight-body">
+                    <h3>Training Needed</h3>
+                    <p class="insight-value">{{ "Yes" if results.training_needed else "No" }}</p>
+                    <p class="insight-detail">{{ "Upskilling recommended" if results.training_needed else "You're well-prepared!" }}</p>
+                </div>
+            </div>
+
+            <!-- Profile Completeness -->
+            <div class="insight-card profile-card">
+                <div class="insight-icon">📊</div>
+                <div class="insight-body">
+                    <h3>Profile Score</h3>
+                    <div class="progress-ring-container">
+                        <span class="insight-value">{{ results.profile_completeness }}%</span>
+                        <span class="profile-grade">Grade {{ results.profile_grade }}</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: {{ results.profile_completeness }}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Match Confidence -->
+            <div class="insight-card match-card">
+                <div class="insight-icon">✅</div>
+                <div class="insight-body">
+                    <h3>Top Job Match</h3>
+                    {% if results.job_predictions %}
+                        <p class="insight-value">{{ results.job_predictions[0].label }}</p>
+                        <p class="insight-detail">{{ (results.job_predictions[0].confidence * 100)|int }}% confidence</p>
+                    {% else %}
+                        <p class="insight-value">{{ domain }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================
+     JOB RECOMMENDATIONS
      ======================================== -->
 <section class="result-content">
     <div class="container">
         <div class="result-grid">
-            <!-- Jobs Section -->
             <div class="jobs-section">
                 <div class="section-header">
                     <h2>
@@ -64,6 +171,18 @@
                     </h2>
                     <span class="job-count">{{ jobs|length }} opportunities</span>
                 </div>
+
+                <!-- Other predicted job titles from model -->
+                {% if results.job_predictions|length > 1 %}
+                <div class="other-predictions">
+                    <p class="predictions-label">Other matches:</p>
+                    <div class="prediction-tags">
+                        {% for jp in results.job_predictions[1:] %}
+                        <span class="prediction-tag">{{ jp.label }} <small>({{ (jp.confidence * 100)|int }}%)</small></span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
 
                 <div class="jobs-list">
                     {% for job in jobs %}
@@ -91,34 +210,29 @@
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
                                 {{ job.work_mode }}
                             </span>
+                            {% if job.work_type %}
+                            <span class="meta-tag">{{ job.work_type }}</span>
+                            {% endif %}
                         </div>
                         
-                        <p class="job-description">{{ job.description }}</p>
+                        <p class="job-description">{{ job.description[:150] }}{% if job.description|length > 150 %}...{% endif %}</p>
                         
-                        <!-- Apply Links -->
                         <div class="apply-section">
                             <span class="apply-label">Apply on:</span>
                             <div class="portal-links">
-                                <a href="{{ job.apply_links.linkedin }}" target="_blank" class="portal-btn linkedin">
+                                <a href="{{ job.apply_links.linkedin }}" target="_blank" rel="noopener noreferrer" class="portal-btn linkedin">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                                     LinkedIn
                                 </a>
-                                <a href="{{ job.apply_links.naukri }}" target="_blank" class="portal-btn naukri">
-                                    Naukri
-                                </a>
-                                <a href="{{ job.apply_links.indeed }}" target="_blank" class="portal-btn indeed">
-                                    Indeed
-                                </a>
-                                <a href="{{ job.apply_links.internshala }}" target="_blank" class="portal-btn internshala">
-                                    Internshala
-                                </a>
+                                <a href="{{ job.apply_links.naukri }}" target="_blank" rel="noopener noreferrer" class="portal-btn naukri">Naukri</a>
+                                <a href="{{ job.apply_links.indeed }}" target="_blank" rel="noopener noreferrer" class="portal-btn indeed">Indeed</a>
+                                <a href="{{ job.apply_links.internshala }}" target="_blank" rel="noopener noreferrer" class="portal-btn internshala">Internshala</a>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="action-buttons">
                     <a href="/jobs" class="btn btn-secondary">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
@@ -157,7 +271,7 @@
                     </h3>
                     <div class="resource-list">
                         {% for name, url in links %}
-                        <a href="{{ url }}" target="_blank" class="resource-link">
+                        <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="resource-link">
                             {{ name }}
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
                         </a>
@@ -195,7 +309,7 @@
     <div class="container">
         <div class="footer-content">
             <div class="footer-brand">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MaaSarthi Logo" class="footer-logo">
+                <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="MaaSarthi Logo" class="footer-logo">
                 <span>MaaSarthi</span>
             </div>
             <p class="footer-text">Empowering women to find flexible work opportunities</p>
@@ -211,11 +325,9 @@ function shareWhatsApp() {
     const text = "Check out MaaSarthi - I found great job opportunities! Visit: " + window.location.origin;
     window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
 }
-
 function shareLinkedIn() {
     window.open("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(window.location.origin), "_blank");
 }
-
 function copyLink() {
     navigator.clipboard.writeText(window.location.href);
     alert("Link copied to clipboard!");

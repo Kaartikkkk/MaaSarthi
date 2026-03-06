@@ -1,0 +1,38 @@
+📦 Checking dependencies...
+
+======================================================================
+⚖️ MAASARTHI WORK-LIFE BALANCE MODEL TRAINING
+======================================================================
+   Started: 2026-03-06 14:57:22
+   Target Accuracy: 85%+
+
+--------------------------------------------------
+STEP 1: DATA PROCESSING
+--------------------------------------------------
+📂 Loading data from: /Users/kartik/Documents/MaaSarthi/dataset.csv
+   Total records: 300,000
+🧹 Cleaning data...
+   Removed 0 duplicates
+📊 Computing work-life balance score from features...
+   Computed WLB score range: 12.0 - 115.0
+   Classes: ['Average', 'Below_Average', 'Excellent', 'Good', 'Poor']
+   Distribution:
+      Average: 60,000 (20.0%)
+      Below_Average: 60,000 (20.0%)
+      Excellent: 60,000 (20.0%)
+      Good: 60,000 (20.0%)
+      Poor: 60,000 (20.0%)
+🔧 Engineering work-life balance features...
+   Added 12 engineered features
+⚙️ Creating preprocessor...
+   Numeric features: 12
+   Categorical features: 10
+   Binary features: 14
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/joblib/externals/loky/backend/resource_tracker.py:359: UserWarning: resource_tracker: There appear to be 7 leaked semlock objects to clean up at shutdown
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/joblib/externals/loky/backend/resource_tracker.py:359: UserWarning: resource_tracker: There appear to be 1 leaked folder objects to clean up at shutdown
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/joblib/externals/loky/backend/resource_tracker.py:375: UserWarning: resource_tracker: /var/folders/vk/10hk6vwd61l9rlzsctty9wwr0000gn/T/joblib_memmapping_folder_18188_43c6f3421523443b81eecc15b19f3f7e_bd63f7c0286d4d53be1c1a4f418aa6ab: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/resource_tracker.py:396: UserWarning: resource_tracker: There appear to be 2 leaked semaphore objects to clean up at shutdown: {'/loky-18188-ipifud33', '/loky-18188-sow56i_8'}
+  warnings.warn(

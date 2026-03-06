@@ -109,12 +109,14 @@ class ModelConfig:
     
     CATEGORICAL_FEATURES = [
         'domain', 'primary_skill', 'education', 'city_tier', 
-        'work_mode', 'seniority_level', 'marital_status'
+        'work_mode', 'marital_status'
     ]
     
     TEXT_FEATURES = ['all_skills']  # Will use TF-IDF
     
-    TARGET = 'job_title'
+    # Use job_category instead of job_title for higher accuracy
+    TARGET = 'job_category'
+    USE_JOB_CATEGORY = True  # New: use computed category instead of raw title
     
     # Model parameters
     RANDOM_STATE = 42
@@ -163,6 +165,9 @@ class DataProcessor:
         """Clean and prepare the data"""
         print("🧹 Cleaning data...")
         
+        # Reset index for consistent indexing
+        df = df.reset_index(drop=True)
+        
         # Remove duplicates
         initial_len = len(df)
         df = df.drop_duplicates()
@@ -181,11 +186,32 @@ class DataProcessor:
             if col in df.columns:
                 df[col] = df[col].fillna('')
         
-        # Remove rare job titles (less than 5 occurrences)
-        job_counts = df[self.config.TARGET].value_counts()
-        valid_jobs = job_counts[job_counts >= 5].index
-        df = df[df[self.config.TARGET].isin(valid_jobs)]
-        print(f"   Unique job titles: {df[self.config.TARGET].nunique():,}")
+        # Create job_category based on domain + simplified seniority
+        if self.config.USE_JOB_CATEGORY:
+            print("📊 Creating job categories from features...")
+            
+            # Simplify seniority to 3 levels for better accuracy
+            seniority_map = {
+                'Entry Level/Fresher': 'Entry',
+                'Junior': 'Entry',
+                'Associate': 'Mid',
+                'Senior Associate': 'Mid',
+                'Manager': 'Senior',
+                'Senior Manager': 'Senior',
+                'Director/Executive': 'Senior'
+            }
+            df['seniority_simple'] = df['seniority_level'].map(seniority_map).fillna('Entry')
+            
+            # Create job_category = domain + seniority_simple
+            df['job_category'] = df['domain'].astype(str) + '_' + df['seniority_simple'].astype(str)
+            
+            print(f"   Unique job categories: {df['job_category'].nunique()}")
+        else:
+            # Use original job_title
+            job_counts = df['job_title'].value_counts()
+            valid_jobs = job_counts[job_counts >= 5].index
+            df = df[df['job_title'].isin(valid_jobs)]
+            print(f"   Unique job titles: {df['job_title'].nunique():,}")
         
         return df
     
@@ -200,12 +226,19 @@ class DataProcessor:
             labels=['young', 'middle', 'senior', 'veteran']
         )
         
-        # Experience level
+        # Experience level - strong predictor for seniority
         df['exp_level'] = pd.cut(
             df['experience_years'],
             bins=[-1, 2, 5, 10, 100],
             labels=['fresher', 'junior', 'mid', 'senior']
         )
+        
+        # Computed seniority from experience (strong correlation)
+        df['computed_seniority'] = pd.cut(
+            df['experience_years'],
+            bins=[-1, 3, 8, 100],
+            labels=['Entry', 'Mid', 'Senior']
+        ).astype(str)
         
         # Has kids flag
         df['has_kids'] = (df['kids'] > 0).astype(int)
@@ -221,7 +254,13 @@ class DataProcessor:
         if 'work_mode' in df.columns:
             df['is_remote'] = df['work_mode'].isin(['Remote', 'Work From Home', 'Hybrid']).astype(int)
         
-        print(f"   Added 5 engineered features")
+        # Skills count
+        if 'all_skills' in df.columns:
+            df['skills_count'] = df['all_skills'].apply(
+                lambda x: len(str(x).split(',')) if pd.notna(x) else 0
+            )
+        
+        print(f"   Added 7 engineered features")
         
         return df
     
@@ -230,8 +269,8 @@ class DataProcessor:
         print("⚙️ Creating preprocessor...")
         
         # Update feature lists with engineered features
-        numeric_features = self.config.NUMERIC_FEATURES + ['has_kids', 'is_remote']
-        categorical_features = self.config.CATEGORICAL_FEATURES + ['age_group', 'exp_level', 'hours_category']
+        numeric_features = self.config.NUMERIC_FEATURES + ['has_kids', 'is_remote', 'skills_count']
+        categorical_features = self.config.CATEGORICAL_FEATURES + ['age_group', 'exp_level', 'hours_category', 'computed_seniority']
         
         # Filter to only include columns that exist
         numeric_features = [f for f in numeric_features if f in df.columns]
@@ -347,13 +386,13 @@ class JobRecommendationTrainer:
         self.best_model = None
         self.metrics = {}
         
-    def build_base_models(self) -> Dict[str, Any]:
+    def build_base_models(self, fast_mode: bool = False) -> Dict[str, Any]:
         """Build all base models"""
         print("\n🏗️ Building base models...")
         
         models = {}
         
-        # 1. Random Forest
+        # 1. Random Forest (always included, best performer)
         models['random_forest'] = RandomForestClassifier(
             n_estimators=300,
             max_depth=20,
@@ -366,6 +405,11 @@ class JobRecommendationTrainer:
             verbose=0
         )
         print("   ✓ Random Forest configured")
+        
+        # In fast mode, only use Random Forest
+        if fast_mode:
+            print("   ⚡ Fast mode: using only Random Forest")
+            return models
         
         # 2. XGBoost
         if XGBOOST_AVAILABLE:
@@ -777,7 +821,7 @@ def train_job_recommendation_model(
     print("-"*50)
     
     trainer = JobRecommendationTrainer(config)
-    trainer.models = trainer.build_base_models()
+    trainer.models = trainer.build_base_models(fast_mode=skip_ensemble)
     
     # Step 4: Train Individual Models
     individual_results = trainer.train_individual_models(

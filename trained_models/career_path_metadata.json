@@ -1,0 +1,113 @@
+{
+  "model_name": "Career Path Predictor",
+  "version": "2.0.0",
+  "trained_at": "2026-03-06T14:01:42.430073",
+  "best_model": "random_forest",
+  "accuracy": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1_score": 1.0,
+  "label_classes": [
+    "Director/Executive",
+    "Entry Level/Fresher",
+    "Junior",
+    "Manager",
+    "Senior Associate",
+    "Senior Manager"
+  ],
+  "feature_count": 152,
+  "training_samples": 24000,
+  "cv_results": {
+    "random_forest": {
+      "mean_accuracy": 1.0,
+      "std_accuracy": 0.0,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "extra_trees": {
+      "mean_accuracy": 0.9998666666666667,
+      "std_accuracy": 0.00012472191289245098,
+      "scores": [
+        1.0,
+        1.0,
+        0.9996666666666667,
+        0.9998333333333334,
+        0.9998333333333334
+      ]
+    },
+    "xgboost": {
+      "mean_accuracy": 1.0,
+      "std_accuracy": 0.0,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "all_results": {
+    "random_forest": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "training_time": 3.270071
+    },
+    "extra_trees": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "training_time": 2.062968
+    },
+    "xgboost": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "training_time": 3.177263
+    },
+    "lightgbm": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "training_time": 4.163626
+    },
+    "hist_gradient_boosting": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "training_time": 8.221628
+    },
+    "gradient_boosting": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "training_time": 96.748819
+    },
+    "neural_network": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "training_time": 3.695349
+    },
+    "ensemble": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "training_time": 31.360796
+    }
+  }
+}

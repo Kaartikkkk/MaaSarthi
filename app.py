@@ -486,50 +486,121 @@ def load_dataset():
 
 
 # ✅ Load trained models (make sure these exist)
-work_model = safe_load_model("work_model.pkl")
-income_model = safe_load_model("income_model.pkl")
+MODEL_DIR = os.path.join(os.path.dirname(__file__), 'trained_models')
+
+# Model + preprocessor pairs
+job_model = safe_load_model(os.path.join(MODEL_DIR, 'job_recommendation_model.pkl'))
+job_preprocessor_data = safe_load_model(os.path.join(MODEL_DIR, 'job_preprocessor.pkl'))
+
+income_model = safe_load_model(os.path.join(MODEL_DIR, 'income_prediction_model.pkl'))
+income_preprocessor_data = safe_load_model(os.path.join(MODEL_DIR, 'income_preprocessor.pkl'))
+
+skill_match_model = safe_load_model(os.path.join(MODEL_DIR, 'skill_match_model.pkl'))
+skill_match_preprocessor_data = safe_load_model(os.path.join(MODEL_DIR, 'skill_match_preprocessor.pkl'))
+
+mother_model = safe_load_model(os.path.join(MODEL_DIR, 'mother_suitability_model.pkl'))
+mother_preprocessor_data = safe_load_model(os.path.join(MODEL_DIR, 'mother_suitability_preprocessor.pkl'))
+
+skill_gap_model = safe_load_model(os.path.join(MODEL_DIR, 'skill_gap_model.pkl'))
+skill_gap_preprocessor_data = safe_load_model(os.path.join(MODEL_DIR, 'skill_gap_preprocessor.pkl'))
+
+career_model = safe_load_model(os.path.join(MODEL_DIR, 'career_path_model.pkl'))
+career_preprocessor_data = safe_load_model(os.path.join(MODEL_DIR, 'career_path_preprocessor.pkl'))
+
+wlb_model = safe_load_model(os.path.join(MODEL_DIR, 'work_life_balance_model.pkl'))
+wlb_preprocessor_data = safe_load_model(os.path.join(MODEL_DIR, 'work_life_balance_preprocessor.pkl'))
+
+profile_model = safe_load_model(os.path.join(MODEL_DIR, 'profile_completeness_model.pkl'))
+profile_preprocessor_data = safe_load_model(os.path.join(MODEL_DIR, 'profile_completeness_preprocessor.pkl'))
+
+print(f"Models loaded: job={job_model is not None}, income={income_model is not None}, "
+      f"skill_match={skill_match_model is not None}, mother={mother_model is not None}, "
+      f"skill_gap={skill_gap_model is not None}, career={career_model is not None}, "
+      f"wlb={wlb_model is not None}, profile={profile_model is not None}")
 
 # ✅ Language Dictionary (EN + HI)
 TEXT = {
     "en": {
         "education_list": {
-            "No Formal": "No Formal",
-            "8th": "8th",
-            "10th": "10th",
-            "12th": "12th",
-            "Diploma": "Diploma",
-            "UG": "UG",
-            "PG": "PG"
+            "Below 8th/Informal Education": "Below 8th / Informal",
+            "8th Pass": "8th Pass",
+            "10th Pass (SSC)": "10th Pass (SSC)",
+            "12th Pass (HSC)": "12th Pass (HSC)",
+            "Diploma/ITI": "Diploma / ITI",
+            "Graduate (BTech/BA/BCom/BSc)": "Graduate (BTech/BA/BCom/BSc)",
+            "Post Graduate (MBA/MTech/MA/MSc)": "Post Graduate (MBA/MTech/MA/MSc)",
+            "PhD/Doctorate": "PhD / Doctorate"
         },
         "city_type_list": {
-            "Urban": "Urban",
-            "Semi-Urban": "Semi-Urban",
-            "Rural": "Rural"
+            "Metro": "Metro",
+            "Tier-1": "Tier-1",
+            "Tier-2": "Tier-2",
+            "Tier-3": "Tier-3",
+            "Rural": "Rural",
+            "Remote": "Remote"
         },
         "language_list": {
             "Hindi": "Hindi",
             "English": "English",
-            "Both": "Both"
+            "Both English and Hindi": "Both English and Hindi",
+            "English + Regional": "English + Regional",
+            "Regional Language": "Regional Language"
         },
         "device_list": {
-            "Mobile": "Mobile",
+            "Mobile Phone": "Mobile Phone",
             "Laptop": "Laptop",
-            "Both": "Both"
+            "Desktop": "Desktop",
+            "Both Mobile and Laptop": "Both Mobile and Laptop",
+            "No Device Required": "No Device Required"
         },
         "work_mode_list": {
             "Work From Home": "Work From Home",
+            "Remote": "Remote",
             "Hybrid": "Hybrid",
-            "Offline Local": "Offline Local"
+            "Office": "Office",
+            "On-site": "On-site",
+            "Field Work": "Field Work"
         },
+        "work_type_list": {
+            "Full-time": "Full-time",
+            "Part-time": "Part-time",
+            "Freelance": "Freelance",
+            "Contract": "Contract",
+            "Internship": "Internship"
+        },
+        "marital_status_list": {
+            "Single": "Single",
+            "Married": "Married"
+        },
+        "shift_type_list": {
+            "Day Shift": "Day Shift",
+            "General Shift": "General Shift",
+            "Flexible": "Flexible",
+            "Night Shift": "Night Shift",
+            "Rotational": "Rotational"
+        },
+        "sector_list": [
+            "IT & Technology","Healthcare","Education","Banking & Finance",
+            "Sales & Marketing","E-Commerce","Content & Media","Customer Service",
+            "Beauty & Wellness","Childcare & Homecare","Arts & Design",
+            "Administration","Agriculture","Consulting","Gig Economy","Government",
+            "Hospitality","Human Resources","Legal","Manufacturing","Real Estate",
+            "General"
+        ],
         "domain_list": [
-            "Cooking","Baking","Teaching","Commerce","Law","Cleaning","Gardening",
-            "Data Entry","Social Media","E-Commerce","Clothing","Beauty","Banking",
-            "Security","Music","Electrician","Handicraft","Fitness","IT",
-            "Writing","Translation","Graphic Design","Photography","Video Editing",
-            "Web Development","Customer Support","Virtual Assistant","Accounting",
-            "Healthcare","Nursing","Yoga","Meditation","Tutoring","Art & Craft",
-            "Interior Design","Event Planning","Catering","Tailoring","Embroidery",
-            "Mehndi","Makeup Artist","Hair Styling","Nutrition","Consulting","Other"
+            "Accounting","Administration","Agriculture","Allied Health",
+            "Banking Operations","Beauty Wellness","Childcare","Cloud & DevOps",
+            "Construction","Consulting","Content Writing","Corporate Training",
+            "Customer Support","Cybersecurity","Dairy Animal","Data Entry",
+            "Data Science","Delivery Logistics","Digital Marketing","Ecommerce",
+            "EdTech","Elderly Care","Fashion Design","Fitness Yoga",
+            "Food Processing","Food Service","Freelancing","General","Government",
+            "Graphic Design","HR","Handicrafts","Higher Education",
+            "Hotel Management","IT Support","Insurance","Investment","Journalism",
+            "Legal","Manufacturing","Marketing","Medical Doctors","Mental Health",
+            "Nursing","Pharma Sales","QA Testing","Real Estate","Retail","Sales",
+            "School Teaching","Social Work","Software Engineering",
+            "Travel Tourism","UI/UX Design"
         ],
         "location_optional": "Location (Optional)",
         "goal": "Goal",
@@ -640,17 +711,23 @@ TEXT = {
         "job_heading": "Find Your Best Work Option",
         "job_sub": "Fill your details and MaaSarthi will suggest the best job + income estimate.",
         "age": "Age",
-        "kids": "Kids",
+        "kids": "Number of Kids",
         "hours": "Hours Available Per Day",
-        "domain": "Domain",
-        "main_skill": "Main Skill",
+        "domain": "Domain / Field",
+        "sector": "Sector",
+        "main_skill": "Primary Skill",
+        "secondary_skill": "Secondary Skill",
         "education": "Education",
-        "city_type": "City Type",
+        "city_type": "City Tier",
         "language": "Language",
         "device": "Device",
         "work_mode": "Work Mode",
-        "get_rec": "✅ Get Recommendation",
-        "train_instead": "📚 Train a Skill Instead",
+        "work_type": "Work Type",
+        "marital_status": "Marital Status",
+        "shift_type": "Preferred Shift",
+        "experience_years": "Experience (Years)",
+        "get_rec": "Get My Career Report",
+        "train_instead": "Train a Skill Instead",
         "result_title": "Recommendation",
         "expected_income": "Expected Monthly Income",
         "skills_learn": "Skills You Should Learn Next",
@@ -703,43 +780,85 @@ TEXT = {
     },
     "hi": {
         "education_list": {
-            "No Formal": "कोई औपचारिक शिक्षा नहीं",
-            "8th": "8वीं",
-            "10th": "10वीं",
-            "12th": "12वीं",
-            "Diploma": "डिप्लोमा",
-            "UG": "स्नातक (UG)",
-            "PG": "स्नातकोत्तर (PG)"
+            "Below 8th/Informal Education": "8वीं से नीचे / अनौपचारिक",
+            "8th Pass": "8वीं पास",
+            "10th Pass (SSC)": "10वीं पास (SSC)",
+            "12th Pass (HSC)": "12वीं पास (HSC)",
+            "Diploma/ITI": "डिप्लोमा / ITI",
+            "Graduate (BTech/BA/BCom/BSc)": "स्नातक (BTech/BA/BCom/BSc)",
+            "Post Graduate (MBA/MTech/MA/MSc)": "स्नातकोत्तर (MBA/MTech/MA/MSc)",
+            "PhD/Doctorate": "पीएचडी / डॉक्टरेट"
         },
         "city_type_list": {
-            "Urban": "शहरी",
-            "Semi-Urban": "अर्ध-शहरी",
-            "Rural": "ग्रामीण"
+            "Metro": "मेट्रो",
+            "Tier-1": "टियर-1",
+            "Tier-2": "टियर-2",
+            "Tier-3": "टियर-3",
+            "Rural": "ग्रामीण",
+            "Remote": "रिमोट"
         },
         "language_list": {
             "Hindi": "हिन्दी",
             "English": "अंग्रेज़ी",
-            "Both": "दोनों"
+            "Both English and Hindi": "अंग्रेज़ी और हिन्दी दोनों",
+            "English + Regional": "अंग्रेज़ी + क्षेत्रीय",
+            "Regional Language": "क्षेत्रीय भाषा"
         },
         "device_list": {
-            "Mobile": "मोबाइल",
+            "Mobile Phone": "मोबाइल फोन",
             "Laptop": "लैपटॉप",
-            "Both": "दोनों"
+            "Desktop": "डेस्कटॉप",
+            "Both Mobile and Laptop": "मोबाइल और लैपटॉप दोनों",
+            "No Device Required": "किसी डिवाइस की ज़रूरत नहीं"
         },
         "work_mode_list": {
             "Work From Home": "घर से काम",
+            "Remote": "रिमोट",
             "Hybrid": "हाइब्रिड",
-            "Offline Local": "लोकल ऑफलाइन"
+            "Office": "ऑफिस",
+            "On-site": "ऑन-साइट",
+            "Field Work": "फील्ड वर्क"
         },
+        "work_type_list": {
+            "Full-time": "पूर्णकालिक",
+            "Part-time": "अंशकालिक",
+            "Freelance": "फ्रीलांस",
+            "Contract": "कॉन्ट्रैक्ट",
+            "Internship": "इंटर्नशिप"
+        },
+        "marital_status_list": {
+            "Single": "अविवाहित",
+            "Married": "विवाहित"
+        },
+        "shift_type_list": {
+            "Day Shift": "दिन की शिफ्ट",
+            "General Shift": "सामान्य शिफ्ट",
+            "Flexible": "फ्लेक्सिबल",
+            "Night Shift": "रात की शिफ्ट",
+            "Rotational": "रोटेशनल"
+        },
+        "sector_list": [
+            "आईटी और टेक्नोलॉजी","स्वास्थ्य","शिक्षा","बैंकिंग और वित्त",
+            "बिक्री और विपणन","ई-कॉमर्स","कंटेंट और मीडिया","ग्राहक सेवा",
+            "सौंदर्य और कल्याण","बाल देखभाल और गृह देखभाल","कला और डिज़ाइन",
+            "प्रशासन","कृषि","परामर्श","गिग इकॉनमी","सरकारी",
+            "आतिथ्य","मानव संसाधन","कानूनी","विनिर्माण","रियल एस्टेट",
+            "सामान्य"
+        ],
         "domain_list": [
-            "कुकिंग","बेकिंग","टीचिंग","कॉमर्स","कानून","सफाई","बागवानी",
-            "डेटा एंट्री","सोशल मीडिया","ई-कॉमर्स","कपड़े","ब्यूटी","बैंकिंग",
-            "सिक्योरिटी","म्यूजिक","इलेक्ट्रीशियन","हस्तकला","फिटनेस","आईटी",
-            "लेखन","अनुवाद","ग्राफिक डिज़ाइन","फोटोग्राफी","वीडियो एडिटिंग",
-            "वेब डेवलपमेंट","कस्टमर सपोर्ट","वर्चुअल असिस्टेंट","अकाउंटिंग",
-            "हेल्थकेयर","नर्सिंग","योगा","मेडिटेशन","ट्यूटरिंग","आर्ट एंड क्राफ्ट",
-            "इंटीरियर डिज़ाइन","इवेंट प्लानिंग","केटरिंग","टेलरिंग","कढ़ाई",
-            "मेहंदी","मेकअप आर्टिस्ट","हेयर स्टाइलिंग","न्यूट्रिशन","कंसल्टिंग","अन्य"
+            "अकाउंटिंग","प्रशासन","कृषि","सम्बद्ध स्वास्थ्य",
+            "बैंकिंग ऑपरेशंस","सौंदर्य कल्याण","बाल देखभाल","क्लाउड और DevOps",
+            "निर्माण","परामर्श","कंटेंट राइटिंग","कॉर्पोरेट ट्रेनिंग",
+            "ग्राहक सहायता","साइबरसिक्योरिटी","डेयरी पशु","डेटा एंट्री",
+            "डेटा साइंस","डिलीवरी लॉजिस्टिक्स","डिजिटल मार्केटिंग","ई-कॉमर्स",
+            "एडटेक","वृद्ध देखभाल","फैशन डिज़ाइन","फिटनेस योगा",
+            "फूड प्रोसेसिंग","फूड सर्विस","फ्रीलांसिंग","सामान्य","सरकारी",
+            "ग्राफिक डिज़ाइन","एचआर","हस्तकला","उच्च शिक्षा",
+            "होटल मैनेजमेंट","आईटी सपोर्ट","बीमा","निवेश","पत्रकारिता",
+            "कानूनी","विनिर्माण","मार्केटिंग","चिकित्सक","मानसिक स्वास्थ्य",
+            "नर्सिंग","फार्मा सेल्स","क्यूए टेस्टिंग","रियल एस्टेट","रिटेल","बिक्री",
+            "स्कूल टीचिंग","सामाजिक कार्य","सॉफ्टवेयर इंजीनियरिंग",
+            "ट्रैवल टूरिज्म","UI/UX डिज़ाइन"
         ],
         "location_optional": "लोकेशन (Optional)",
         "title": "माँ सारथी",
@@ -850,17 +969,23 @@ TEXT = {
         "job_heading": "अपने लिए सबसे अच्छा काम चुनें",
         "job_sub": "अपनी जानकारी भरें और माँ सारथी आपको सही काम + अनुमानित कमाई बताएगा।",
         "age": "उम्र",
-        "kids": "बच्चे",
+        "kids": "बच्चों की संख्या",
         "hours": "दिन में उपलब्ध समय (घंटे)",
         "domain": "क्षेत्र (डोमेन)",
+        "sector": "सेक्टर",
         "main_skill": "मुख्य स्किल",
+        "secondary_skill": "अन्य स्किल",
         "education": "शिक्षा",
-        "city_type": "शहर का प्रकार",
+        "city_type": "शहर टियर",
         "language": "भाषा",
         "device": "डिवाइस",
         "work_mode": "काम का तरीका",
-        "get_rec": "सुझाव देखें",
-        "train_instead": " स्किल ट्रेनिंग करें",
+        "work_type": "काम का प्रकार",
+        "marital_status": "वैवाहिक स्थिति",
+        "shift_type": "पसंदीदा शिफ्ट",
+        "experience_years": "अनुभव (वर्ष)",
+        "get_rec": "मेरी करियर रिपोर्ट देखें",
+        "train_instead": "स्किल ट्रेनिंग करें",
         "result_title": "सुझाव",
         "expected_income": "अनुमानित मासिक कमाई",
         "skills_learn": "अगली स्किल जो आपको सीखनी चाहिए",
@@ -1425,277 +1550,708 @@ def jobs():
 def predict():
     t = get_text()
 
-    age = int(request.form.get("age", 0))
+    # ============================================
+    # COLLECT ALL FORM INPUTS
+    # ============================================
+    age = int(request.form.get("age", 25))
     kids = int(request.form.get("kids", 0))
-    hours = int(request.form.get("hours", 0))
-    domain = request.form.get("domain", "Cooking")
-    skill = request.form.get("skill", "Cooking")
-    education = request.form.get("education", "10th")
-    city_type = request.form.get("city_type", "Urban")
-
+    hours = int(request.form.get("hours", 4))
+    experience_years = int(request.form.get("experience_years", 0))
+    domain = request.form.get("domain", "General")
+    sector = request.form.get("sector", "General")
+    primary_skill = request.form.get("primary_skill", "General")
+    secondary_skill = request.form.get("secondary_skill", "")
+    education = request.form.get("education", "12th Pass (HSC)")
+    city_type = request.form.get("city_type", "Tier-2")
+    language = request.form.get("language", "Hindi")
+    device = request.form.get("device", "Mobile Phone")
+    work_mode = request.form.get("work_mode", "Work From Home")
+    work_type = request.form.get("work_type", "Part-time")
+    marital_status = request.form.get("marital_status", "Married")
+    shift_type = request.form.get("shift_type", "General Shift")
     location = request.form.get("location", "").strip()
+
     if location:
         session["location"] = location
 
-    language = request.form.get("language", "Hindi")
-    device = request.form.get("device", "Mobile")
-    work_mode = request.form.get("work_mode", "Work From Home")
+    # Build the combined skill strings matching training data format
+    all_skills = f"{primary_skill}, {secondary_skill}" if secondary_skill else primary_skill
 
-    X = pd.DataFrame([{
-        "age": age,
-        "kids": kids,
-        "hours": hours,
-        "domain": domain,
-        "skill": skill,
-        "education": education,
-        "city_type": city_type,
-        "language": language,
-        "device": device,
-        "work_mode": work_mode
-    }])
+    # ============================================
+    # BUILD BASE USER DATA (shared across models)
+    # ============================================
+    # These are sensible defaults for fields the user doesn't fill.
+    # The models were trained on dataset columns, so we provide reasonable values.
+    user_base = {
+        'age': age,
+        'kids': kids,
+        'hours_available': hours,
+        'experience_years': experience_years,
+        'domain': domain,
+        'sector': sector,
+        'primary_skill': primary_skill,
+        'secondary_skill': secondary_skill,
+        'all_skills': all_skills,
+        'education': education,
+        'city_tier': city_type,
+        'work_mode': work_mode,
+        'work_type': work_type,
+        'marital_status': marital_status,
+        'shift_type': shift_type,
+        'language': language,
+        'device': device,
+        'seniority_level': 'Entry Level/Fresher' if experience_years <= 2 else ('Associate' if experience_years <= 5 else ('Senior Associate' if experience_years <= 8 else 'Manager')),
+        'career_growth': 'Medium',
+        'travel_required': 'No Travel',
+        'remote_available': work_mode in ('Work From Home', 'Remote', 'Hybrid'),
+        'flexible_timing': shift_type == 'Flexible' or work_mode in ('Work From Home', 'Remote'),
+        'childcare_compatible': work_mode in ('Work From Home', 'Remote'),
+        'women_friendly': True,
+        'maternity_benefits': False,
+        'training_provided': False,
+        'health_insurance': False,
+        'pf_available': False,
+        'is_verified': False,
+        'income': 30000,
+        'mother_suitability_score': 7,
+        'skill_match_score': 75,
+        'work_life_balance': 7,
+        'job_title': f'{domain} {work_type}',
+        'city': location or 'Delhi',
+        'state': 'Delhi',
+        'country': 'India',
+    }
 
-    if work_model is None or income_model is None:
-        work_pred = "Work From Home"
-        income_pred = 5000
-        confidence_score = 0.65
-    else:
-        work_pred = work_model.predict(X)[0]
-        income_pred = int(income_model.predict(X)[0])
-        
-        # ✅ Get confidence score from RandomForestClassifier/Regressor
-        try:
-            if hasattr(income_model, 'predict_proba'):
-                # For classifier: get max probability
-                confidence_score = float(np.max(income_model.predict_proba(X)[0]))
-            elif hasattr(income_model, '_estimators'):
-                # For RandomForestRegressor: calculate mean prediction variance
-                predictions = np.array([tree.predict(X)[0] for tree in income_model.estimators_])
-                variance = np.var(predictions)
-                # Normalize variance to confidence score (0-1)
-                confidence_score = float(1.0 / (1.0 + variance / 1000))
-                confidence_score = min(0.99, max(0.5, confidence_score))
-            else:
-                confidence_score = 0.80
-        except Exception as e:
-            print(f"Error calculating confidence: {e}")
-            confidence_score = 0.75
-    
-    # ✅ QUANTILE-BASED INCOME RANGE (from dataset statistics)
+    # ============================================
+    # HELPER: Engineer features and transform for each model
+    # ============================================
+    results = {}
+
+    # --- 1. JOB RECOMMENDATION MODEL ---
     try:
-        # ✅ Load cached dataset
-        global df
-        df, _, _, _ = load_dataset()
-        
-        if df is None or df.empty:
-            raise Exception("Dataset not loaded")
-        
-        # Get income statistics for similar domain from dataset
-        domain_data = df[df['Domain'].str.contains(domain, case=False, na=False)]
-        
-        if len(domain_data) > 0 and 'Salary' in df.columns:
-            # Extract salary values and calculate quantiles
-            salary_values = []
-            for salary_str in domain_data['Salary'].dropna():
-                try:
-                    # Extract numeric value from salary string
-                    import re
-                    numbers = re.findall(r'\d+', str(salary_str))
-                    if numbers:
-                        salary_values.append(int(numbers[0]) * 1000)  # Convert to full amount
-                except:
-                    pass
-            
-            if salary_values:
-                # Use 25th and 75th percentiles for range
-                low = int(np.percentile(salary_values, 25))
-                high = int(np.percentile(salary_values, 75))
-            else:
-                # Fallback: use model prediction with ±30% range
-                low = int(income_pred * 0.70)
-                high = int(income_pred * 1.30)
-        else:
-            # Default range based on model prediction
-            low = int(income_pred * 0.70)
-            high = int(income_pred * 1.30)
-    except Exception as e:
-        print(f"Error calculating quantile range: {e}")
-        # Fallback to original fixed range
-        low = (income_pred // 1000) * 1000
-        high = low + 1000
+        if job_model and job_preprocessor_data:
+            prep = job_preprocessor_data
+            preprocessor = prep['preprocessor']
+            label_encoder = prep['label_encoder']
+            tfidf = prep['tfidf']
+            svd = prep['svd']
 
-    # ✅ Get multiple job recommendations from dataset
+            df_job = pd.DataFrame([user_base])
+            # Engineer features
+            df_job['age_group'] = pd.cut(df_job['age'], bins=[0, 25, 35, 45, 100], labels=['young', 'middle', 'senior', 'veteran'])
+            df_job['exp_level'] = pd.cut(df_job['experience_years'], bins=[-1, 2, 5, 10, 100], labels=['fresher', 'junior', 'mid', 'senior'])
+            df_job['computed_seniority'] = pd.cut(df_job['experience_years'], bins=[-1, 3, 8, 100], labels=['Entry', 'Mid', 'Senior']).astype(str)
+            df_job['has_kids'] = (df_job['kids'] > 0).astype(int)
+            df_job['hours_category'] = pd.cut(df_job['hours_available'], bins=[0, 4, 6, 8, 100], labels=['part_time', 'half_day', 'full_day', 'overtime'])
+            df_job['is_remote'] = df_job['work_mode'].isin(['Remote', 'Work From Home', 'Hybrid']).astype(int)
+            df_job['skills_count'] = df_job['all_skills'].apply(lambda x: len(str(x).split(',')) if pd.notna(x) else 0)
+
+            feature_names = prep.get('feature_names', ['age', 'kids', 'hours_available', 'experience_years', 'has_kids', 'is_remote', 'skills_count',
+                                     'domain', 'primary_skill', 'education', 'city_tier', 'work_mode', 'marital_status', 'age_group', 'exp_level', 'hours_category', 'computed_seniority'])
+            for col in feature_names:
+                if col not in df_job.columns:
+                    df_job[col] = 'Unknown' if col in ['domain', 'primary_skill', 'education', 'city_tier', 'work_mode', 'marital_status', 'age_group', 'exp_level', 'hours_category', 'computed_seniority'] else 0
+
+            X_transformed = preprocessor.transform(df_job[feature_names])
+            if hasattr(X_transformed, 'toarray'):
+                X_transformed = X_transformed.toarray()
+            text_features = tfidf.transform([all_skills])
+            text_reduced = svd.transform(text_features)
+            X_final = np.hstack([X_transformed, text_reduced])
+
+            # Get top-5 predictions
+            if hasattr(job_model, 'predict_proba'):
+                proba = job_model.predict_proba(X_final)[0]
+                top_indices = np.argsort(proba)[::-1][:5]
+                top_labels = label_encoder.inverse_transform(top_indices)
+                top_probs = proba[top_indices]
+                results['job_predictions'] = [{'label': lbl, 'confidence': float(prob)} for lbl, prob in zip(top_labels, top_probs)]
+            else:
+                pred = job_model.predict(X_final)[0]
+                pred_label = label_encoder.inverse_transform([pred])[0]
+                results['job_predictions'] = [{'label': pred_label, 'confidence': 0.85}]
+        else:
+            results['job_predictions'] = [{'label': f'{domain}_Entry', 'confidence': 0.60}]
+    except Exception as e:
+        print(f"Job model error: {e}")
+        results['job_predictions'] = [{'label': f'{domain}_Entry', 'confidence': 0.50}]
+
+    # --- 2. INCOME PREDICTION MODEL ---
+    try:
+        if income_model and income_preprocessor_data:
+            prep = income_preprocessor_data
+            preprocessor = prep['preprocessor']
+
+            df_inc = pd.DataFrame([user_base])
+            # Convert booleans to int
+            for col in ['remote_available', 'flexible_timing', 'childcare_compatible', 'women_friendly', 'maternity_benefits', 'training_provided', 'health_insurance', 'pf_available']:
+                df_inc[col] = df_inc[col].astype(int)
+
+            # Engineer features
+            df_inc['age_squared'] = df_inc['age'] ** 2
+            df_inc['age_group'] = pd.cut(df_inc['age'], bins=[0, 25, 30, 35, 40, 50, 100], labels=['<25', '25-30', '30-35', '35-40', '40-50', '50+'])
+            df_inc['exp_squared'] = df_inc['experience_years'] ** 2
+            df_inc['exp_age_ratio'] = df_inc['experience_years'] / (df_inc['age'] - 18 + 1).clip(lower=1)
+            df_inc['exp_level'] = pd.cut(df_inc['experience_years'], bins=[-1, 1, 3, 5, 8, 12, 100], labels=['fresher', 'junior', 'mid', 'senior', 'lead', 'expert'])
+            df_inc['flexibility_score'] = df_inc['remote_available'] + df_inc['flexible_timing'] + df_inc['work_mode'].isin(['Remote', 'Work From Home', 'Hybrid']).astype(int)
+            df_inc['benefits_score'] = df_inc[['health_insurance', 'pf_available', 'maternity_benefits', 'training_provided']].sum(axis=1)
+            df_inc['mother_friendly_composite'] = (df_inc['mother_suitability_score'] + df_inc['childcare_compatible'] + df_inc['women_friendly'] + df_inc['flexible_timing']) / 4
+            df_inc['city_tier_num'] = df_inc['city_tier'].map({'Metro': 4, 'Tier-1': 3, 'Tier-2': 2, 'Tier-3': 1, 'Rural': 0, 'Remote': 3}).fillna(1)
+            df_inc['has_kids'] = (df_inc['kids'] > 0).astype(int)
+            df_inc['kids_impact'] = df_inc['kids'] * df_inc['hours_available']
+            df_inc['seniority_num'] = df_inc['seniority_level'].map({'Entry Level/Fresher': 0, 'Associate': 1, 'Senior Associate': 2, 'Manager': 3, 'Senior Manager': 4, 'Director/Executive': 5}).fillna(1)
+            df_inc['career_growth_num'] = df_inc['career_growth'].map({'Low': 0, 'Medium': 1, 'High': 2}).fillna(1)
+            edu_map = {'Below 8th/Informal Education': 0, '8th Pass': 1, '10th Pass (SSC)': 2, '12th Pass (HSC)': 3, 'Diploma/ITI': 4, 'Graduate (BTech/BA/BCom/BSc)': 5, 'Post Graduate (MBA/MTech/MA/MSc)': 6, 'PhD/Doctorate': 7}
+            df_inc['education_num'] = df_inc['education'].map(edu_map).fillna(3)
+
+            feature_names = prep.get('feature_names', list(df_inc.columns))
+            for col in feature_names:
+                if col not in df_inc.columns:
+                    df_inc[col] = 0
+
+            X_transformed = preprocessor.transform(df_inc[feature_names])
+            if hasattr(X_transformed, 'toarray'):
+                X_transformed = X_transformed.toarray()
+
+            # TF-IDF
+            tfidf_skills = prep.get('tfidf_skills')
+            svd_skills = prep.get('svd_skills')
+            tfidf_jobs = prep.get('tfidf_jobs')
+            svd_jobs = prep.get('svd_jobs')
+
+            parts = [X_transformed]
+            if tfidf_skills and svd_skills:
+                skills_reduced = svd_skills.transform(tfidf_skills.transform([all_skills]))
+                parts.append(skills_reduced)
+            if tfidf_jobs and svd_jobs:
+                jobs_reduced = svd_jobs.transform(tfidf_jobs.transform([user_base['job_title']]))
+                parts.append(jobs_reduced)
+
+            X_final = np.hstack(parts)
+            y_log_pred = income_model.predict(X_final)[0]
+            income_pred = int(np.expm1(y_log_pred))
+            income_pred = max(5000, min(500000, income_pred))
+            results['income'] = income_pred
+            results['income_low'] = int(income_pred * 0.80)
+            results['income_high'] = int(income_pred * 1.25)
+        else:
+            results['income'] = 25000
+            results['income_low'] = 20000
+            results['income_high'] = 35000
+    except Exception as e:
+        print(f"Income model error: {e}")
+        results['income'] = 25000
+        results['income_low'] = 20000
+        results['income_high'] = 35000
+
+    # Update user_base income with predicted value for other models
+    user_base['income'] = results['income']
+
+    # --- 3. MOTHER SUITABILITY MODEL ---
+    try:
+        if mother_model and mother_preprocessor_data:
+            prep = mother_preprocessor_data
+            preprocessor = prep['preprocessor']
+            label_encoder = prep['label_encoder']
+
+            df_m = pd.DataFrame([user_base])
+            for col in ['remote_available', 'flexible_timing', 'childcare_compatible', 'women_friendly', 'maternity_benefits', 'training_provided', 'health_insurance', 'pf_available']:
+                df_m[col] = df_m[col].astype(int)
+
+            # Engineer features
+            df_m['flexibility_score'] = df_m[['remote_available', 'flexible_timing', 'childcare_compatible']].sum(axis=1) * 25
+            df_m['family_support_score'] = df_m[['maternity_benefits', 'women_friendly', 'childcare_compatible']].sum(axis=1) * 33
+            df_m['total_benefits'] = df_m[['health_insurance', 'pf_available', 'maternity_benefits', 'training_provided']].sum(axis=1)
+            travel_stress = df_m['travel_required'].map({'No Travel': 0, 'Occasional': 15, 'Frequent': 30}).fillna(10)
+            df_m['work_stress'] = travel_stress + (12 - df_m['hours_available']).clip(lower=0) * 5
+            df_m['mother_friendly_composite'] = df_m['flexibility_score'] * 0.4 + df_m['family_support_score'] * 0.3 + df_m['work_life_balance'] * 0.3
+            df_m['kids_factor'] = np.where(df_m['kids'] > 0, 1, 0)
+            df_m['kids_count_impact'] = np.minimum(df_m['kids'], 4) * 10
+            df_m['day_shift'] = df_m['shift_type'].str.lower().str.contains('day|morning|general', na=False).astype(int)
+            df_m['hours_suitable'] = np.where(df_m['hours_available'] <= 8, 1, 0)
+
+            feature_names = prep.get('feature_names') or prep.get('numeric_cols', []) + prep.get('categorical_cols', []) + prep.get('binary_cols', [])
+            if not feature_names:
+                # Fallback: use all columns the preprocessor was trained on
+                feature_names = list(df_m.columns)
+
+            for col in feature_names:
+                if col not in df_m.columns:
+                    df_m[col] = 0
+
+            X_transformed = preprocessor.transform(df_m[feature_names])
+            if hasattr(X_transformed, 'toarray'):
+                X_transformed = X_transformed.toarray()
+
+            pred = mother_model.predict(X_transformed)[0]
+            pred_label = label_encoder.inverse_transform([pred])[0]
+            results['mother_suitability'] = pred_label
+
+            if hasattr(mother_model, 'predict_proba'):
+                proba = mother_model.predict_proba(X_transformed)[0]
+                results['mother_suitability_confidence'] = float(max(proba))
+            else:
+                results['mother_suitability_confidence'] = 0.75
+        else:
+            results['mother_suitability'] = 'Good'
+            results['mother_suitability_confidence'] = 0.60
+    except Exception as e:
+        print(f"Mother suitability error: {e}")
+        results['mother_suitability'] = 'Moderate'
+        results['mother_suitability_confidence'] = 0.50
+
+    # --- 4. WORK-LIFE BALANCE MODEL ---
+    try:
+        if wlb_model and wlb_preprocessor_data:
+            prep = wlb_preprocessor_data
+            preprocessor = prep['preprocessor']
+            label_encoder = prep['label_encoder']
+
+            df_w = pd.DataFrame([user_base])
+            for col in ['remote_available', 'flexible_timing', 'childcare_compatible', 'women_friendly', 'maternity_benefits', 'training_provided', 'health_insurance', 'pf_available']:
+                df_w[col] = df_w[col].astype(int)
+
+            # Engineer features
+            df_w['flexibility_score'] = df_w[['remote_available', 'flexible_timing', 'childcare_compatible']].sum(axis=1) * 33.33
+            df_w['hours_stress'] = (12 - df_w['hours_available']).clip(lower=0) * 10
+            df_w['reasonable_hours'] = (df_w['hours_available'] <= 8).astype(int)
+            df_w['no_travel'] = df_w['travel_required'].map({'No Travel': 1, 'Occasional': 0.5, 'Frequent': 0}).fillna(0.5)
+            df_w['day_shift'] = df_w['shift_type'].str.lower().str.contains('day|morning|general', na=False).astype(int)
+            df_w['night_shift'] = df_w['shift_type'].str.lower().str.contains('night', na=False).astype(int)
+            df_w['family_friendly_score'] = df_w[['women_friendly', 'maternity_benefits', 'childcare_compatible']].sum(axis=1) * 33.33
+            df_w['benefits_score'] = df_w[['health_insurance', 'pf_available', 'training_provided']].sum(axis=1) * 25
+            wm_score_map = {'Work From Home': 100, 'Remote': 100, 'Hybrid': 75, 'Office': 50, 'On-site': 40, 'Field Work': 30}
+            df_w['work_mode_score'] = df_w['work_mode'].map(wm_score_map).fillna(50)
+            df_w['balance_composite'] = df_w['flexibility_score'] * 0.35 + df_w['family_friendly_score'] * 0.25 + df_w['work_mode_score'] * 0.20 + (100 - df_w['hours_stress']) * 0.20
+            df_w['has_kids'] = (df_w['kids'] > 0).astype(int)
+            df_w['multiple_kids'] = (df_w['kids'] > 1).astype(int)
+
+            feature_names = prep.get('feature_names') or prep.get('numeric_cols', []) + prep.get('categorical_cols', []) + prep.get('binary_cols', [])
+            if not feature_names:
+                feature_names = list(df_w.columns)
+
+            for col in feature_names:
+                if col not in df_w.columns:
+                    df_w[col] = 0
+
+            X_transformed = preprocessor.transform(df_w[feature_names])
+            if hasattr(X_transformed, 'toarray'):
+                X_transformed = X_transformed.toarray()
+
+            pred = wlb_model.predict(X_transformed)[0]
+            pred_label = label_encoder.inverse_transform([pred])[0]
+            results['work_life_balance'] = pred_label.replace('_', ' ')
+        else:
+            results['work_life_balance'] = 'Good'
+    except Exception as e:
+        print(f"WLB model error: {e}")
+        results['work_life_balance'] = 'Average'
+
+    # --- 5. CAREER PATH MODEL ---
+    try:
+        if career_model and career_preprocessor_data:
+            prep = career_preprocessor_data
+            preprocessor = prep['preprocessor']
+            label_encoder = prep['label_encoder']
+
+            df_c = pd.DataFrame([user_base])
+            for col in ['remote_available', 'flexible_timing', 'training_provided', 'health_insurance', 'pf_available', 'is_verified']:
+                df_c[col] = df_c[col].astype(int)
+
+            # Engineer features
+            df_c['skills_count'] = df_c['all_skills'].apply(lambda x: len(str(x).split(',')) if pd.notna(x) else 0)
+            df_c['exp_age_ratio'] = df_c['experience_years'] / (df_c['age'] - 17).clip(lower=1)
+            df_c['career_velocity'] = df_c['skills_count'] / (df_c['experience_years'] + 1)
+            df_c['income_per_exp'] = df_c['income'] / (df_c['experience_years'] + 1)
+            edu_level_map = {'Below 8th/Informal Education': 0, '8th Pass': 1, '10th Pass (SSC)': 2, '12th Pass (HSC)': 3, 'Diploma/ITI': 4, 'Graduate (BTech/BA/BCom/BSc)': 5, 'Post Graduate (MBA/MTech/MA/MSc)': 6, 'PhD/Doctorate': 7}
+            df_c['education_level'] = df_c['education'].map(edu_level_map).fillna(3)
+            df_c['career_growth_num'] = df_c['career_growth'].map({'Low': 30, 'Medium': 60, 'High': 90}).fillna(50)
+            df_c['growth_potential'] = df_c['career_growth_num'] / (df_c['experience_years'] + 1)
+            df_c['job_stability'] = df_c[['is_verified', 'health_insurance', 'pf_available']].sum(axis=1)
+            df_c['leadership_indicator'] = 0
+
+            feature_names = prep.get('feature_names') or prep.get('numeric_cols', []) + prep.get('categorical_cols', []) + prep.get('binary_cols', [])
+            if not feature_names:
+                feature_names = list(df_c.columns)
+
+            for col in feature_names:
+                if col not in df_c.columns:
+                    df_c[col] = 0
+
+            X_structured = preprocessor.transform(df_c[feature_names])
+            if hasattr(X_structured, 'toarray'):
+                X_structured = X_structured.toarray()
+
+            # TF-IDF text features
+            tfidf_skills = prep.get('tfidf_skills')
+            svd_obj = prep.get('svd')
+            parts = [X_structured]
+            if tfidf_skills and svd_obj:
+                combined_text = f"{all_skills} {primary_skill} {user_base['job_title']}"
+                text_reduced = svd_obj.transform(tfidf_skills.transform([combined_text]))
+                parts.append(text_reduced)
+
+            X_final = np.hstack(parts)
+            pred = career_model.predict(X_final)[0]
+            pred_label = label_encoder.inverse_transform([pred])[0]
+            results['career_path'] = pred_label
+        else:
+            results['career_path'] = user_base['seniority_level']
+    except Exception as e:
+        print(f"Career path error: {e}")
+        results['career_path'] = user_base['seniority_level']
+
+    # --- 6. SKILL-JOB MATCHING MODEL ---
+    try:
+        if skill_match_model and skill_match_preprocessor_data:
+            prep = skill_match_preprocessor_data
+            preprocessor = prep['preprocessor']
+            label_encoder = prep['label_encoder']
+
+            df_sm = pd.DataFrame([user_base])
+            for col in ['remote_available', 'flexible_timing', 'childcare_compatible', 'women_friendly', 'maternity_benefits', 'training_provided', 'health_insurance', 'pf_available', 'is_verified']:
+                df_sm[col] = df_sm[col].astype(int)
+
+            # Engineer features
+            df_sm['exp_level'] = pd.cut(df_sm['experience_years'], bins=[-1, 2, 5, 10, 20, 100], labels=['Entry', 'Junior', 'Mid', 'Senior', 'Expert']).astype(str)
+            df_sm['age_group'] = pd.cut(df_sm['age'], bins=[17, 25, 35, 45, 55, 100], labels=['18-25', '26-35', '36-45', '46-55', '55+']).astype(str)
+            df_sm['income_level'] = 'Medium'
+            df_sm['skills_count'] = df_sm['all_skills'].apply(lambda x: len(str(x).split(',')) if pd.notna(x) else 0)
+            df_sm['flexibility_score'] = df_sm[['remote_available', 'flexible_timing', 'childcare_compatible']].sum(axis=1)
+            df_sm['benefits_score'] = df_sm[['maternity_benefits', 'health_insurance', 'pf_available', 'training_provided']].sum(axis=1)
+            df_sm['exp_age_ratio'] = df_sm['experience_years'] / (df_sm['age'] - 17).clip(lower=1)
+            df_sm['hours_util'] = df_sm['hours_available'] / 12
+
+            feature_names = prep.get('feature_names') or prep.get('numeric_cols', []) + prep.get('categorical_cols', []) + prep.get('binary_cols', [])
+            if not feature_names:
+                feature_names = list(df_sm.columns)
+
+            for col in feature_names:
+                if col not in df_sm.columns:
+                    df_sm[col] = 0
+
+            X_structured = preprocessor.transform(df_sm[feature_names])
+            if hasattr(X_structured, 'toarray'):
+                X_structured = X_structured.toarray()
+
+            tfidf_skills = prep.get('tfidf_skills')
+            tfidf_jobs = prep.get('tfidf_jobs')
+            svd_obj = prep.get('svd')
+            parts = [X_structured]
+            if tfidf_skills and tfidf_jobs and svd_obj:
+                from scipy.sparse import hstack as sparse_hstack
+                combined_skills_text = f"{all_skills} {primary_skill} {secondary_skill}"
+                skills_tfidf = tfidf_skills.transform([combined_skills_text])
+                jobs_tfidf = tfidf_jobs.transform([user_base['job_title']])
+                text_combined = sparse_hstack([skills_tfidf, jobs_tfidf])
+                text_reduced = svd_obj.transform(text_combined)
+                parts.append(text_reduced)
+
+            X_final = np.hstack(parts)
+            pred = skill_match_model.predict(X_final)[0]
+            pred_label = label_encoder.inverse_transform([pred])[0]
+            results['skill_match'] = pred_label.replace('_', ' ')
+        else:
+            results['skill_match'] = 'Medium'
+    except Exception as e:
+        print(f"Skill match error: {e}")
+        results['skill_match'] = 'Medium'
+
+    # --- 7. SKILL GAP ANALYZER ---
+    try:
+        if skill_gap_model and skill_gap_preprocessor_data:
+            prep = skill_gap_preprocessor_data
+            preprocessor = prep['preprocessor']
+
+            df_sg = pd.DataFrame([user_base])
+            # Engineer features
+            df_sg['skills_count'] = df_sg['all_skills'].apply(lambda x: len(str(x).split(',')) if pd.notna(x) else 0)
+            skills_text = str(all_skills)
+            unique_skills = len(set(skills_text.lower().split(',')))
+            total_skills = max(len(skills_text.split(',')), 1)
+            df_sg['skill_diversity'] = unique_skills / total_skills
+            df_sg['skill_exp_ratio'] = df_sg['skills_count'] / (df_sg['experience_years'] + 1)
+            df_sg['skill_gap_indicator'] = 100 - df_sg['skill_match_score']
+            df_sg['career_growth_num'] = df_sg['career_growth'].map({'Low': 30, 'Medium': 60, 'High': 90}).fillna(50)
+            df_sg['growth_gap'] = 100 - df_sg['career_growth_num']
+            seniority_skills_map = {'Entry Level/Fresher': 3, 'Associate': 6, 'Senior Associate': 10, 'Manager': 15, 'Senior Manager': 20, 'Director/Executive': 15}
+            df_sg['expected_skills'] = df_sg['seniority_level'].map(seniority_skills_map).fillna(5)
+            df_sg['skill_deficiency'] = (df_sg['expected_skills'] - df_sg['skills_count']).clip(lower=0)
+            df_sg['domain_complexity'] = 1.0
+            df_sg['training_likelihood'] = df_sg['skill_deficiency'] * 5 + df_sg['skill_gap_indicator'] * 0.5 + df_sg['growth_gap'] * 0.3
+
+            feature_names = prep.get('feature_names') or prep.get('numeric_cols', []) + prep.get('categorical_cols', [])
+            if not feature_names:
+                feature_names = list(df_sg.columns)
+
+            for col in feature_names:
+                if col not in df_sg.columns:
+                    df_sg[col] = 0
+
+            X_structured = preprocessor.transform(df_sg[feature_names])
+            if hasattr(X_structured, 'toarray'):
+                X_structured = X_structured.toarray()
+
+            tfidf_skills = prep.get('tfidf_skills')
+            tfidf_jobs = prep.get('tfidf_jobs')
+            svd_obj = prep.get('svd')
+            parts = [X_structured]
+            if tfidf_skills and tfidf_jobs and svd_obj:
+                from scipy.sparse import hstack as sparse_hstack
+                combined_skills_text = f"{all_skills} {primary_skill} {secondary_skill}"
+                skills_tfidf = tfidf_skills.transform([combined_skills_text])
+                jobs_tfidf = tfidf_jobs.transform([user_base['job_title']])
+                text_combined = sparse_hstack([skills_tfidf, jobs_tfidf])
+                text_reduced = svd_obj.transform(text_combined)
+                parts.append(text_reduced)
+
+            X_final = np.hstack(parts)
+            pred = skill_gap_model.predict(X_final)[0]
+            results['training_needed'] = bool(pred)
+        else:
+            results['training_needed'] = True
+    except Exception as e:
+        print(f"Skill gap error: {e}")
+        results['training_needed'] = True
+
+    # --- 8. PROFILE COMPLETENESS ---
+    try:
+        if profile_model and profile_preprocessor_data:
+            prep = profile_preprocessor_data
+            preprocessor = prep['preprocessor']
+
+            df_pc = pd.DataFrame([user_base])
+            for col in ['remote_available', 'flexible_timing', 'childcare_compatible', 'women_friendly', 'maternity_benefits', 'training_provided', 'health_insurance', 'pf_available', 'is_verified']:
+                df_pc[col] = df_pc[col].astype(int)
+
+            # Profile completeness scoring (rule-based part)
+            profile_fields = {
+                'age': (10, age > 0), 'education': (15, bool(education)),
+                'experience_years': (12, experience_years >= 0), 'primary_skill': (15, bool(primary_skill)),
+                'all_skills': (10, bool(all_skills)), 'domain': (10, bool(domain)),
+                'city': (5, bool(location)), 'marital_status': (3, bool(marital_status)),
+                'hours_available': (5, hours > 0), 'work_mode': (5, bool(work_mode)),
+                'secondary_skill': (3, bool(secondary_skill)), 'language': (2, bool(language)),
+                'device': (2, bool(device)), 'kids': (3, True),
+            }
+            completeness_score = sum(weight for weight, present in profile_fields.values() if present)
+            fields_filled = sum(1 for _, present in profile_fields.values() if present)
+            critical_fields = [bool(primary_skill), bool(education), experience_years >= 0, bool(domain)]
+            critical_missing = sum(1 for v in critical_fields if not v)
+
+            df_pc['completeness_score'] = completeness_score
+            df_pc['fields_filled'] = fields_filled
+            df_pc['critical_missing'] = critical_missing
+            df_pc['skills_count'] = df_pc['all_skills'].apply(lambda x: len(str(x).split(',')) if pd.notna(x) else 0)
+            df_pc['has_primary_skill'] = int(bool(primary_skill))
+            df_pc['has_secondary_skill'] = int(bool(secondary_skill))
+            df_pc['has_education'] = int(bool(education))
+            df_pc['has_experience'] = int(experience_years > 0)
+            df_pc['has_domain'] = int(bool(domain))
+            df_pc['profile_quality'] = df_pc['has_primary_skill'] * 25 + df_pc['has_education'] * 20 + df_pc['has_experience'] * 20 + df_pc['has_domain'] * 15 + df_pc['has_secondary_skill'] * 10 + min(df_pc['skills_count'].iloc[0] * 2, 10)
+            df_pc['profile_complete'] = int(all(critical_fields))
+            df_pc['age_valid'] = int(18 <= age <= 70)
+
+            feature_names = prep.get('feature_names') or prep.get('numeric_cols', []) + prep.get('categorical_cols', []) + prep.get('binary_cols', [])
+            if not feature_names:
+                feature_names = list(df_pc.columns)
+
+            for col in feature_names:
+                if col not in df_pc.columns:
+                    df_pc[col] = 0
+
+            X_structured = preprocessor.transform(df_pc[feature_names])
+            if hasattr(X_structured, 'toarray'):
+                X_structured = X_structured.toarray()
+
+            tfidf_skills = prep.get('tfidf_skills')
+            svd_obj = prep.get('svd')
+            parts = [X_structured]
+            if tfidf_skills and svd_obj:
+                combined_text = f"{all_skills} {primary_skill} {secondary_skill}"
+                text_reduced = svd_obj.transform(tfidf_skills.transform([combined_text]))
+                parts.append(text_reduced)
+
+            X_final = np.hstack(parts)
+            # We just use rule-based score here; ML model is for is_verified
+            results['profile_completeness'] = completeness_score
+            results['profile_grade'] = 'A+' if completeness_score >= 95 else ('A' if completeness_score >= 85 else ('B' if completeness_score >= 70 else ('C' if completeness_score >= 50 else 'D')))
+        else:
+            results['profile_completeness'] = 75
+            results['profile_grade'] = 'B'
+    except Exception as e:
+        print(f"Profile completeness error: {e}")
+        results['profile_completeness'] = 70
+        results['profile_grade'] = 'B'
+
+    # ============================================
+    # FETCH JOB RECOMMENDATIONS FROM DATASET
+    # ============================================
     job_recommendations = []
     try:
-        # ✅ Load cached dataset if not already loaded
-        if df is None or df.empty:
-            df, _, _, _ = load_dataset()
-        
-        # Search for jobs matching the domain and work mode
-        filtered_df = df[
-            (df['Domain'].str.contains(domain, case=False, na=False)) |
-            (df['Work Mode'].str.contains(work_mode, case=False, na=False))
-        ]
-        
-        # Get top 5 jobs or all available
-        top_jobs = filtered_df.head(5).to_dict('records')
-        
-        for idx, job in enumerate(top_jobs, 1):
-            job_title = job.get('Job Title', 'Job Opportunity')
-            job_recommendations.append({
-                'id': idx,
-                'title': job_title,
-                'company': job.get('Company', 'MaaSarthi Partner'),
-                'description': job.get('Description', 'Remote work opportunity'),
-                'salary': job.get('Salary', f'₹{low} - ₹{high}'),
-                'work_mode': job.get('Work Mode', work_mode),
-                'location': job.get('Location', location or 'Remote'),
-                'apply_links': {
-                    'linkedin': f"https://www.linkedin.com/jobs/search/?keywords={job_title.replace(' ', '%20')}&location=India",
-                    'naukri': f"https://www.naukri.com/{job_title.lower().replace(' ', '-')}-jobs",
-                    'indeed': f"https://www.indeed.co.in/jobs?q={job_title.replace(' ', '+')}&l=India",
-                    'internshala': f"https://internshala.com/jobs/{job_title.lower().replace(' ', '-')}-jobs"
-                }
-            })
+        global df
+        df, _, _, _ = load_dataset()
+
+        if df is not None and not df.empty:
+            filtered_df = df[
+                (df['domain'].str.contains(domain, case=False, na=False))
+            ]
+            if len(filtered_df) < 3:
+                filtered_df = df[df['sector'].str.contains(sector, case=False, na=False)]
+
+            top_jobs = filtered_df.head(5).to_dict('records')
+
+            for idx, job in enumerate(top_jobs, 1):
+                job_title_text = job.get('job_title', f'{domain} Opportunity')
+                job_recommendations.append({
+                    'id': idx,
+                    'title': job_title_text,
+                    'company': job.get('company', 'MaaSarthi Partner'),
+                    'description': job.get('job_description', f'{domain} role'),
+                    'salary': f"₹{job.get('salary_min', results['income_low']):,.0f} - ₹{job.get('salary_max', results['income_high']):,.0f}",
+                    'work_mode': job.get('work_mode', work_mode),
+                    'location': job.get('city', location or 'Remote'),
+                    'work_type': job.get('work_type', work_type),
+                    'apply_links': {
+                        'linkedin': f"https://www.linkedin.com/jobs/search/?keywords={job_title_text.replace(' ', '%20')}&location=India",
+                        'naukri': f"https://www.naukri.com/{job_title_text.lower().replace(' ', '-')}-jobs",
+                        'indeed': f"https://www.indeed.co.in/jobs?q={job_title_text.replace(' ', '+')}&l=India",
+                        'internshala': f"https://internshala.com/jobs/{job_title_text.lower().replace(' ', '-')}-jobs"
+                    }
+                })
     except Exception as e:
         print(f"Error fetching jobs: {e}")
-        # Fallback: create sample recommendations with real job links
+
+    if not job_recommendations:
         search_term = domain.replace(' ', '%20')
-        search_term_dash = domain.lower().replace(' ', '-')
-        search_term_plus = domain.replace(' ', '+')
-        
-        job_recommendations = [
-            {
-                'id': 1,
-                'title': f'{domain} - Remote Position',
-                'company': 'MaaSarthi Partner',
-                'description': f'Part-time {domain} work from home',
-                'salary': f'₹{low} - ₹{high}',
-                'work_mode': work_mode,
-                'location': location or 'Remote',
-                'apply_links': {
-                    'linkedin': f"https://www.linkedin.com/jobs/search/?keywords={search_term}&location=India&f_WT=2",
-                    'naukri': f"https://www.naukri.com/{search_term_dash}-jobs?wfhType=2",
-                    'indeed': f"https://www.indeed.co.in/jobs?q={search_term_plus}&l=India&remotejob=032b3046-06a3-4876-8dfd-474eb5e7ed11",
-                    'internshala': f"https://internshala.com/jobs/{search_term_dash}-jobs/work-from-home"
-                }
-            },
-            {
-                'id': 2,
-                'title': f'{domain} Freelancer',
-                'company': 'Independent',
-                'description': f'Flexible {domain} freelancing opportunities',
-                'salary': f'₹{low*2} - ₹{high*2}',
-                'work_mode': 'Flexible',
-                'location': 'Remote',
-                'apply_links': {
-                    'linkedin': f"https://www.linkedin.com/jobs/search/?keywords={search_term}%20freelance&location=India",
-                    'naukri': f"https://www.naukri.com/freelance-{search_term_dash}-jobs",
-                    'indeed': f"https://www.indeed.co.in/jobs?q=freelance+{search_term_plus}&l=India",
-                    'internshala': f"https://internshala.com/jobs/{search_term_dash}-jobs"
-                }
-            },
-            {
-                'id': 3,
-                'title': f'{domain} Expert',
-                'company': 'MaaSarthi Network',
-                'description': f'Become a {domain} expert and earn',
-                'salary': f'₹{low*1.5} - ₹{high*1.5}',
-                'work_mode': work_mode,
-                'location': 'Remote',
-                'apply_links': {
-                    'linkedin': f"https://www.linkedin.com/jobs/search/?keywords=senior%20{search_term}&location=India",
-                    'naukri': f"https://www.naukri.com/senior-{search_term_dash}-jobs",
-                    'indeed': f"https://www.indeed.co.in/jobs?q=senior+{search_term_plus}&l=India",
-                    'internshala': f"https://internshala.com/jobs/{search_term_dash}-jobs"
-                }
+        job_recommendations = [{
+            'id': 1,
+            'title': f'{domain} - {work_mode}',
+            'company': 'MaaSarthi Partner',
+            'description': f'{work_type} {domain} opportunity',
+            'salary': f"₹{results['income_low']:,} - ₹{results['income_high']:,}",
+            'work_mode': work_mode,
+            'location': location or 'Remote',
+            'work_type': work_type,
+            'apply_links': {
+                'linkedin': f"https://www.linkedin.com/jobs/search/?keywords={search_term}&location=India",
+                'naukri': f"https://www.naukri.com/{domain.lower().replace(' ', '-')}-jobs",
+                'indeed': f"https://www.indeed.co.in/jobs?q={domain.replace(' ', '+')}&l=India",
+                'internshala': f"https://internshala.com/jobs/{domain.lower().replace(' ', '-')}-jobs"
             }
-        ]
+        }]
 
-    suggested_skills = ["Improve your skill", "Create Portfolio", "Market yourself online"]
-    links = [("YouTube", "https://www.youtube.com"), ("Google", "https://www.google.com")]
+    # Suggested skills based on domain
+    suggested_skills = _get_suggested_skills(domain, primary_skill)
 
-    # ✅ Convert confidence score to percentage and round
-    confidence_percentage = int(round(confidence_score * 100))
+    # Learning resources
+    links = [
+        ("YouTube - " + domain, f"https://www.youtube.com/results?search_query={domain.replace(' ', '+')}+tutorial"),
+        ("Google - " + domain, f"https://www.google.com/search?q={domain.replace(' ', '+')}+free+course"),
+        ("Coursera", "https://www.coursera.org"),
+        ("Khan Academy", "https://www.khanacademy.org"),
+    ]
 
-    # ✅ Save job search to database
+    # Overall confidence from job prediction
+    top_job_pred = results.get('job_predictions', [{}])[0]
+    confidence_percentage = int(round(top_job_pred.get('confidence', 0.70) * 100))
+
+    # ============================================
+    # SAVE TO DATABASE
+    # ============================================
     if 'user_email' in session:
         try:
             user = User.query.filter_by(email=session['user_email']).first()
             if user:
-                # Save to job search history
                 job_search = JobSearchHistory(
-                    user_id=user.id,
-                    age=age,
-                    education=education,
-                    domain=domain,
-                    skill=skill,
-                    work_mode=work_mode,
-                    location=location,
-                    city_type=city_type,
-                    hours=hours,
-                    kids=kids,
-                    language=language,
-                    device=device,
-                    predicted_job=work_pred,
-                    predicted_salary_low=low,
-                    predicted_salary_high=high,
-                    confidence_score=confidence_score
+                    user_id=user.id, age=age, education=education,
+                    domain=domain, skill=primary_skill, work_mode=work_mode,
+                    location=location, city_type=city_type, hours=hours, kids=kids,
+                    language=language, device=device,
+                    predicted_job=top_job_pred.get('label', domain),
+                    predicted_salary_low=results['income_low'],
+                    predicted_salary_high=results['income_high'],
+                    confidence_score=top_job_pred.get('confidence', 0.70)
                 )
                 db.session.add(job_search)
-                
-                # Save the top job recommendation
+
                 if job_recommendations:
                     top_job = job_recommendations[0]
                     job_rec = JobRecommendation(
                         user_id=user.id,
-                        job_title=top_job.get('title', work_pred),
+                        job_title=top_job.get('title', domain),
                         company=top_job.get('company', 'MaaSarthi Partner'),
-                        salary=f'₹{low} - ₹{high}',
-                        hours=f'{hours} hours/week',
+                        salary=f"₹{results['income_low']} - ₹{results['income_high']}",
+                        hours=f'{hours} hours/day',
                         location=location or 'Remote',
                         description=top_job.get('description', '')
                     )
                     db.session.add(job_rec)
-                
-                # Update or create user profile with search data
+
                 profile = UserProfile.query.filter_by(user_id=user.id).first()
                 if not profile:
                     profile = UserProfile(user_id=user.id)
                     db.session.add(profile)
-                
+
                 profile.age = age
                 profile.education = education
                 profile.location = location
                 profile.city_type = city_type
                 profile.preferred_domain = domain
-                profile.primary_skill = skill
+                profile.primary_skill = primary_skill
                 profile.work_mode_preference = work_mode
                 profile.available_hours = hours
                 profile.number_of_kids = kids
                 profile.language_preference = language
                 profile.device_type = device
                 profile.profile_completed = True
-                
+
                 db.session.commit()
-                print(f"✅ Job search saved for user {user.email}: {work_pred}")
         except Exception as e:
-            print(f"❌ Error saving job search: {e}")
+            print(f"Error saving job search: {e}")
             db.session.rollback()
 
     return render_template(
         "result.html",
         t=t,
-        work=work_pred,
-        low=low,
-        high=high,
+        # Model results
+        results=results,
+        # Job data
+        jobs=job_recommendations,
+        confidence_score=confidence_percentage,
+        # Income
+        low=results['income_low'],
+        high=results['income_high'],
+        income_prediction=results['income'],
+        # Skills & links
         skills=suggested_skills,
         links=links,
-        jobs=job_recommendations,
-        confidence_score=confidence_percentage,  # ✅ Pass confidence percentage to template
-        income_prediction=income_pred,  # ✅ Pass actual prediction
-        domain=domain,  # ✅ Pass domain for context
+        # Context
+        domain=domain,
+        primary_skill=primary_skill,
+        work_mode=work_mode,
         user=get_current_user()
     )
+
+
+def _get_suggested_skills(domain, current_skill):
+    """Return domain-specific skill suggestions."""
+    domain_skills = {
+        'Software Engineering': ['Python', 'JavaScript', 'React', 'SQL', 'Git'],
+        'Data Science': ['Python', 'Machine Learning', 'SQL', 'Tableau', 'Statistics'],
+        'Digital Marketing': ['SEO', 'Google Ads', 'Social Media', 'Content Writing', 'Analytics'],
+        'Graphic Design': ['Photoshop', 'Illustrator', 'Figma', 'Canva', 'Typography'],
+        'Content Writing': ['SEO Writing', 'Copywriting', 'Blogging', 'Social Media', 'Editing'],
+        'Data Entry': ['Excel', 'Typing Speed', 'Google Sheets', 'MS Office', 'Accuracy'],
+        'Customer Support': ['Communication', 'CRM Tools', 'Email Writing', 'Problem Solving', 'Patience'],
+        'School Teaching': ['Lesson Planning', 'EdTech Tools', 'Communication', 'Subject Expertise', 'Patience'],
+        'Beauty Wellness': ['Skin Care', 'Hair Styling', 'Makeup', 'Nail Art', 'Client Management'],
+        'Handicrafts': ['Product Photography', 'Online Selling', 'Packaging', 'Design', 'Marketing'],
+        'Ecommerce': ['Product Listing', 'Inventory', 'Customer Service', 'Marketing', 'Analytics'],
+        'Nursing': ['Patient Care', 'Medical Records', 'First Aid', 'Communication', 'Empathy'],
+    }
+    skills = domain_skills.get(domain, ['Communication', 'Time Management', 'Computer Basics', 'Online Collaboration', 'Self-Marketing'])
+    return [s for s in skills if s.lower() != current_skill.lower()][:5]
 
 # Google OAuth setup
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID")

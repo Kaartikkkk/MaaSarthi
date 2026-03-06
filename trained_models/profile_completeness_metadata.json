@@ -1,0 +1,121 @@
+{
+  "model_name": "Profile Completeness Scorer",
+  "version": "2.0.0",
+  "trained_at": "2026-03-06T14:04:08.264932",
+  "best_model": "hist_gradient_boosting",
+  "accuracy": 0.8486666666666667,
+  "precision": 0.8486666666666667,
+  "recall": 1.0,
+  "f1_score": 0.9181391994230076,
+  "roc_auc": 0.4844787625747913,
+  "feature_count": 155,
+  "training_samples": 24000,
+  "cv_results": {
+    "hist_gradient_boosting": {
+      "mean_accuracy": 0.8487333333333332,
+      "std_accuracy": 8.164965809276362e-05,
+      "scores": [
+        0.8488333333333333,
+        0.8488333333333333,
+        0.8486666666666667,
+        0.8486666666666667,
+        0.8486666666666667
+      ]
+    },
+    "neural_network": {
+      "mean_accuracy": 0.8485333333333334,
+      "std_accuracy": 0.00035590260840104814,
+      "scores": [
+        0.8478333333333333,
+        0.8488333333333333,
+        0.8486666666666667,
+        0.8486666666666667,
+        0.8486666666666667
+      ]
+    },
+    "extra_trees": {
+      "mean_accuracy": 0.8483,
+      "std_accuracy": 0.000163299316185568,
+      "scores": [
+        0.8483333333333334,
+        0.8483333333333334,
+        0.848,
+        0.8483333333333334,
+        0.8485
+      ]
+    }
+  },
+  "all_results": {
+    "random_forest": {
+      "accuracy": 0.8483333333333334,
+      "precision": 0.8487324883255504,
+      "recall": 0.9994108405341713,
+      "f1_score": 0.9179292929292929,
+      "roc_auc": 0.47769391219188084,
+      "training_time": 4.228124
+    },
+    "extra_trees": {
+      "accuracy": 0.8485,
+      "precision": 0.8487577121894281,
+      "recall": 0.9996072270227808,
+      "f1_score": 0.9180268734782216,
+      "roc_auc": 0.48554937173626417,
+      "training_time": 3.444373
+    },
+    "xgboost": {
+      "accuracy": 0.8448333333333333,
+      "precision": 0.8487845766974015,
+      "recall": 0.994304791830322,
+      "f1_score": 0.915799945735733,
+      "roc_auc": 0.49051905294995,
+      "training_time": 2.55695
+    },
+    "lightgbm": {
+      "accuracy": 0.7821666666666667,
+      "precision": 0.8493631161159313,
+      "recall": 0.9035742340926944,
+      "f1_score": 0.8756304120277857,
+      "roc_auc": 0.49326986964089825,
+      "training_time": 2.507276
+    },
+    "hist_gradient_boosting": {
+      "accuracy": 0.8486666666666667,
+      "precision": 0.8486666666666667,
+      "recall": 1.0,
+      "f1_score": 0.9181391994230076,
+      "roc_auc": 0.4844787625747913,
+      "training_time": 0.450464
+    },
+    "gradient_boosting": {
+      "accuracy": 0.8418333333333333,
+      "precision": 0.848209783156833,
+      "recall": 0.9909662215239592,
+      "f1_score": 0.9140476406122634,
+      "roc_auc": 0.4820533461835271,
+      "training_time": 70.348969
+    },
+    "neural_network": {
+      "accuracy": 0.8486666666666667,
+      "precision": 0.8486666666666667,
+      "recall": 1.0,
+      "f1_score": 0.9181391994230076,
+      "roc_auc": 0.48913407400742637,
+      "training_time": 2.618894
+    },
+    "logistic_regression": {
+      "accuracy": 0.5156666666666667,
+      "precision": 0.8439269981120201,
+      "recall": 0.5267085624509034,
+      "f1_score": 0.6486094316807739,
+      "roc_auc": 0.4930760785684377,
+      "training_time": 0.170347
+    },
+    "ensemble": {
+      "accuracy": 0.8486666666666667,
+      "precision": 0.8486666666666667,
+      "recall": 1.0,
+      "f1_score": 0.9181391994230076,
+      "training_time": 10.864268
+    }
+  }
+}

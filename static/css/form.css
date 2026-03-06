@@ -405,3 +405,17 @@
         font-size: 2rem;
     }
 }
+
+/* Form Section Labels */
+.form-section-label {
+    grid-column: 1 / -1;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-pink, #e91e8c);
+    margin: 1rem 0 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(233, 30, 140, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
