@@ -2,6 +2,9 @@
 __pycache__/
 *.pyc
 *.pkl
+*.log
 .DS_Store
-
+.venv/
+dataset.csv
+maasarthi.db
 
