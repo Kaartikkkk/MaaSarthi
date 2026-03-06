@@ -1,0 +1,112 @@
+{
+  "model_name": "Work-Life Balance Model",
+  "version": "2.0.0",
+  "trained_at": "2026-03-06T13:49:19.347240",
+  "best_model": "neural_network",
+  "accuracy": 0.34983333333333333,
+  "precision": 0.18959267153304343,
+  "recall": 0.34983333333333333,
+  "f1_score": 0.20512465743003586,
+  "label_classes": [
+    "Average",
+    "Below_Average",
+    "Excellent",
+    "Good",
+    "Poor"
+  ],
+  "feature_count": 138,
+  "training_samples": 24000,
+  "cv_results": {
+    "neural_network": {
+      "mean_accuracy": 0.34736666666666666,
+      "std_accuracy": 0.0024367555843329437,
+      "scores": [
+        0.3476666666666667,
+        0.347,
+        0.3506666666666667,
+        0.3431666666666667,
+        0.34833333333333333
+      ]
+    },
+    "hist_gradient_boosting": {
+      "mean_accuracy": 0.33763333333333334,
+      "std_accuracy": 0.0013266499161421618,
+      "scores": [
+        0.3378333333333333,
+        0.3373333333333333,
+        0.34,
+        0.337,
+        0.336
+      ]
+    },
+    "random_forest": {
+      "mean_accuracy": 0.33923333333333333,
+      "std_accuracy": 0.0019453648615219876,
+      "scores": [
+        0.3373333333333333,
+        0.3408333333333333,
+        0.3421666666666667,
+        0.3373333333333333,
+        0.3385
+      ]
+    }
+  },
+  "all_results": {
+    "random_forest": {
+      "accuracy": 0.3385,
+      "precision": 0.28336972490271767,
+      "recall": 0.3385,
+      "f1_score": 0.2406972686917489,
+      "training_time": 2.738133
+    },
+    "extra_trees": {
+      "accuracy": 0.31616666666666665,
+      "precision": 0.26616454218104735,
+      "recall": 0.31616666666666665,
+      "f1_score": 0.2566268510717736,
+      "training_time": 2.615962
+    },
+    "xgboost": {
+      "accuracy": 0.2981666666666667,
+      "precision": 0.26962248101915237,
+      "recall": 0.2981666666666667,
+      "f1_score": 0.2700224778575734,
+      "training_time": 6.900121
+    },
+    "lightgbm": {
+      "accuracy": 0.30633333333333335,
+      "precision": 0.27449213682974594,
+      "recall": 0.30633333333333335,
+      "f1_score": 0.2757479230400087,
+      "training_time": 11.053218
+    },
+    "hist_gradient_boosting": {
+      "accuracy": 0.3408333333333333,
+      "precision": 0.2744721978885168,
+      "recall": 0.3408333333333333,
+      "f1_score": 0.23289237042818317,
+      "training_time": 4.187865
+    },
+    "gradient_boosting": {
+      "accuracy": 0.2835,
+      "precision": 0.2609952881995245,
+      "recall": 0.2835,
+      "f1_score": 0.2638505365146817,
+      "training_time": 38.812507
+    },
+    "neural_network": {
+      "accuracy": 0.34983333333333333,
+      "precision": 0.18959267153304343,
+      "recall": 0.34983333333333333,
+      "f1_score": 0.20512465743003586,
+      "training_time": 3.228869
+    },
+    "ensemble": {
+      "accuracy": 0.3453333333333333,
+      "precision": 0.29203418895788014,
+      "recall": 0.3453333333333333,
+      "f1_score": 0.23953544767907578,
+      "training_time": 19.375148
+    }
+  }
+}

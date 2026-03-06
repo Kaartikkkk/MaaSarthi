@@ -1,0 +1,103 @@
+{
+  "model_name": "Skill-Job Matching Model",
+  "version": "2.0.0",
+  "trained_at": "2026-03-05T02:16:31.417566",
+  "best_model": "extra_trees",
+  "accuracy": 0.4091666666666667,
+  "precision": 0.3472396653400889,
+  "recall": 0.4091666666666667,
+  "f1_score": 0.36659292867556975,
+  "label_classes": [
+    "High",
+    "Medium",
+    "Very_High"
+  ],
+  "feature_count": 184,
+  "training_samples": 4800,
+  "cv_results": {
+    "extra_trees": {
+      "mean_accuracy": 0.4033333333333333,
+      "std_accuracy": 0.014643921757659209,
+      "scores": [
+        0.38416666666666666,
+        0.3975,
+        0.39416666666666667,
+        0.4191666666666667,
+        0.4216666666666667
+      ]
+    },
+    "neural_network": {
+      "mean_accuracy": 0.4035,
+      "std_accuracy": 0.011801600644733661,
+      "scores": [
+        0.3933333333333333,
+        0.4008333333333333,
+        0.39416666666666667,
+        0.42583333333333334,
+        0.4033333333333333
+      ]
+    },
+    "gradient_boosting": {
+      "mean_accuracy": 0.398,
+      "std_accuracy": 0.009422196016735057,
+      "scores": [
+        0.3858333333333333,
+        0.4141666666666667,
+        0.3975,
+        0.4,
+        0.3925
+      ]
+    }
+  },
+  "all_results": {
+    "random_forest": {
+      "accuracy": 0.38666666666666666,
+      "precision": 0.3626580019323818,
+      "recall": 0.38666666666666666,
+      "f1_score": 0.3536357530299178,
+      "training_time": 3.708438
+    },
+    "extra_trees": {
+      "accuracy": 0.4091666666666667,
+      "precision": 0.3472396653400889,
+      "recall": 0.4091666666666667,
+      "f1_score": 0.36659292867556975,
+      "training_time": 2.353565
+    },
+    "xgboost": {
+      "accuracy": 0.37666666666666665,
+      "precision": 0.34531946486710247,
+      "recall": 0.37666666666666665,
+      "f1_score": 0.3486484238959045,
+      "training_time": 20.880566
+    },
+    "lightgbm": {
+      "accuracy": 0.385,
+      "precision": 0.36722042253600695,
+      "recall": 0.385,
+      "f1_score": 0.3690054263358308,
+      "training_time": 25.059898
+    },
+    "gradient_boosting": {
+      "accuracy": 0.3908333333333333,
+      "precision": 0.3562520408051596,
+      "recall": 0.3908333333333333,
+      "f1_score": 0.36175533861176246,
+      "training_time": 40.228211
+    },
+    "neural_network": {
+      "accuracy": 0.39666666666666667,
+      "precision": 0.35329969762531693,
+      "recall": 0.39666666666666667,
+      "f1_score": 0.353848219846584,
+      "training_time": 5.729425
+    },
+    "ensemble": {
+      "accuracy": 0.4008333333333333,
+      "precision": 0.31730235593247014,
+      "recall": 0.4008333333333333,
+      "f1_score": 0.35420681525017367,
+      "training_time": 75.596161
+    }
+  }
+}

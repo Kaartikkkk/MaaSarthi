@@ -1,0 +1,23 @@
+
+======================================================================
+🎯 MAASARTHI - TRAINING ALL ML MODELS
+======================================================================
+   Started: 2026-03-05 15:11:38
+   Sample fraction: 100%
+   Total models: 8
+   Models to train: 8
+      1. Job Recommendation
+      2. Income Prediction
+      3. Skill-Job Matching
+      4. Mother Suitability
+      5. Skill Gap Analyzer
+      6. Career Path Predictor
+      7. Work-Life Balance
+      8. Profile Completeness
+
+======================================================================
+🚀 Training: Job Recommendation
+======================================================================
+   Script: models/job_recommendation_model.py
+   Sample: 100%
+   Started: 15:11:38
