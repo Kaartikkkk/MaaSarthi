@@ -433,8 +433,10 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_email' not in session:
-            # Store the URL the user wanted to access
-            session['next_url'] = request.url
+            # Only store GET URLs for redirect after login
+            # POST-only routes like /predict would fail on GET redirect
+            if request.method == 'GET':
+                session['next_url'] = request.url
             flash('Please login to access this feature', 'info')
             return redirect(url_for('login'))
         return f(*args, **kwargs)
@@ -1544,6 +1546,20 @@ def jobs():
     t = get_text()
     return render_template("form.html", t=t, user=get_current_user())
 
+def _clean_job_label(label):
+    """Clean up model labels like 'Agriculture_Mid' → 'Agriculture - Mid Level'"""
+    level_map = {
+        'Entry': 'Entry Level',
+        'Mid': 'Mid Level',
+        'Senior': 'Senior Level',
+    }
+    if '_' in label:
+        parts = label.rsplit('_', 1)
+        domain_part = parts[0].replace('_', ' ')
+        level_part = level_map.get(parts[1], parts[1])
+        return f"{domain_part} - {level_part}"
+    return label
+
 # ✅ Predict job recommendation
 @app.route("/predict", methods=["POST"])
 @login_required
@@ -1665,11 +1681,17 @@ def predict():
                 top_indices = np.argsort(proba)[::-1][:5]
                 top_labels = label_encoder.inverse_transform(top_indices)
                 top_probs = proba[top_indices]
-                results['job_predictions'] = [{'label': lbl, 'confidence': float(prob)} for lbl, prob in zip(top_labels, top_probs)]
+                # Normalize top-5 probabilities so they sum to ~100%
+                top_sum = top_probs.sum()
+                if top_sum > 0:
+                    normalized_probs = top_probs / top_sum
+                else:
+                    normalized_probs = top_probs
+                results['job_predictions'] = [{'label': _clean_job_label(lbl), 'confidence': float(prob)} for lbl, prob in zip(top_labels, normalized_probs)]
             else:
                 pred = job_model.predict(X_final)[0]
                 pred_label = label_encoder.inverse_transform([pred])[0]
-                results['job_predictions'] = [{'label': pred_label, 'confidence': 0.85}]
+                results['job_predictions'] = [{'label': _clean_job_label(pred_label), 'confidence': 0.85}]
         else:
             results['job_predictions'] = [{'label': f'{domain}_Entry', 'confidence': 0.60}]
     except Exception as e:
@@ -1902,57 +1924,44 @@ def predict():
         results['career_path'] = user_base['seniority_level']
 
     # --- 6. SKILL-JOB MATCHING MODEL ---
+    # The trained model only has Low/Medium classes due to biased training data.
+    # Use a rule-based score that considers actual user input for a meaningful result.
     try:
-        if skill_match_model and skill_match_preprocessor_data:
-            prep = skill_match_preprocessor_data
-            preprocessor = prep['preprocessor']
-            label_encoder = prep['label_encoder']
+        score = 0
 
-            df_sm = pd.DataFrame([user_base])
-            for col in ['remote_available', 'flexible_timing', 'childcare_compatible', 'women_friendly', 'maternity_benefits', 'training_provided', 'health_insurance', 'pf_available', 'is_verified']:
-                df_sm[col] = df_sm[col].astype(int)
+        # Experience contributes up to 25 points
+        score += min(experience_years * 5, 25)
 
-            # Engineer features
-            df_sm['exp_level'] = pd.cut(df_sm['experience_years'], bins=[-1, 2, 5, 10, 20, 100], labels=['Entry', 'Junior', 'Mid', 'Senior', 'Expert']).astype(str)
-            df_sm['age_group'] = pd.cut(df_sm['age'], bins=[17, 25, 35, 45, 55, 100], labels=['18-25', '26-35', '36-45', '46-55', '55+']).astype(str)
-            df_sm['income_level'] = 'Medium'
-            df_sm['skills_count'] = df_sm['all_skills'].apply(lambda x: len(str(x).split(',')) if pd.notna(x) else 0)
-            df_sm['flexibility_score'] = df_sm[['remote_available', 'flexible_timing', 'childcare_compatible']].sum(axis=1)
-            df_sm['benefits_score'] = df_sm[['maternity_benefits', 'health_insurance', 'pf_available', 'training_provided']].sum(axis=1)
-            df_sm['exp_age_ratio'] = df_sm['experience_years'] / (df_sm['age'] - 17).clip(lower=1)
-            df_sm['hours_util'] = df_sm['hours_available'] / 12
+        # Skills count contributes up to 25 points
+        skills_count = len([s.strip() for s in all_skills.split(',') if s.strip()])
+        score += min(skills_count * 12, 25)
 
-            feature_names = prep.get('feature_names') or prep.get('numeric_cols', []) + prep.get('categorical_cols', []) + prep.get('binary_cols', [])
-            if not feature_names:
-                feature_names = list(df_sm.columns)
+        # Education contributes up to 20 points
+        edu_scores = {
+            'Below 8th/Informal Education': 3, '8th Pass': 5,
+            '10th Pass (SSC)': 8, '12th Pass (HSC)': 10,
+            'Diploma/ITI': 13, 'Graduate (BTech/BA/BCom/BSc)': 17,
+            'Post Graduate (MBA/MTech/MA/MSc)': 20, 'PhD/Doctorate': 20,
+        }
+        score += edu_scores.get(education, 10)
 
-            for col in feature_names:
-                if col not in df_sm.columns:
-                    df_sm[col] = 0
+        # Hours available contributes up to 15 points
+        score += min(hours * 2, 15)
 
-            X_structured = preprocessor.transform(df_sm[feature_names])
-            if hasattr(X_structured, 'toarray'):
-                X_structured = X_structured.toarray()
+        # Having a secondary skill adds up to 15 points
+        if secondary_skill:
+            score += 15
 
-            tfidf_skills = prep.get('tfidf_skills')
-            tfidf_jobs = prep.get('tfidf_jobs')
-            svd_obj = prep.get('svd')
-            parts = [X_structured]
-            if tfidf_skills and tfidf_jobs and svd_obj:
-                from scipy.sparse import hstack as sparse_hstack
-                combined_skills_text = f"{all_skills} {primary_skill} {secondary_skill}"
-                skills_tfidf = tfidf_skills.transform([combined_skills_text])
-                jobs_tfidf = tfidf_jobs.transform([user_base['job_title']])
-                text_combined = sparse_hstack([skills_tfidf, jobs_tfidf])
-                text_reduced = svd_obj.transform(text_combined)
-                parts.append(text_reduced)
+        score = min(score, 100)
 
-            X_final = np.hstack(parts)
-            pred = skill_match_model.predict(X_final)[0]
-            pred_label = label_encoder.inverse_transform([pred])[0]
-            results['skill_match'] = pred_label.replace('_', ' ')
-        else:
+        if score >= 75:
+            results['skill_match'] = 'Excellent'
+        elif score >= 55:
+            results['skill_match'] = 'High'
+        elif score >= 35:
             results['skill_match'] = 'Medium'
+        else:
+            results['skill_match'] = 'Low'
     except Exception as e:
         print(f"Skill match error: {e}")
         results['skill_match'] = 'Medium'
@@ -2021,40 +2030,59 @@ def predict():
             preprocessor = prep['preprocessor']
 
             df_pc = pd.DataFrame([user_base])
-            for col in ['remote_available', 'flexible_timing', 'childcare_compatible', 'women_friendly', 'maternity_benefits', 'training_provided', 'health_insurance', 'pf_available', 'is_verified']:
-                df_pc[col] = df_pc[col].astype(int)
+            for col in ['remote_available', 'flexible_timing', 'childcare_compatible', 'women_friendly', 'maternity_benefits', 'training_provided', 'health_insurance', 'pf_available']:
+                if col in df_pc.columns:
+                    df_pc[col] = df_pc[col].fillna(0).astype(int)
 
             # Profile completeness scoring (rule-based part)
             profile_fields = {
-                'age': (10, age > 0), 'education': (15, bool(education)),
-                'experience_years': (12, experience_years >= 0), 'primary_skill': (15, bool(primary_skill)),
-                'all_skills': (10, bool(all_skills)), 'domain': (10, bool(domain)),
+                'age': (8, age > 0), 'education': (12, bool(education)),
+                'experience_years': (10, experience_years > 0), 'primary_skill': (12, bool(primary_skill)),
+                'all_skills': (8, bool(all_skills)), 'domain': (10, bool(domain)),
                 'city': (5, bool(location)), 'marital_status': (3, bool(marital_status)),
                 'hours_available': (5, hours > 0), 'work_mode': (5, bool(work_mode)),
-                'secondary_skill': (3, bool(secondary_skill)), 'language': (2, bool(language)),
-                'device': (2, bool(device)), 'kids': (3, True),
+                'secondary_skill': (5, bool(secondary_skill)), 'language': (3, bool(language)),
+                'device': (2, bool(device)), 'kids': (2, True),
+                'sector': (5, bool(sector)), 'shift_type': (5, bool(shift_type)),
             }
             completeness_score = sum(weight for weight, present in profile_fields.values() if present)
-            fields_filled = sum(1 for _, present in profile_fields.values() if present)
-            critical_fields = [bool(primary_skill), bool(education), experience_years >= 0, bool(domain)]
-            critical_missing = sum(1 for v in critical_fields if not v)
+            total_possible = sum(weight for weight, _ in profile_fields.values())
+            completeness_score = int(round(completeness_score / total_possible * 100))
 
-            df_pc['completeness_score'] = completeness_score
-            df_pc['fields_filled'] = fields_filled
-            df_pc['critical_missing'] = critical_missing
-            df_pc['skills_count'] = df_pc['all_skills'].apply(lambda x: len(str(x).split(',')) if pd.notna(x) else 0)
-            df_pc['has_primary_skill'] = int(bool(primary_skill))
+            # Engineer features to match the trained model
+            edu_order = {
+                'Below 8th/Informal Education': 0, '8th Pass': 1,
+                '10th Pass (SSC)': 2, '12th Pass (HSC)': 3,
+                'Diploma/ITI': 4, 'Graduate (BTech/BA/BCom/BSc)': 5,
+                'Post Graduate (MBA/MTech/MA/MSc)': 6, 'PhD/Doctorate': 7
+            }
+            sen_order = {'Entry': 0, 'Junior': 1, 'Mid': 2, 'Senior': 3, 'Lead': 4, 'Manager': 5}
+            tier_map = {'Metro': 0, 'Tier-1': 1, 'Tier-2': 2, 'Tier-3': 3, 'Remote': 4, 'Rural': 5}
+
+            df_pc['education_level'] = edu_order.get(education, 3)
+            df_pc['seniority_num'] = sen_order.get(df_pc.get('seniority_level', {None: 1}).get(None, 1) if isinstance(df_pc.get('seniority_level'), dict) else 1, 1)
+            if 'seniority_level' in df_pc.columns:
+                df_pc['seniority_num'] = df_pc['seniority_level'].map(sen_order).fillna(1)
+            else:
+                df_pc['seniority_num'] = 1
+            df_pc['skills_count'] = len(str(all_skills).split(',')) if all_skills else 0
             df_pc['has_secondary_skill'] = int(bool(secondary_skill))
-            df_pc['has_education'] = int(bool(education))
-            df_pc['has_experience'] = int(experience_years > 0)
-            df_pc['has_domain'] = int(bool(domain))
-            df_pc['profile_quality'] = df_pc['has_primary_skill'] * 25 + df_pc['has_education'] * 20 + df_pc['has_experience'] * 20 + df_pc['has_domain'] * 15 + df_pc['has_secondary_skill'] * 10 + min(df_pc['skills_count'].iloc[0] * 2, 10)
-            df_pc['profile_complete'] = int(all(critical_fields))
-            df_pc['age_valid'] = int(18 <= age <= 70)
+            df_pc['exp_edu_interaction'] = experience_years * edu_order.get(education, 3)
+            df_pc['income_per_exp'] = (df_pc.get('income', 0) if 'income' in df_pc.columns else 0) / (experience_years + 1) if isinstance(experience_years, (int, float)) else 0
+            if 'income' in df_pc.columns:
+                df_pc['income_per_exp'] = df_pc['income'].fillna(0) / (experience_years + 1)
+            else:
+                df_pc['income_per_exp'] = 0
+            benefit_cols = ['health_insurance', 'pf_available', 'maternity_benefits',
+                           'training_provided', 'flexible_timing', 'childcare_compatible',
+                           'women_friendly', 'remote_available']
+            df_pc['benefits_count'] = sum(int(df_pc[c].iloc[0]) if c in df_pc.columns else 0 for c in benefit_cols)
+            df_pc['hours_bucket'] = 0 if hours <= 3 else (1 if hours <= 5 else (2 if hours <= 7 else 3))
+            df_pc['age_group'] = 0 if age <= 25 else (1 if age <= 35 else (2 if age <= 45 else 3))
+            ct = df_pc['city_tier'].iloc[0] if 'city_tier' in df_pc.columns else 'Tier-2'
+            df_pc['city_tier_num'] = tier_map.get(str(ct), 2)
 
-            feature_names = prep.get('feature_names') or prep.get('numeric_cols', []) + prep.get('categorical_cols', []) + prep.get('binary_cols', [])
-            if not feature_names:
-                feature_names = list(df_pc.columns)
+            feature_names = prep.get('numeric_cols', []) + prep.get('categorical_cols', []) + prep.get('binary_cols', [])
 
             for col in feature_names:
                 if col not in df_pc.columns:
@@ -2068,12 +2096,19 @@ def predict():
             svd_obj = prep.get('svd')
             parts = [X_structured]
             if tfidf_skills and svd_obj:
-                combined_text = f"{all_skills} {primary_skill} {secondary_skill}"
+                combined_text = f"{all_skills or ''} {primary_skill or ''} {secondary_skill or ''}"
                 text_reduced = svd_obj.transform(tfidf_skills.transform([combined_text]))
                 parts.append(text_reduced)
 
             X_final = np.hstack(parts)
-            # We just use rule-based score here; ML model is for is_verified
+            quality_pred = profile_model.predict(X_final)[0]
+
+            # Combine rule-based completeness with ML quality prediction
+            if quality_pred == 1 and completeness_score >= 80:
+                completeness_score = max(completeness_score, 90)
+            elif quality_pred == 0 and completeness_score > 85:
+                completeness_score = min(completeness_score, 85)
+
             results['profile_completeness'] = completeness_score
             results['profile_grade'] = 'A+' if completeness_score >= 95 else ('A' if completeness_score >= 85 else ('B' if completeness_score >= 70 else ('C' if completeness_score >= 50 else 'D')))
         else:
@@ -2093,13 +2128,30 @@ def predict():
         df, _, _, _ = load_dataset()
 
         if df is not None and not df.empty:
-            filtered_df = df[
-                (df['domain'].str.contains(domain, case=False, na=False))
-            ]
-            if len(filtered_df) < 3:
-                filtered_df = df[df['sector'].str.contains(sector, case=False, na=False)]
+            # Try matching by domain first
+            filtered_df = df[df['domain'].str.contains(domain, case=False, na=False)]
 
-            top_jobs = filtered_df.head(5).to_dict('records')
+            # If not enough, also include sector matches
+            if len(filtered_df) < 10:
+                sector_df = df[df['sector'].str.contains(sector, case=False, na=False)]
+                filtered_df = pd.concat([filtered_df, sector_df]).drop_duplicates()
+
+            # If still not enough, include skill matches
+            if len(filtered_df) < 10:
+                skill_df = df[df['primary_skill'].str.contains(primary_skill, case=False, na=False)]
+                filtered_df = pd.concat([filtered_df, skill_df]).drop_duplicates()
+
+            # Sort by relevance: prefer matching work_mode and work_type
+            if not filtered_df.empty:
+                filtered_df = filtered_df.copy()
+                filtered_df['_relevance'] = 0
+                if 'work_mode' in filtered_df.columns:
+                    filtered_df.loc[filtered_df['work_mode'].str.contains(work_mode, case=False, na=False), '_relevance'] += 2
+                if 'work_type' in filtered_df.columns:
+                    filtered_df.loc[filtered_df['work_type'].str.contains(work_type, case=False, na=False), '_relevance'] += 1
+                filtered_df = filtered_df.sort_values('_relevance', ascending=False)
+
+            top_jobs = filtered_df.head(10).to_dict('records')
 
             for idx, job in enumerate(top_jobs, 1):
                 job_title_text = job.get('job_title', f'{domain} Opportunity')

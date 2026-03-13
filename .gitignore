@@ -1,10 +1,56 @@
+# Environment variables
 .env
+
+# Python cache files
 __pycache__/
 *.pyc
+*.pyo
 *.pkl
+
+# Logs
 *.log
+
+# macOS system files
 .DS_Store
+
+# Virtual environments
 .venv/
-dataset.csv
+
+# Database files
 maasarthi.db
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Compiled code
+*.so
+*.out
+*.o
+
+# Static files
+static/css/
+static/js/
+static/Images/
+
+# Dataset files
+*.csv
+*.json
+
+# Backup files
+*.bak
+*.swp
+*.tmp
+
+# Model files
+trained_models/
+*.h5
+*.pkl
+*.joblib
+
+# Reports
+*.md
+
+# IDE specific files
+.vscode/
+.idea/
 

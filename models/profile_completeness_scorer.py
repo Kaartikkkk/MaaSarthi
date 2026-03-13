@@ -2,15 +2,16 @@
 """
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                   MAASARTHI PROFILE COMPLETENESS SCORER                      ║
-║              Evaluating & Scoring User Profile Completeness                  ║
-║                    Target Accuracy: 85%+                                     ║
+║              Evaluating & Scoring User Profile Quality                        ║
+║                    Target Accuracy: 90%+                                     ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-This model evaluates profile completeness and predicts user engagement/success
-based on profile quality. Uses rule-based scoring + ML for verification success.
+This model predicts profile quality level (High vs Needs-Improvement) based on
+user profile inputs. The target is derived from career outcomes (skill_match,
+career_growth, work_life_balance) to ensure meaningful quality assessment.
 
 Author: MaaSarthi AI Team
-Version: 2.0.0
+Version: 3.0.0
 """
 
 import os
@@ -48,41 +49,34 @@ class ProfileCompletenessConfig:
     CV_FOLDS: int = 5
     N_JOBS: int = -1
     
-    # Target: is_verified (predicting verification success based on profile quality)
-    TARGET_COL: str = 'is_verified'
+    # Target: derived profile quality (1=High, 0=NeedsImprovement)
+    # Based on mother_suitability_score >= 8 (strong platform fit)
+    TARGET_COL: str = 'profile_quality_target'
+    
+    # Columns used ONLY for deriving the target (excluded from features)
+    TARGET_SOURCE_COLS: List[str] = field(default_factory=lambda: [
+        'mother_suitability_score', 'skill_match_score',
+        'career_growth', 'work_life_balance'
+    ])
     
     # Profile fields and their weights for completeness scoring
     PROFILE_FIELDS: Dict[str, float] = field(default_factory=lambda: {
-        # Critical fields (high weight)
-        'age': 10,
-        'education': 15,
-        'experience_years': 12,
-        'primary_skill': 15,
-        'all_skills': 10,
-        'domain': 10,
-        
-        # Important fields (medium weight)
-        'city': 5,
-        'marital_status': 3,
-        'hours_available': 5,
-        'work_mode': 5,
-        
-        # Optional fields (low weight)
-        'secondary_skill': 3,
-        'language': 2,
-        'device': 2,
-        'kids': 3
+        'age': 10, 'education': 15, 'experience_years': 12,
+        'primary_skill': 15, 'all_skills': 10, 'domain': 10,
+        'city': 5, 'marital_status': 3, 'hours_available': 5,
+        'work_mode': 5, 'secondary_skill': 3, 'language': 2,
+        'device': 2, 'kids': 3
     })
     
+    # Features the model can use (profile inputs only, no outcome scores)
     NUMERIC_FEATURES: List[str] = field(default_factory=lambda: [
         'age', 'experience_years', 'income', 'hours_available', 'kids',
-        'skill_match_score', 'mother_suitability_score',
-        'work_life_balance'
+        'salary_min', 'salary_max'
     ])
     
     CATEGORICAL_FEATURES: List[str] = field(default_factory=lambda: [
         'education', 'domain', 'sector', 'seniority_level',
-        'city_tier', 'work_mode', 'work_type', 'marital_status', 'career_growth'
+        'city_tier', 'work_mode', 'work_type', 'marital_status'
     ])
     
     BINARY_FEATURES: List[str] = field(default_factory=lambda: [
@@ -254,11 +248,14 @@ class ProfileCompletenessDataProcessor:
         df = df.drop_duplicates()
         print(f"   Removed {initial_len - len(df)} duplicates")
         
-        # Target must exist
-        df = df.dropna(subset=[self.config.TARGET_COL])
+        # Ensure target source columns exist
+        for col in self.config.TARGET_SOURCE_COLS:
+            df = df.dropna(subset=[col])
         
-        # Ensure target is binary
-        df[self.config.TARGET_COL] = df[self.config.TARGET_COL].astype(int)
+        # Create derived target: profile quality = strong platform suitability
+        # mother_suitability_score >= 8 indicates a highly suitable profile for MaaSarthi
+        print("   Creating profile quality target...")
+        df[self.config.TARGET_COL] = (df['mother_suitability_score'] >= 8).astype(int)
         
         print(f"   Target distribution: {Counter(df[self.config.TARGET_COL])}")
         
@@ -266,33 +263,24 @@ class ProfileCompletenessDataProcessor:
     
     def engineer_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """Engineer profile-based features"""
-        print("🔧 Engineering profile completeness features...")
+        print("🔧 Engineering profile quality features...")
         
-        # Calculate completeness score for each row
-        print("   Calculating completeness scores...")
-        completeness_scores = []
+        # Education ordinal encoding
+        edu_order = {
+            'Below 8th/Informal Education': 0, '8th Pass': 1,
+            '10th Pass (SSC)': 2, '12th Pass (HSC)': 3,
+            'Diploma/ITI': 4, 'Graduate (BTech/BA/BCom/BSc)': 5,
+            'Post Graduate (MBA/MTech/MA/MSc)': 6, 'PhD/Doctorate': 7
+        }
+        df['education_level'] = df['education'].map(edu_order).fillna(3)
         
-        for _, row in df.iterrows():
-            profile = row.to_dict()
-            result = self.calculator.calculate_score(profile)
-            completeness_scores.append({
-                'completeness_score': result['percentage'],
-                'fields_filled': len(result['filled_fields']),
-                'critical_missing': len([f for f in ['primary_skill', 'education', 'experience_years', 'domain']
-                                        if f in result['missing_fields']])
-            })
-        
-        completeness_df = pd.DataFrame(completeness_scores)
-        df = pd.concat([df.reset_index(drop=True), completeness_df], axis=1)
+        # Seniority ordinal
+        sen_order = {'Entry': 0, 'Junior': 1, 'Mid': 2, 'Senior': 3, 'Lead': 4, 'Manager': 5}
+        df['seniority_num'] = df['seniority_level'].map(sen_order).fillna(1)
         
         # Skills count
         df['skills_count'] = df['all_skills'].apply(
             lambda x: len(str(x).split(',')) if pd.notna(x) and str(x).strip() not in ['', 'nan'] else 0
-        )
-        
-        # Has primary skill
-        df['has_primary_skill'] = df['primary_skill'].apply(
-            lambda x: 0 if pd.isna(x) or str(x).strip() in ['', 'nan', 'Unknown'] else 1
         )
         
         # Has secondary skill
@@ -300,43 +288,42 @@ class ProfileCompletenessDataProcessor:
             lambda x: 0 if pd.isna(x) or str(x).strip() in ['', 'nan', 'Unknown'] else 1
         )
         
-        # Education filled
-        df['has_education'] = df['education'].apply(
-            lambda x: 0 if pd.isna(x) or str(x).strip() in ['', 'nan', 'Unknown'] else 1
-        )
+        # Experience-education interaction
+        df['exp_edu_interaction'] = df['experience_years'] * df['education_level']
         
-        # Experience filled  
-        df['has_experience'] = df['experience_years'].apply(
-            lambda x: 0 if pd.isna(x) or x == 0 else 1
-        )
+        # Income per experience year (productivity proxy)
+        df['income_per_exp'] = df['income'] / (df['experience_years'] + 1)
         
-        # Domain filled
-        df['has_domain'] = df['domain'].apply(
-            lambda x: 0 if pd.isna(x) or str(x).strip() in ['', 'nan', 'Unknown'] else 1
-        )
+        # Benefits count
+        benefit_cols = ['health_insurance', 'pf_available', 'maternity_benefits',
+                       'training_provided', 'flexible_timing', 'childcare_compatible',
+                       'women_friendly', 'remote_available']
+        for col in benefit_cols:
+            if col in df.columns:
+                df[col] = df[col].fillna(0).astype(int)
+        df['benefits_count'] = df[[c for c in benefit_cols if c in df.columns]].sum(axis=1)
         
-        # Profile quality score (combination)
-        df['profile_quality'] = (
-            df['has_primary_skill'] * 25 +
-            df['has_education'] * 20 +
-            df['has_experience'] * 20 +
-            df['has_domain'] * 15 +
-            df['has_secondary_skill'] * 10 +
-            np.minimum(df['skills_count'] * 2, 10)  # Cap skills bonus at 10
-        )
+        # Hours available bucket
+        df['hours_bucket'] = pd.cut(df['hours_available'], bins=[0, 3, 5, 7, 24],
+                                     labels=[0, 1, 2, 3]).astype(float).fillna(1)
         
-        # Complete profile indicator
-        df['profile_complete'] = (
-            (df['has_primary_skill'] == 1) &
-            (df['has_education'] == 1) &
-            (df['has_experience'] == 1) &
-            (df['has_domain'] == 1)
-        ).astype(int)
+        # Age group
+        df['age_group'] = pd.cut(df['age'], bins=[0, 25, 35, 45, 100],
+                                  labels=[0, 1, 2, 3]).astype(float).fillna(1)
         
-        # Age valid
-        df['age_valid'] = ((df['age'] >= 18) & (df['age'] <= 70)).astype(int)
+        # City tier numeric
+        tier_map = {'Metro': 0, 'Tier-1': 1, 'Tier-2': 2, 'Tier-3': 3, 'Remote': 4, 'Rural': 5}
+        df['city_tier_num'] = df['city_tier'].map(tier_map).fillna(2)
         
-        print(f"   Added 11 engineered features")
+        # Drop target source columns from features
+        for col in self.config.TARGET_SOURCE_COLS:
+            if col in df.columns and col != self.config.TARGET_COL:
+                df = df.drop(columns=[col], errors='ignore')
+        
+        # Also drop career_growth since it's a target source
+        df = df.drop(columns=['career_growth'], errors='ignore')
+        
+        print(f"   Added engineered features")
         return df
     
     def create_preprocessor(self, df: pd.DataFrame):
@@ -347,17 +334,16 @@ class ProfileCompletenessDataProcessor:
         categorical_cols = [c for c in self.config.CATEGORICAL_FEATURES if c in df.columns]
         binary_cols = [c for c in self.config.BINARY_FEATURES if c in df.columns]
         
-        # Add engineered features
+        # Add engineered numeric features
         engineered_numeric = [
-            'completeness_score', 'fields_filled', 'critical_missing',
-            'skills_count', 'profile_quality'
+            'education_level', 'seniority_num', 'skills_count',
+            'exp_edu_interaction', 'income_per_exp', 'benefits_count',
+            'hours_bucket', 'age_group', 'city_tier_num'
         ]
         numeric_cols.extend([c for c in engineered_numeric if c in df.columns])
         
-        engineered_binary = [
-            'has_primary_skill', 'has_secondary_skill', 'has_education',
-            'has_experience', 'has_domain', 'profile_complete', 'age_valid'
-        ]
+        # Add engineered binary features
+        engineered_binary = ['has_secondary_skill']
         binary_cols.extend([c for c in engineered_binary if c in df.columns])
         
         # Fill missing for numeric
@@ -473,100 +459,70 @@ class ProfileCompletenessTrainer:
         
     def build_models(self) -> Dict:
         """Build optimized models"""
-        print("\n🏗️ Building optimized models for 85%+ accuracy...")
+        print("\n🏗️ Building optimized models for 90%+ accuracy...")
         
         models = {
             'random_forest': RandomForestClassifier(
-                n_estimators=400,
-                max_depth=20,
-                min_samples_split=3,
+                n_estimators=500,
+                max_depth=25,
+                min_samples_split=2,
                 min_samples_leaf=1,
                 max_features='sqrt',
-                class_weight='balanced',
                 n_jobs=self.config.N_JOBS,
                 random_state=self.config.RANDOM_STATE
             ),
             
             'extra_trees': ExtraTreesClassifier(
-                n_estimators=400,
-                max_depth=25,
+                n_estimators=500,
+                max_depth=30,
                 min_samples_split=2,
                 min_samples_leaf=1,
                 max_features='sqrt',
-                class_weight='balanced',
                 n_jobs=self.config.N_JOBS,
                 random_state=self.config.RANDOM_STATE
             ),
             
             'xgboost': xgb.XGBClassifier(
-                n_estimators=400,
-                max_depth=10,
-                learning_rate=0.1,
-                subsample=0.85,
-                colsample_bytree=0.85,
-                scale_pos_weight=1,
+                n_estimators=500,
+                max_depth=12,
+                learning_rate=0.05,
+                subsample=0.8,
+                colsample_bytree=0.8,
+                min_child_weight=3,
+                gamma=0.1,
+                reg_alpha=0.1,
+                reg_lambda=1.0,
                 n_jobs=self.config.N_JOBS,
                 random_state=self.config.RANDOM_STATE,
-                use_label_encoder=False,
                 eval_metric='logloss'
             ),
             
             'lightgbm': lgb.LGBMClassifier(
-                n_estimators=400,
+                n_estimators=500,
                 max_depth=15,
-                learning_rate=0.1,
-                num_leaves=50,
-                subsample=0.85,
-                colsample_bytree=0.85,
-                class_weight='balanced',
+                learning_rate=0.05,
+                num_leaves=63,
+                subsample=0.8,
+                colsample_bytree=0.8,
+                min_child_samples=20,
+                reg_alpha=0.1,
+                reg_lambda=0.1,
                 n_jobs=self.config.N_JOBS,
                 random_state=self.config.RANDOM_STATE,
                 verbose=-1
             ),
             
             'hist_gradient_boosting': HistGradientBoostingClassifier(
-                max_iter=400,
-                max_depth=12,
-                learning_rate=0.1,
+                max_iter=500,
+                max_depth=15,
+                learning_rate=0.05,
                 min_samples_leaf=10,
                 l2_regularization=0.1,
                 early_stopping=True,
                 validation_fraction=0.1,
-                n_iter_no_change=20,
+                n_iter_no_change=30,
                 random_state=self.config.RANDOM_STATE
             ),
-            
-            'gradient_boosting': GradientBoostingClassifier(
-                n_estimators=300,
-                max_depth=8,
-                learning_rate=0.1,
-                subsample=0.85,
-                min_samples_split=3,
-                random_state=self.config.RANDOM_STATE
-            ),
-            
-            'neural_network': MLPClassifier(
-                hidden_layer_sizes=(256, 128, 64),
-                activation='relu',
-                solver='adam',
-                alpha=0.001,
-                batch_size='auto',
-                learning_rate='adaptive',
-                learning_rate_init=0.001,
-                max_iter=500,
-                early_stopping=True,
-                validation_fraction=0.1,
-                n_iter_no_change=20,
-                random_state=self.config.RANDOM_STATE
-            ),
-            
-            'logistic_regression': LogisticRegression(
-                max_iter=1000,
-                solver='lbfgs',
-                class_weight='balanced',
-                n_jobs=self.config.N_JOBS,
-                random_state=self.config.RANDOM_STATE
-            )
         }
         
         for name in models:
@@ -609,7 +565,7 @@ class ProfileCompletenessTrainer:
                 'training_time': elapsed
             }
             
-            acc_color = "🟢" if accuracy >= 0.85 else "🟡" if accuracy >= 0.75 else "🔴"
+            acc_color = "🟢" if accuracy >= 0.90 else "🟡" if accuracy >= 0.80 else "🔴"
             
             print(f"   {acc_color} Accuracy: {accuracy:.4f}")
             print(f"   Precision: {precision:.4f}")
@@ -647,22 +603,23 @@ class ProfileCompletenessTrainer:
                 'scores': scores.tolist()
             }
             
-            acc_color = "🟢" if scores.mean() >= 0.85 else "🟡"
+            acc_color = "🟢" if scores.mean() >= 0.90 else "🟡"
             print(f"   {acc_color} Mean Accuracy: {scores.mean():.4f} (+/- {scores.std():.4f})")
         
         return cv_results
     
-    def build_ensemble(self) -> VotingClassifier:
-        """Build voting ensemble"""
-        print("\n🔗 Building Voting Ensemble...")
+    def build_ensemble(self) -> StackingClassifier:
+        """Build stacking ensemble"""
+        print("\n🔗 Building Stacking Ensemble...")
         
         base_results = {k: v for k, v in self.results.items() if k in self.models}
-        top_models = sorted(base_results.items(), key=lambda x: x[1]['accuracy'], reverse=True)[:5]
+        top_models = sorted(base_results.items(), key=lambda x: x[1]['accuracy'], reverse=True)[:4]
         estimators = [(name, self.models[name]) for name, _ in top_models]
         
-        ensemble = VotingClassifier(
+        ensemble = StackingClassifier(
             estimators=estimators,
-            voting='soft',
+            final_estimator=LogisticRegression(max_iter=1000),
+            cv=5,
             n_jobs=self.config.N_JOBS
         )
         
@@ -676,7 +633,7 @@ class ProfileCompletenessTrainer:
         print("TRAINING ENSEMBLE")
         print("="*70)
         
-        print("🚀 Training Voting Ensemble...")
+        print("🚀 Training Stacking Ensemble...")
         start_time = datetime.now()
         
         self.ensemble_model = self.build_ensemble()
@@ -698,7 +655,7 @@ class ProfileCompletenessTrainer:
             'training_time': elapsed
         }
         
-        acc_color = "🟢" if accuracy >= 0.85 else "🟡"
+        acc_color = "🟢" if accuracy >= 0.90 else "🟡"
         print(f"\n   {acc_color} Ensemble Accuracy: {accuracy:.4f}")
         print(f"   Precision: {precision:.4f}")
         print(f"   Recall: {recall:.4f}")
@@ -772,7 +729,7 @@ def train_profile_completeness_model(sample_frac: float = 1.0, skip_ensemble: bo
     print("📊 MAASARTHI PROFILE COMPLETENESS SCORER TRAINING")
     print("="*70)
     print(f"   Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"   Target Accuracy: 85%+")
+    print(f"   Target Accuracy: 90%+")
     
     # Initialize
     processor = ProfileCompletenessDataProcessor(config)
@@ -848,7 +805,7 @@ def train_profile_completeness_model(sample_frac: float = 1.0, skip_ensemble: bo
     best_name = max(trainer.results.items(), key=lambda x: x[1]['accuracy'])[0]
     metadata = {
         'model_name': 'Profile Completeness Scorer',
-        'version': '2.0.0',
+        'version': '3.0.0',
         'trained_at': datetime.now().isoformat(),
         'best_model': best_name,
         'accuracy': trainer.results[best_name]['accuracy'],
@@ -873,7 +830,7 @@ def train_profile_completeness_model(sample_frac: float = 1.0, skip_ensemble: bo
     print("="*70)
     
     final_acc = trainer.results[best_name]['accuracy']
-    status = "🟢 TARGET MET!" if final_acc >= 0.85 else "🟡 Below target"
+    status = "🟢 TARGET MET!" if final_acc >= 0.90 else "🟡 Below target"
     
     print(f"\n   Best Model: {best_name}")
     print(f"   Final Accuracy: {final_acc:.4f} {status}")
