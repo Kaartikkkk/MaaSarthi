@@ -1,3 +1,14 @@
+<script>
+// Apply theme before render to prevent flash of unstyled content
+(function() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    }
+})();
+</script>
+
 <!-- Universal Navbar Component -->
 <nav class="navbar">
     <div class="nav-container">
@@ -13,13 +24,34 @@
             <a href="{{ url_for('jobs') }}" class="nav-link {% if request.endpoint in ['jobs', 'result'] %}active{% endif %}">Find Jobs</a>
             <a href="{{ url_for('skills') }}" class="nav-link {% if request.endpoint in ['skills', 'skills_result'] %}active{% endif %}">Train a Skill</a>
             <a href="/#about" class="nav-link">About Us</a>
+            <a href="{{ url_for('org_register_page') }}" class="nav-link {% if request.endpoint == 'org_register_page' %}active{% endif %}">Register Organization</a>
             <a href="{{ url_for('contact') }}" class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}">Contact</a>
-            
+        </div>
+
+        <div class="nav-actions" style="display: flex; align-items: center; gap: 1.2rem; flex-shrink: 0;">
             <!-- Language Switcher -->
             <div class="lang-switch">
                 <a class="lang-btn {% if session.get('lang', 'en') == 'en' %}active{% endif %}" href="/set-language/en">English</a>
                 <a class="lang-btn {% if session.get('lang') == 'hi' %}active{% endif %}" href="/set-language/hi">हिंदी</a>
             </div>
+            
+            <!-- Theme Toggle -->
+            <button id="themeToggle" class="theme-btn" aria-label="Toggle Dark Mode">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
             
             {% if admin %}
             <!-- Admin logged in - Show Admin Name -->
@@ -84,11 +116,12 @@
             </div>
             {% else %}
             <!-- Not logged in - Show Login/Signup -->
-            <div class="auth-buttons">
-                <a href="{{ url_for('login') }}" class="btn-login">Login</a>
-                <a href="{{ url_for('signup') }}" class="btn-signup">Sign Up</a>
+            <div class="auth-buttons" style="display: flex; align-items: center; gap: 10px; margin-left: 0;">
+                <a href="{{ url_for('login') }}" class="btn-login" style="background: var(--primary-pink); color: #fff; border-radius: 22px; padding: 0.4rem 1.2rem; font-weight: 600; text-decoration: none;">Login / Sign In</a>
             </div>
             {% endif %}
+        </div>
+        </div>
         </div>
     </div>
 </nav>
@@ -105,6 +138,38 @@ document.addEventListener('click', function(e) {
     const menu = document.getElementById('dropdownMenu');
     if (dropdown && menu && !dropdown.contains(e.target)) {
         menu.classList.remove('show');
+    }
+});
+
+// Theme Toggle Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('themeToggle');
+    const htmlEl = document.documentElement;
+    const sunIcon = document.querySelector('.sun-icon');
+    const moonIcon = document.querySelector('.moon-icon');
+
+    function updateIcons(isDark) {
+        if (isDark) {
+            sunIcon.style.display = 'none';
+            moonIcon.style.display = 'block';
+        } else {
+            sunIcon.style.display = 'block';
+            moonIcon.style.display = 'none';
+        }
+    }
+
+    // Initialize icons based on current theme
+    const currentTheme = htmlEl.getAttribute('data-theme');
+    updateIcons(currentTheme === 'dark');
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            htmlEl.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcons(!isDark);
+        });
     }
 });
 </script>

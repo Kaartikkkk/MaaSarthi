@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Register Organization | MaaSarthi</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    
+    <style>
+        .register-container {
+            max-width: 900px;
+            margin: 120px auto 40px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .register-title {
+            text-align: center;
+            color: var(--primary-dark, #2c3e50);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        .register-subtitle {
+            text-align: center; 
+            color: #555; 
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .form-group {
+            margin-bottom: 5px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.95rem;
+        }
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            background-color: #fcfcfc;
+        }
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15);
+            background-color: #fff;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--primary-dark, #2c3e50);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            grid-column: 1 / -1;
+            font-weight: 600;
+        }
+        .submit-btn-container {
+            margin-top: 30px;
+            grid-column: 1 / -1;
+        }
+        .required-mark {
+            color: #ff4757;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .register-container {
+                margin: 100px 20px 40px;
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    {% include '_navbar.html' %}
+
+    <div class="register-container">
+        <h1 class="register-title">Register Your Organization</h1>
+        <p class="register-subtitle">
+            Join MaaSarthi as a hiring partner and empower women across the country.
+        </p>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div style="margin-bottom: 20px;">
+                {% for category, message in messages %}
+                    <div style="padding: 12px 15px; border-radius: 8px; margin-bottom: 10px; font-weight: 500;
+                                {% if category == 'success' %}background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+                                {% elif category == 'error' or category == 'danger' %}background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
+                                {% else %}background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form action="#" method="POST">
+            <div class="form-grid">
+                <!-- Organization Details Section -->
+                <div class="section-title">Organization Details</div>
+                
+                <div class="form-group full-width">
+                    <label>Company/Organization Name <span class="required-mark">*</span></label>
+                    <input type="text" name="company_name" placeholder="Enter full organization name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Organization Type <span class="required-mark">*</span></label>
+                    <select name="org_type" required>
+                        <option value="" disabled selected>Select type</option>
+                        <option value="private">Private Limited Company</option>
+                        <option value="public">Public Limited Company</option>
+                        <option value="ngo">NGO / Non-Profit</option>
+                        <option value="partnership">Partnership Firm</option>
+                        <option value="proprietorship">Sole Proprietorship</option>
+                        <option value="government">Government / PSU</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Industry / Sector <span class="required-mark">*</span></label>
+                    <input type="text" name="industry" placeholder="e.g. IT, Healthcare, Education" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Registration Number / CIN</label>
+                    <input type="text" name="registration_number" placeholder="Enter Registration No. or CIN">
+                </div>
+                
+                <div class="form-group">
+                    <label>Year of Establishment</label>
+                    <input type="number" name="established_year" placeholder="YYYY" min="1800" max="2099">
+                </div>
+
+                <div class="form-group">
+                    <label>Organization Size <span class="required-mark">*</span></label>
+                    <select name="org_size" required>
+                        <option value="" disabled selected>Number of employees</option>
+                        <option value="1-10">1-10 employees</option>
+                        <option value="11-50">11-50 employees</option>
+                        <option value="51-200">51-200 employees</option>
+                        <option value="201-500">201-500 employees</option>
+                        <option value="500+">500+ employees</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Company Website</label>
+                    <input type="url" name="website" placeholder="https://www.example.com">
+                </div>
+                
+                <!-- Contact Person Details Section -->
+                <div class="section-title">Contact Person Details</div>
+                
+                <div class="form-group">
+                    <label>Contact Person Name <span class="required-mark">*</span></label>
+                    <input type="text" name="contact_name" placeholder="Full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Designation <span class="required-mark">*</span></label>
+                    <input type="text" name="designation" placeholder="e.g. HR Manager, Director" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Official Email Address <span class="required-mark">*</span></label>
+                    <input type="email" name="email" placeholder="work@company.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Contact Phone Number <span class="required-mark">*</span></label>
+                    <input type="tel" name="phone_number" placeholder="10-digit mobile number" pattern="[0-9]{10,14}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password <span class="required-mark">*</span></label>
+                    <input type="password" name="password" placeholder="Create a strong password" required minlength="8">
+                </div>
+                
+                <div class="form-group">
+                    <label>Confirm Password <span class="required-mark">*</span></label>
+                    <input type="password" name="confirm_password" placeholder="Confirm your password" required minlength="8">
+                </div>
+
+                <!-- Address Details Section -->
+                <div class="section-title">Address Details</div>
+
+                <div class="form-group full-width">
+                    <label>Office Address <span class="required-mark">*</span></label>
+                    <textarea name="address" rows="3" placeholder="Street address, building, or area" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>City <span class="required-mark">*</span></label>
+                    <input type="text" name="city" placeholder="e.g. New Delhi" required>
+                </div>
+
+                <div class="form-group">
+                    <label>State <span class="required-mark">*</span></label>
+                    <input type="text" name="state" placeholder="e.g. Delhi" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Pincode / Zip Code <span class="required-mark">*</span></label>
+                    <input type="text" name="pincode" placeholder="6-digit pincode" pattern="[0-9]{6}" required>
+                </div>
+                
+                <div class="submit-btn-container">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 16px; border-radius: 8px; font-weight: 600;">Complete Registration</button>
+                    <p style="text-align: center; margin-top: 15px; font-size: 14px; color: #666;">
+                        By registering, you agree to our <a href="#" style="color: #ff6b6b; text-decoration: none;">Terms of Service</a> and <a href="#" style="color: #ff6b6b; text-decoration: none;">Privacy Policy</a>.
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

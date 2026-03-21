@@ -421,6 +421,57 @@ class SkillSearchHistory(db.Model):
         return f'<SkillSearchHistory {self.skill_name}>'
 
 
+class Organization(db.Model):
+    """Registered Organization model"""
+    __tablename__ = 'organizations'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    company_name = db.Column(db.String(200), nullable=False)
+    org_type = db.Column(db.String(100), nullable=False)
+    industry = db.Column(db.String(100), nullable=False)
+    registration_number = db.Column(db.String(100), nullable=True)
+    established_year = db.Column(db.Integer, nullable=True)
+    org_size = db.Column(db.String(50), nullable=False)
+    website = db.Column(db.String(200), nullable=True)
+    contact_name = db.Column(db.String(100), nullable=False)
+    designation = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(254), nullable=False)
+    phone_number = db.Column(db.String(20), nullable=False)
+    address = db.Column(db.Text, nullable=False)
+    city = db.Column(db.String(100), nullable=False)
+    state = db.Column(db.String(100), nullable=False)
+    pincode = db.Column(db.String(20), nullable=False)
+    password_hash = db.Column(db.String(64), nullable=False)
+    salt = db.Column(db.String(64), nullable=False)
+    status = db.Column(db.String(50), default='Pending')
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    
+    # Relationships
+    jobs = db.relationship('OrganizationJob', backref='organization', lazy=True, cascade='all, delete-orphan')
+    
+    def __repr__(self):
+        return f'<Organization {self.company_name}>'
+
+class OrganizationJob(db.Model):
+    """Organization Job Postings"""
+    __tablename__ = 'organization_jobs'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    org_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    job_type = db.Column(db.String(50), nullable=False) # e.g. Job, Internship
+    work_mode = db.Column(db.String(100), nullable=True) # Remote, Hybrid, On-site
+    location = db.Column(db.String(200), nullable=True)
+    salary_range = db.Column(db.String(100), nullable=True)
+    description = db.Column(db.Text, nullable=False)
+    requirements = db.Column(db.Text, nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    
+    def __repr__(self):
+        return f'<OrganizationJob {self.title}>'
+
+
 # Create all database tables
 with app.app_context():
     db.create_all()
@@ -2739,6 +2790,7 @@ def admin_dashboard():
     contact_messages = ContactMessage.query.order_by(ContactMessage.created_at.desc()).all()
     tasks = Task.query.order_by(Task.created_at.desc()).all()
     reminders = Reminder.query.order_by(Reminder.created_at.desc()).all()
+    organizations = Organization.query.order_by(Organization.created_at.desc()).all()
     
     # Create a dict of user_id to profile for easy lookup
     profiles_dict = {p.user_id: p for p in user_profiles}
@@ -2750,7 +2802,8 @@ def admin_dashboard():
         'skill_searches': len(skill_searches),
         'messages': len(contact_messages),
         'tasks': len(tasks),
-        'reminders': len(reminders)
+        'reminders': len(reminders),
+        'organizations': len(organizations)
     }
     
     return render_template('admin.html',
@@ -2761,6 +2814,7 @@ def admin_dashboard():
         contact_messages=contact_messages,
         tasks=tasks,
         reminders=reminders,
+        organizations=organizations,
         stats=stats
     )
 
@@ -3089,6 +3143,149 @@ def get_dashboard_stats():
         }
     })
 
+# ✅ Frontend Page Routes
+@app.route('/organizations/register', methods=['GET', 'POST'])
+def org_register_page():
+    t = dict(t=app.jinja_env.globals.get('t', {})) # ensure translation dict is available
+    
+    if request.method == 'POST':
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        
+        if password != confirm_password:
+            flash('Passwords do not match.', 'error')
+            return redirect(url_for('org_register_page'))
+            
+        is_valid, error_msg = Validator.validate_password(password)
+        if not is_valid:
+            flash(error_msg, 'error')
+            return redirect(url_for('org_register_page'))
+            
+        try:
+            password_hash, salt = SecurityUtils.hash_password(password)
+            new_org = Organization(
+                company_name=request.form.get('company_name'),
+                org_type=request.form.get('org_type'),
+                industry=request.form.get('industry'),
+                registration_number=request.form.get('registration_number'),
+                established_year=int(request.form.get('established_year')) if request.form.get('established_year') else None,
+                org_size=request.form.get('org_size'),
+                website=request.form.get('website'),
+                contact_name=request.form.get('contact_name'),
+                designation=request.form.get('designation'),
+                email=request.form.get('email'),
+                phone_number=request.form.get('phone_number'),
+                address=request.form.get('address'),
+                city=request.form.get('city'),
+                state=request.form.get('state'),
+                pincode=request.form.get('pincode'),
+                password_hash=password_hash,
+                salt=salt
+            )
+            db.session.add(new_org)
+            db.session.commit()
+            flash('Organization registered successfully! You can now log in.', 'success')
+            return redirect(url_for('org_login'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred: {str(e)}', 'error')
+            
+    return render_template('organizations/register.html', **t)
+
+# ✅ Admin Approval Routes
+@app.route('/admin/org/<int:org_id>/approve', methods=['POST'])
+def admin_approve_org(org_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+    org = Organization.query.get_or_404(org_id)
+    org.status = 'Approved'
+    db.session.commit()
+    flash(f'{org.company_name} has been approved.', 'success')
+    return redirect(url_for('admin_dashboard') + '#organizations')
+
+@app.route('/admin/org/<int:org_id>/decline', methods=['POST'])
+def admin_decline_org(org_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+    org = Organization.query.get_or_404(org_id)
+    org.status = 'Declined'
+    db.session.commit()
+    flash(f'{org.company_name} has been declined.', 'error')
+    return redirect(url_for('admin_dashboard') + '#organizations')
+
+# ✅ Organization Portal Routes
+@app.route('/org/login', methods=['GET', 'POST'])
+def org_login():
+    t = dict(t=app.jinja_env.globals.get('t', {}))
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '').strip()
+        
+        org = Organization.query.filter_by(email=email).first()
+        if not org or not SecurityUtils.verify_password(password, org.password_hash, org.salt):
+            flash('Invalid email or password', 'error')
+            return render_template('organizations/login.html', **t)
+            
+        if org.status == 'Pending':
+            flash('Your account is currently under review. You will be able to log in once an admin approves it.', 'info')
+            return render_template('organizations/login.html', **t)
+        elif org.status == 'Declined':
+            flash('Your organization registration has been declined. Please contact support.', 'error')
+            return render_template('organizations/login.html', **t)
+            
+        session.clear()
+        session['org_id'] = org.id
+        session['org_name'] = org.company_name
+        flash('Successfully logged in!', 'success')
+        return redirect(url_for('org_dashboard'))
+        
+    return render_template('organizations/login.html', **t)
+
+@app.route('/org/logout')
+def org_logout():
+    session.pop('org_id', None)
+    session.pop('org_name', None)
+    flash('Logged out successfully.', 'success')
+    return redirect(url_for('org_login'))
+
+@app.route('/org/dashboard')
+def org_dashboard():
+    t = dict(t=app.jinja_env.globals.get('t', {}))
+    org_id = session.get('org_id')
+    if not org_id:
+        return redirect(url_for('org_login'))
+        
+    org = Organization.query.get(org_id)
+    jobs = OrganizationJob.query.filter_by(org_id=org_id).order_by(OrganizationJob.created_at.desc()).all()
+    
+    return render_template('organizations/dashboard.html', org=org, jobs=jobs, **t)
+
+@app.route('/org/jobs/add', methods=['POST'])
+def org_add_job():
+    org_id = session.get('org_id')
+    if not org_id:
+        return redirect(url_for('org_login'))
+        
+    try:
+        new_job = OrganizationJob(
+            org_id=org_id,
+            title=request.form.get('title'),
+            job_type=request.form.get('job_type'),
+            work_mode=request.form.get('work_mode'),
+            location=request.form.get('location'),
+            salary_range=request.form.get('salary_range'),
+            description=request.form.get('description'),
+            requirements=request.form.get('requirements')
+        )
+        db.session.add(new_job)
+        db.session.commit()
+        flash('Job posted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred: {str(e)}', 'error')
+        
+    return redirect(url_for('org_dashboard'))
+
 
 # ✅ Run the app
 if __name__ == "__main__":
@@ -3114,4 +3311,4 @@ if __name__ == "__main__":
     print("   ✓ Model retraining pipeline (/admin/retrain-model)")
     print("   ✓ Model statistics endpoint (/admin/model-stats)")
     print("")
-    app.run(debug=False, port=5001)
+    app.run(debug=True, port=5001)

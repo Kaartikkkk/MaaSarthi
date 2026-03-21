@@ -838,6 +838,7 @@
     <!-- TABS -->
     <div class="tabs-wrap">
         <button class="tab-btn active" onclick="showPanel('users',this)"><span class="tab-dot"></span>Users</button>
+        <button class="tab-btn" onclick="showPanel('organizations',this)"><span class="tab-dot"></span>Organizations</button>
         <button class="tab-btn" onclick="showPanel('job-searches',this)"><span class="tab-dot"></span>Job Searches</button>
         <button class="tab-btn" onclick="showPanel('skill-searches',this)"><span class="tab-dot"></span>Skill Searches</button>
         <button class="tab-btn" onclick="showPanel('contacts',this)"><span class="tab-dot"></span>Messages</button>
@@ -894,6 +895,88 @@
                 </div>
                 <h3>No users yet</h3>
                 <p>Registered users will appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ORGANIZATIONS PANEL -->
+    <div id="organizations" class="panel">
+        <div class="panel-card">
+            <div class="panel-head">
+                <div class="panel-title">
+                    <div class="panel-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="16" rx="2" ry="2"/>
+                            <line x1="8" y1="8" x2="16" y2="8"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                            <line x1="8" y1="16" x2="16" y2="16"/>
+                        </svg>
+                    </div>
+                    Registered Organizations
+                    <span class="panel-count" id="cnt-orgs">{{ organizations|length if organizations else 0 }}</span>
+                </div>
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" placeholder="Search organizations..." onkeyup="filterTable(this,'orgs-table')">
+                </div>
+            </div>
+            {% if organizations %}
+            <div class="table-scroll">
+                <table id="orgs-table">
+                    <thead><tr><th>ID</th><th>Company Name</th><th>Type</th><th>Industry</th><th>Contact Person</th><th>Phone</th><th>Email</th><th>City</th><th>Date Joined</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody>
+                    {% for org in organizations %}
+                    <tr>
+                        <td class="id-cell">#{{ org.id }}</td>
+                        <td class="name-cell">{{ org.company_name }}</td>
+                        <td><span class="badge badge-purple">{{ org.org_type }}</span></td>
+                        <td>{{ org.industry }}</td>
+                        <td>{{ org.contact_name }} ({{ org.designation }})</td>
+                        <td>{{ org.phone_number }}</td>
+                        <td>{{ org.email }}</td>
+                        <td>{{ org.city }}</td>
+                        <td>{{ org.created_at.strftime('%b %d, %Y') if org.created_at else '—' }}</td>
+                        <td>
+                            {% if org.status == 'Approved' %}
+                                <span class="badge badge-success" style="background-color: #d1fae5; color: #065f46;">Approved</span>
+                            {% elif org.status == 'Declined' %}
+                                <span class="badge badge-danger" style="background-color: #fee2e2; color: #991b1b;">Declined</span>
+                            {% else %}
+                                <span class="badge badge-info" style="background-color: #e0f2fe; color: #075985;">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if org.status == 'Pending' %}
+                            <div style="display: flex; gap: 5px;">
+                                <form action="{{ url_for('admin_approve_org', org_id=org.id) }}" method="POST" style="margin: 0;">
+                                    <button type="submit" style="background-color: #10b981; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; border: none; cursor: pointer;">Approve</button>
+                                </form>
+                                <form action="{{ url_for('admin_decline_org', org_id=org.id) }}" method="POST" style="margin: 0;">
+                                    <button type="submit" style="background-color: #ef4444; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; border: none; cursor: pointer;">Decline</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            <span style="color: #999; font-size: 0.85rem;">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="16" rx="2" ry="2"/>
+                        <line x1="8" y1="8" x2="16" y2="8"/>
+                        <line x1="8" y1="12" x2="16" y2="12"/>
+                        <line x1="8" y1="16" x2="16" y2="16"/>
+                    </svg>
+                </div>
+                <h3>No organizations yet</h3>
+                <p>Registered organizations will appear here.</p>
             </div>
             {% endif %}
         </div>

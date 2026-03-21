@@ -51,6 +51,44 @@
     --section-padding: 5rem;
 }
 
+/* ========================================
+   DARK THEME VARIABLES
+   ======================================== */
+[data-theme="dark"] {
+    /* Keep primary pinks vibrant */
+    --primary-pink: #ff4d6d;
+    --primary-pink-dark: #ff2a52;
+    --primary-pink-light: #ff7a93;
+    --secondary-pink: #ff85a1;
+    --accent-pink: #ffb3c1;
+    
+    /* Darken Pale/Soft colors */
+    --soft-pink: #4a1c25;
+    --pale-pink: #2d1417;
+    
+    /* Invert Supporting Backgrounds */
+    --bg-dark: #fff5f7;
+    --bg-card: #1f0b0f;
+    --bg-light: #12070a;
+    --bg-white: #1a0a0e;
+    
+    /* Invert Text Colors */
+    --text-primary: #ffffff;
+    --text-secondary: #ffb3c1;
+    --text-light: #a38991;
+    --text-white: #1a0a0e;
+    
+    /* Adjust Effects */
+    --border-color: #3d1b22;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.7);
+    
+    /* Gradients */
+    --gradient-overlay: linear-gradient(135deg, rgba(255, 77, 109, 0.15) 0%, rgba(255, 181, 193, 0.15) 100%);
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
     line-height: 1.6;

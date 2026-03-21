@@ -6,143 +6,194 @@
 /* ========================================
    HERO SECTION
    ======================================== */
-.hero {
-    margin-top: 80px;
-    padding: 6rem 2rem;
-    background: linear-gradient(135deg, #fff0f3 0%, #ffe5ec 100%);
+.hero-split {
     position: relative;
+    min-height: 100vh;
+    margin-top: 0;
+    background: var(--bg-white);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Push text container strictly to the right */
     overflow: hidden;
-    min-height: 650px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.hero-background {
+.hero-image-side {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0.15;
-    background-image: 
-        radial-gradient(circle at 20% 30%, var(--primary-pink) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, var(--secondary-pink) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, var(--accent-pink) 0%, transparent 60%);
-    animation: heroGlow 20s ease-in-out infinite;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%;
+    z-index: 0;
 }
 
-@keyframes heroGlow {
-    0%, 100% { 
-        transform: scale(1) rotate(0deg);
-        opacity: 0.15;
-    }
-    50% { 
-        transform: scale(1.1) rotate(5deg);
-        opacity: 0.25;
-    }
+.hero-cover-img {
+    width: 75%; /* Image physically spans left 75% */
+    height: 100%;
+    object-fit: cover;
+    object-position: 80% center; /* Slides the image content to the left to reveal the right side */
 }
 
-.hero-content {
-    max-width: 900px;
-    text-align: center;
+/* Beautiful seamless fade mask */
+.hero-image-side::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    /* Fades from fully invisible to solid background to seamlessly blend */
+    background: linear-gradient(to right, transparent 35%, var(--bg-white) 60%);
+    pointer-events: none;
+}
+
+.hero-content-side {
+    flex: 0 0 55%; /* Text area overwrites the image gracefully by taking 55% width */
+    max-width: 55%;
     position: relative;
-    z-index: 2;
-    margin: 0 auto;
-}
-
-.pill {
-    display: inline-flex;
+    z-index: 2; /* Sit cleanly above the faded image */
+    padding: 6rem 5% 4rem;
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    background: rgba(255, 77, 109, 0.1);
-    border: 2px solid rgba(255, 77, 109, 0.3);
-    padding: 0.625rem 1.25rem;
-    border-radius: 50px;
-    color: var(--primary-pink);
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 15px rgba(255, 77, 109, 0.15);
+    justify-content: center;
+    background: transparent; 
 }
 
-.hero-title {
-    font-size: 3.75rem;
-    font-weight: 900;
-    line-height: 1.15;
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    letter-spacing: -0.5px;
+/* ========================================
+   LIVE HERO BACKGROUND EFFECTS
+   ======================================== */
+.hero-live-effects {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0; /* Cover the entire hero section */
+    z-index: 1; /* Above image fade, below text */
+    overflow: hidden;
+    pointer-events: none;
+    
+    /* Dotted grid directly injected here to augment blobs */
+    background-image: 
+        radial-gradient(rgba(255, 77, 109, 0.15) 2px, transparent 2px),
+        radial-gradient(rgba(255, 77, 109, 0.05) 1px, transparent 1px);
+    background-size: 30px 30px, 15px 15px;
+    background-position: 0 0, 15px 15px;
+    
+    /* Perfect synchronization: Invisible on image (0-35%), fades in (35-60%), solid on text (60%-100%) */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 35%, black 60%);
+    mask-image: linear-gradient(to right, transparent 0%, transparent 35%, black 60%);
 }
 
-.highlight {
-    background: linear-gradient(135deg, #ff4d6d 0%, #ff85a1 100%);
+.blob {
+    position: absolute;
+    filter: blur(40px);
+    opacity: 0.6;
+    animation: morphingBg 15s ease-in-out infinite alternate;
+}
+
+.blob-1 {
+    width: 350px;
+    height: 350px;
+    background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
+    top: -50px;
+    right: -100px;
+    border-radius: 40% 60% 50% 50% / 40% 50% 60% 50%;
+    animation-duration: 20s;
+}
+
+.blob-2 {
+    width: 650px;
+    height: 650px;
+    background: linear-gradient(135deg, #7e22ce, var(--primary-pink-light));
+    bottom: -150px;
+    right: 15%; /* Moved to right because left is full screen now */
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    animation-delay: -5s;
+    animation-direction: alternate-reverse;
+}
+
+@keyframes morphingBg {
+    0% {
+        border-radius: 40% 60% 50% 50% / 40% 50% 60% 50%;
+        transform: scale(1) translate(0, 0) rotate(0deg);
+    }
+    33% {
+        border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+        transform: scale(1.1) translate(20px, -30px) rotate(15deg);
+    }
+    66% {
+        border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+        transform: scale(0.9) translate(-20px, 20px) rotate(-10deg);
+    }
+    100% {
+        border-radius: 40% 60% 50% 50% / 40% 50% 60% 50%;
+        transform: scale(1.05) translate(10px, -10px) rotate(5deg);
+    }
+}
+
+.hero-content-inner {
+    max-width: 500px;
+    width: 100%;
+}
+
+.hero-brand {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--primary-pink-dark) 0%, var(--primary-pink) 50%, var(--secondary-pink) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    line-height: 1.1;
+    word-break: break-word;
 }
 
-.hero-description {
+.hero-subline {
     font-size: 1.25rem;
-    color: var(--text-secondary);
+    color: #4b5563;
+    line-height: 1.6;
     margin-bottom: 2.5rem;
-    line-height: 1.8;
     font-weight: 500;
+    max-width: 90%;
 }
 
-.hero-buttons {
+.hero-action-buttons {
     display: flex;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-    flex-wrap: nowrap;
-    justify-content: center;
-    align-items: center;
-}
-
-.hero-buttons .btn-primary {
-    min-width: 320px;
-    font-size: 1.1rem;
-    padding: 1.1rem 2.5rem;
-}
-
-.hero-buttons .btn-secondary {
-    min-width: 200px;
-    font-size: 1rem;
-}
-
-/* Hero Stats */
-.hero-stats {
-    display: flex;
-    gap: 3rem;
+    gap: 1rem;
     flex-wrap: wrap;
-    justify-content: center;
 }
 
-.stat-item {
+.btn-outline-pill {
+    padding: 0.8rem 2.5rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    color: var(--primary-pink);
+    border: 2px solid transparent;
+    background: linear-gradient(#fef8ff, #fef8ff) padding-box,
+                var(--gradient-primary) border-box;
+    transition: all 0.3s;
+    min-width: 160px;
     text-align: center;
 }
 
-.stat-number {
-    font-size: 2.75rem;
-    font-weight: 900;
+.btn-outline-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 77, 109, 0.15);
+}
+
+.btn-gradient-pill {
+    padding: 0.8rem 2.5rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    color: white;
     background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+    border: 2px solid transparent;
+    min-width: 160px;
+    text-align: center;
 }
 
-.stat-label {
-    color: var(--text-light);
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
-    font-weight: 600;
-}
-
-/* Hide floating cards */
-.hero-illustration,
-.floating-card {
-    display: none !important;
+.btn-gradient-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4);
 }
 
 /* ========================================
@@ -742,12 +793,37 @@
 }
 
 @media (max-width: 768px) {
-    .hero-title {
-        font-size: 2.5rem;
+    .hero-split {
+        flex-direction: column;
+        min-height: auto;
     }
     
-    .hero-stats {
-        gap: 2rem;
+    .hero-image-side, 
+    .hero-content-side {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .hero-cover-img {
+        height: 50vh;
+    }
+    
+    .hero-content-side {
+        padding: 2.5rem 1.5rem;
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .hero-brand {
+        font-size: 3.5rem;
+    }
+    
+    .hero-subline {
+        margin: 0 auto 2rem;
+    }
+    
+    .hero-action-buttons {
+        justify-content: center;
     }
     
     .steps-container {
@@ -790,8 +866,8 @@
 }
 
 @media (max-width: 480px) {
-    .hero-title {
-        font-size: 2rem;
+    .hero-brand {
+        font-size: 2.5rem;
     }
     
     .about-card h3 {
