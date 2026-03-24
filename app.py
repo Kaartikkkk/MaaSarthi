@@ -448,6 +448,7 @@ class Organization(db.Model):
     
     # Relationships
     jobs = db.relationship('OrganizationJob', backref='organization', lazy=True, cascade='all, delete-orphan')
+    courses = db.relationship('TrainingCourse', backref='organization', lazy=True, cascade='all, delete-orphan')
     
     def __repr__(self):
         return f'<Organization {self.company_name}>'
@@ -471,6 +472,22 @@ class OrganizationJob(db.Model):
     def __repr__(self):
         return f'<OrganizationJob {self.title}>'
 
+class TrainingCourse(db.Model):
+    """Training materials uploaded by organizations"""
+    __tablename__ = 'training_courses'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    org_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    skill_name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    video_url = db.Column(db.String(500), nullable=True)
+    pdf_url = db.Column(db.String(500), nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    
+    def __repr__(self):
+        return f'<TrainingCourse {self.title}>'
 
 # Create all database tables
 with app.app_context():
@@ -829,6 +846,46 @@ TEXT = {
             "Beginner": "Beginner",
             "Intermediate": "Intermediate",
             "Advanced": "Advanced"
+        },
+        "sector_domain_mapping": {
+            "IT & Technology": ["Cloud & DevOps", "Cybersecurity", "Data Science", "IT Support", "QA Testing", "Software Engineering", "UI/UX Design"],
+            "Healthcare": ["Allied Health", "Medical Doctors", "Mental Health", "Nursing", "Pharma Sales"],
+            "Education": ["School Teaching", "Higher Education", "EdTech", "Corporate Training"],
+            "Banking & Finance": ["Accounting", "Banking Operations", "Insurance", "Investment"],
+            "Sales & Marketing": ["Sales", "Marketing", "Digital Marketing", "Pharma Sales"],
+            "E-Commerce": ["Ecommerce", "Retail"],
+            "Content & Media": ["Content Writing", "Journalism", "Graphic Design"],
+            "Customer Service": ["Customer Support", "Data Entry"],
+            "Beauty & Wellness": ["Beauty Wellness", "Fitness Yoga"],
+            "Childcare & Homecare": ["Childcare", "Elderly Care"],
+            "Arts & Design": ["Fashion Design", "Graphic Design", "Handicrafts", "UI/UX Design"],
+            "Administration": ["Administration", "Data Entry", "HR"],
+            "Agriculture": ["Agriculture", "Dairy Animal"],
+            "Consulting": ["Consulting"],
+            "Gig Economy": ["Delivery Logistics", "Freelancing"],
+            "Government": ["Government"],
+            "Hospitality": ["Hotel Management", "Food Service", "Travel Tourism"],
+            "Human Resources": ["HR"],
+            "Legal": ["Legal"],
+            "Manufacturing": ["Manufacturing", "Food Processing", "Construction"],
+            "Real Estate": ["Real Estate"],
+            "General": ["General", "Social Work"]
+        },
+        "domain_skill_mapping": {
+            "Software Engineering": ["Python", "Java", "JavaScript", "React", "Node.js", "SQL", "Git"],
+            "Data Entry": ["Excel", "Typing", "Data Management", "Microsoft Office", "Google Sheets"],
+            "Content Writing": ["Copywriting", "SEO", "Editing", "Creative Writing", "Blogging", "Grammar"],
+            "Digital Marketing": ["SEO", "SEM", "Social Media Marketing", "Email Marketing", "Google Analytics", "Content Strategy"],
+            "Nursing": ["Patient Care", "First Aid", "CPR", "Medical Records", "Patient Monitoring"],
+            "School Teaching": ["Lesson Planning", "Classroom Management", "Communication", "Subject Expertise", "Child Psychology"],
+            "Graphic Design": ["Photoshop", "Illustrator", "Canva", "Logo Design", "Typography", "Color Theory"],
+            "Beauty Wellness": ["Makeup", "Skincare", "Hair Styling", "Yoga", "Personal Grooming"],
+            "Accounting": ["Tally", "QuickBooks", "GST", "Income Tax", "Auditing", "Bookkeeping"],
+            "Customer Support": ["Communication", "Problem Solving", "CRM", "Email Handling", "Active Listening"],
+            "Tailoring": ["Stitching", "Cutting", "Embroidery", "Fashion Design", "Fabric Knowledge"],
+            "Baking": ["Oven Handling", "Decoration", "Recipe Following", "Food Safety"],
+            "Cooking": ["Vegetarian", "Non-Vegetarian", "Desserts", "Kitchen Management"],
+            "General": ["Communication", "Time Management", "Basic Computer", "English Speaking"]
         }
     },
     "hi": {
@@ -1087,6 +1144,46 @@ TEXT = {
             "Beginner": "शुरूआती",
             "Intermediate": "मध्यम",
             "Advanced": "एडवांस"
+        },
+        "sector_domain_mapping": {
+            "आईटी और टेक्नोलॉजी": ["क्लाउड और DevOps", "साइबरसिक्योरिटी", "डेटा साइंस", "आईटी सपोर्ट", "क्यूए टेस्टिंग", "सॉफ्टवेयर इंजीनियरिंग", "UI/UX डिज़ाइन"],
+            "स्वास्थ्य": ["सम्बद्ध स्वास्थ्य", "चिकित्सक", "मानसिक स्वास्थ्य", "नर्सिंग", "फार्मा सेल्स"],
+            "शिक्षा": ["स्कूल टीचिंग", "उच्च शिक्षा", "एडटेक", "कॉर्पोरेट ट्रेनिंग"],
+            "बैंकिंग और वित्त": ["अकाउंटिंग", "बैंकिंग ऑपरेशंस", "बीमा", "निवेश"],
+            "बिक्री और विपणन": ["बिक्री", "मार्केटिंग", "डिजिटल मार्केटिंग", "फार्मा सेल्स"],
+            "ई-कॉमर्स": ["ई-कॉमर्स", "रिटेल"],
+            "कंटेंट और मीडिया": ["कंटेंट राइटिंग", "पत्रकारिता", "ग्राफिक डिज़ाइन"],
+            "ग्राहक सेवा": ["ग्राहक सहायता", "डेटा एंट्री"],
+            "सौंदर्य और कल्याण": ["सौंदर्य कल्याण", "फिटनेस योगा"],
+            "बाल देखभाल और गृह देखभाल": ["बाल देखभाल", "वृद्ध देखभाल"],
+            "कला और डिज़ाइन": ["फैशन डिज़ाइन", "ग्राफिक डिज़ाइन", "हस्तकला", "UI/UX डिज़ाइन"],
+            "प्रशासन": ["प्रशासन", "डेटा एंट्री", "एचआर"],
+            "कृषि": ["कृषि", "डेयरी पशु"],
+            "परामर्श": ["परामर्श"],
+            "गिग इकॉनमी": ["डिलीवरी लॉजिस्टिक्स", "फ्रीलांसिंग"],
+            "सरकारी": ["सरकारी"],
+            "आतिथ्य": ["होटल मैनेजमेंट", "फूड सर्विस", "ट्रैवल टूरिज्म"],
+            "मानव संसाधन": ["एचआर"],
+            "कानूनी": ["कानूनी"],
+            "विनिर्माण": ["विनिर्माण", "फूड प्रोसेसिंग", "निर्माण"],
+            "रियल एस्टेट": ["रियल एस्टेट"],
+            "सामान्य": ["सामान्य", "सामाजिक कार्य"]
+        },
+        "domain_skill_mapping": {
+            "सॉफ्टवेयर इंजीनियरिंग": ["Python", "Java", "JavaScript", "React", "Node.js", "SQL", "Git"],
+            "डेटा एंट्री": ["Excel", "Typing", "Data Management", "Microsoft Office", "Google Sheets"],
+            "कंटेंट राइटिंग": ["Copywriting", "SEO", "Editing", "Creative Writing", "Blogging", "Grammar"],
+            "डिजिटल मार्केटिंग": ["SEO", "SEM", "Social Media Marketing", "Email Marketing", "Google Analytics", "Content Strategy"],
+            "नर्सिंग": ["Patient Care", "First Aid", "CPR", "Medical Records", "Patient Monitoring"],
+            "स्कूल टीचिंग": ["Lesson Planning", "Classroom Management", "Communication", "Subject Expertise", "Child Psychology"],
+            "ग्राफिक डिज़ाइन": ["Photoshop", "Illustrator", "Canva", "Logo Design", "Typography", "Color Theory"],
+            "सौंदर्य कल्याण": ["Makeup", "Skincare", "Hair Styling", "Yoga", "Personal Grooming"],
+            "अकाउंटिंग": ["Tally", "QuickBooks", "GST", "Income Tax", "Auditing", "Bookkeeping"],
+            "ग्राहक सहायता": ["Communication", "Problem Solving", "CRM", "Email Handling", "Active Listening"],
+            "सिलाई / टेलरिंग": ["Stitching", "Cutting", "Embroidery", "Fashion Design", "Fabric Knowledge"],
+            "बेकिंग": ["Oven Handling", "Decoration", "Recipe Following", "Food Safety"],
+            "कुकिंग": ["Vegetarian", "Non-Vegetarian", "Desserts", "Kitchen Management"],
+            "सामान्य": ["Communication", "Time Management", "Basic Computer", "English Speaking"]
         }
     }
 }
@@ -1132,6 +1229,28 @@ def login():
         # Check if user exists
         user = User.query.filter_by(email=email).first()
         if not user:
+            # Check if organization exists instead
+            org = Organization.query.filter_by(email=email).first()
+            if org:
+                # Verify password for organization
+                if not SecurityUtils.verify_password(password, org.password_hash, org.salt):
+                    login_rate_limiter.record_attempt(rate_limit_key, False)
+                    return render_template('login.html', error='Invalid email or password')
+                
+                # Check organization status
+                if org.status == 'Pending':
+                    return render_template('login.html', error='Your account is currently under review. You will be able to log in once an admin approves it.')
+                elif org.status == 'Declined':
+                    return render_template('login.html', error='Your organization registration has been declined. Please contact support.')
+                    
+                # Organization login successful
+                login_rate_limiter.record_attempt(rate_limit_key, True)
+                session.clear()
+                session['org_id'] = org.id
+                session['org_name'] = org.company_name
+                flash('Successfully logged in!', 'success')
+                return redirect(url_for('org_dashboard'))
+
             login_rate_limiter.record_attempt(rate_limit_key, False)
             # Generic error to prevent email enumeration
             return render_template('login.html', error='Invalid email or password')
@@ -1578,7 +1697,13 @@ def skills_result():
             print(f"❌ Error saving skill search: {e}")
             db.session.rollback()
 
-    return render_template("result.html", t=t, work=f"{skill} Training", low=low, high=high, skills=skills, links=links, user=get_current_user())
+    # Fetch matching local training courses
+    local_courses = TrainingCourse.query.filter(
+        (TrainingCourse.skill_name.ilike(f'%{skill}%')) | 
+        (TrainingCourse.title.ilike(f'%{skill}%'))
+    ).order_by(TrainingCourse.created_at.desc()).all()
+
+    return render_template("result.html", t=t, work=f"{skill} Training", low=low, high=high, skills=skills, links=links, user=get_current_user(), local_courses=local_courses)
 
 # ✅ Find jobs nearby
 @app.route("/find-jobs-nearby")
@@ -2314,6 +2439,25 @@ def predict():
             print(f"Error saving job search: {e}")
             db.session.rollback()
 
+    # ============================================
+    # FETCH PARTNER ORGANIZATION JOBS
+    # ============================================
+    try:
+        all_org_jobs = OrganizationJob.query.filter_by(is_active=True).all()
+        matched_org_jobs = []
+        search_terms = [t.lower() for t in [domain, primary_skill] if t and t != 'General']
+        
+        for job in all_org_jobs:
+            text_to_search = f"{job.title} {job.description} {job.requirements}".lower()
+            if not search_terms:
+                matched_org_jobs.append(job)
+            elif any(term in text_to_search for term in search_terms):
+                matched_org_jobs.append(job)
+                
+    except Exception as e:
+        print(f"Error fetching org jobs: {e}")
+        matched_org_jobs = []
+
     return render_template(
         "result.html",
         t=t,
@@ -2321,6 +2465,7 @@ def predict():
         results=results,
         # Job data
         jobs=job_recommendations,
+        org_jobs=matched_org_jobs,
         confidence_score=confidence_percentage,
         # Income
         low=results['income_low'],
@@ -3180,7 +3325,8 @@ def org_register_page():
                 state=request.form.get('state'),
                 pincode=request.form.get('pincode'),
                 password_hash=password_hash,
-                salt=salt
+                salt=salt,
+                status='Approved'
             )
             db.session.add(new_org)
             db.session.commit()
@@ -3257,8 +3403,9 @@ def org_dashboard():
         
     org = Organization.query.get(org_id)
     jobs = OrganizationJob.query.filter_by(org_id=org_id).order_by(OrganizationJob.created_at.desc()).all()
+    courses = TrainingCourse.query.filter_by(org_id=org_id).order_by(TrainingCourse.created_at.desc()).all()
     
-    return render_template('organizations/dashboard.html', org=org, jobs=jobs, **t)
+    return render_template('organizations/dashboard.html', org=org, jobs=jobs, courses=courses, **t)
 
 @app.route('/org/jobs/add', methods=['POST'])
 def org_add_job():
@@ -3280,6 +3427,31 @@ def org_add_job():
         db.session.add(new_job)
         db.session.commit()
         flash('Job posted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred: {str(e)}', 'error')
+        
+    return redirect(url_for('org_dashboard'))
+
+
+@app.route('/org/courses/add', methods=['POST'])
+def org_add_course():
+    org_id = session.get('org_id')
+    if not org_id:
+        return redirect(url_for('org_login'))
+        
+    try:
+        new_course = TrainingCourse(
+            org_id=org_id,
+            title=request.form.get('title'),
+            skill_name=request.form.get('skill_name'),
+            description=request.form.get('description'),
+            video_url=request.form.get('video_url'),
+            pdf_url=request.form.get('pdf_url')
+        )
+        db.session.add(new_course)
+        db.session.commit()
+        flash('Training course posted successfully!', 'success')
     except Exception as e:
         db.session.rollback()
         flash(f'An error occurred: {str(e)}', 'error')

@@ -79,18 +79,8 @@
             <div class="form-section-label">Skills &amp; Domain</div>
             <div class="grid-form">
                 <div class="field">
-                    <label>{{ t.domain }}</label>
-                    <select name="domain" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for d in t.domain_list %}
-                          <option value="{{ d }}">{{ d }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="field">
                     <label>{{ t.sector }}</label>
-                    <select name="sector" required>
+                    <select name="sector" id="sector-select" required>
                         <option value="">{{ t.choose }}</option>
                         {% for s in t.sector_list %}
                           <option value="{{ s }}">{{ s }}</option>
@@ -99,14 +89,26 @@
                 </div>
 
                 <div class="field">
+                    <label>{{ t.domain }}</label>
+                    <select name="domain" id="domain-select" required>
+                        <option value="">{{ t.choose }}</option>
+                        {% for d in t.domain_list %}
+                          <option value="{{ d }}">{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field">
                     <label>{{ t.main_skill }}</label>
-                    <input type="text" name="primary_skill" placeholder="e.g. Excel, Python, Baking" required>
+                    <input type="text" name="primary_skill" id="primary-skill-input" list="skill-suggestions" placeholder="e.g. Excel, Python, Baking" required>
                 </div>
 
                 <div class="field">
                     <label>{{ t.secondary_skill }}</label>
-                    <input type="text" name="secondary_skill" placeholder="e.g. Communication, Marketing">
+                    <input type="text" name="secondary_skill" id="secondary-skill-input" list="skill-suggestions" placeholder="e.g. Communication, Marketing">
                 </div>
+
+                <datalist id="skill-suggestions"></datalist>
             </div>
 
             <!-- Section 3: Work Preferences -->
@@ -181,6 +183,59 @@
     </div>
 </div>
 
+
 <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sectorSelect = document.getElementById('sector-select');
+        const domainSelect = document.getElementById('domain-select');
+        const skillDatalist = document.getElementById('skill-suggestions');
+        
+        // mappings injected from flask/jinja
+        const sectorMapping = {{ t.sector_domain_mapping | tojson }};
+        const domainSkillMapping = {{ t.domain_skill_mapping | tojson }};
+        const allDomains = {{ t.domain_list | tojson }};
+        
+        sectorSelect.addEventListener('change', function() {
+            const selectedSector = this.value;
+            const domains = sectorMapping[selectedSector] || [];
+            
+            // Clear domains
+            domainSelect.innerHTML = '<option value="">{{ t.choose }}</option>';
+            
+            if (domains.length > 0) {
+                domains.forEach(d => {
+                    const option = document.createElement('option');
+                    option.value = d;
+                    option.textContent = d;
+                    domainSelect.appendChild(option);
+                });
+                domainSelect.disabled = false;
+            } else {
+                // if no mapping found or sector cleared, show all domains (fallback)
+                allDomains.forEach(d => {
+                    const option = document.createElement('option');
+                    option.value = d;
+                    option.textContent = d;
+                    domainSelect.appendChild(option);
+                });
+            }
+        });
+
+        domainSelect.addEventListener('change', function() {
+            const selectedDomain = this.value;
+            const skills = domainSkillMapping[selectedDomain] || [];
+            
+            skillDatalist.innerHTML = '';
+            
+            const skillsToDisplay = skills.length > 0 ? skills : (domainSkillMapping["General"] || []);
+            skillsToDisplay.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s;
+                skillDatalist.appendChild(option);
+            });
+        });
+    });
+</script>
 </body>
 </html>
