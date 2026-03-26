@@ -1,25 +1,59 @@
-<!-- ========================================
-     CHATBOT WIDGET (OLLAMA)
-     ======================================== -->
+<!-- MaaSarthi AI Assistant Widget -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+
 <div id="chatbotContainer">
   <div id="chatWidgetBox">
     <div class="chat-header">
-      <span class="chat-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><rect x="3" y="8" width="18" height="12" rx="2"/><circle cx="9" cy="14" r="2" fill="white"/><circle cx="15" cy="14" r="2" fill="white"/><path d="M8 4h8v4H8z"/></svg>MaaSarthi AI</span>
-      <button class="chat-close" id="chatClose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="chat-header-info">
+        <span class="chat-status-indicator"></span>
+        <span class="chat-title">MaaSarthi AI</span>
+      </div>
+      <button class="chat-close" id="chatClose" aria-label="Close chat">&times;</button>
     </div>
     
     <div class="chat-body" id="chatBody">
-      <div class="chat-msg bot">Hi! I'm MaaSarthi AI Assistant. Ask me about jobs, skills, or earning opportunities!</div>
+      <div class="chat-msg bot">
+        Hi! I'm MaaSarthi AI Assistant. How can I help you progress in your career today?
+      </div>
+      <div class="quick-replies" id="quickReplies">
+        <button class="chip" data-msg="Find jobs for me">🔍 Find Jobs</button>
+        <button class="chip" data-msg="What skills are trending?">🎓 Learn Skills</button>
+        <button class="chip" data-msg="Status of my applications">📄 My Applications</button>
+      </div>
     </div>
     
     <div class="chat-input-area">
-      <input type="text" id="chatInput" placeholder="Ask me anything..." />
-      <button id="chatSend">Send</button>
+      <input type="text" id="chatInput" placeholder="Ask me anything..." autocomplete="off" />
+      <button id="chatSend">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
     </div>
   </div>
 
-  <button id="chatToggleBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg></button>
+  <button id="chatToggleBtn" class="pulse-animation">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+    </svg>
+  </button>
 </div>
+
+<style>
+  .chat-header-info { display: flex; align-items: center; gap: 8px; }
+  .chat-status-indicator { width: 8px; height: 8px; border-radius: 50%; background: #4caf50; display: inline-block; }
+  .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chip { background: white; border: 1px solid var(--primary-pink); color: var(--primary-pink); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .chip:hover { background: var(--primary-pink); color: white; }
+  .pulse-animation { animation: pulse-shadow 2s infinite; }
+  @keyframes pulse-shadow {
+    0% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 77, 109, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0); }
+  }
+</style>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -29,72 +63,73 @@ document.addEventListener("DOMContentLoaded", function() {
   const chatInput = document.getElementById("chatInput");
   const chatSend = document.getElementById("chatSend");
   const chatBody = document.getElementById("chatBody");
-
-  // Ensure widget is closed by default
-  chatWidget.classList.remove("active");
-
-  // Toggle chat visibility
-  chatToggle.addEventListener("click", function() {
+  const quickReplies = document.getElementById("quickReplies");
+  
+  chatToggle.addEventListener("click", () => {
     chatWidget.classList.toggle("active");
     if (chatWidget.classList.contains("active")) {
+      chatToggle.classList.remove("pulse-animation");
       chatInput.focus();
     }
   });
 
-  // Close chat
-  chatClose.addEventListener("click", function() {
-    chatWidget.classList.remove("active");
-  });
+  chatClose.addEventListener("click", () => chatWidget.classList.remove("active"));
 
-  // Send message function
-  async function sendMessage() {
-    const message = chatInput.value.trim();
+  async function sendMessage(text) {
+    const message = text || chatInput.value.trim();
     if (!message) return;
 
-    // Add user message to chat
+    // Remove quick replies on first interaction
+    if (quickReplies) quickReplies.style.display = 'none';
+
+    // User Message
     const userMsg = document.createElement("div");
     userMsg.className = "chat-msg user";
     userMsg.textContent = message;
     chatBody.appendChild(userMsg);
-
+    
     chatInput.value = "";
     chatBody.scrollTop = chatBody.scrollHeight;
 
-    // Send to backend
+    // Typing Indicator
+    const typing = document.createElement("div");
+    typing.className = "chat-msg bot typing";
+    typing.innerHTML = "<em>Typing...</em>";
+    chatBody.appendChild(typing);
+    chatBody.scrollTop = chatBody.scrollHeight;
+
     try {
       const response = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: message })
       });
-
       const data = await response.json();
       
-      // Add bot response
+      chatBody.removeChild(typing);
       const botMsg = document.createElement("div");
-      botMsg.className = "chat-msg bot";
-      botMsg.textContent = data.reply || "Sorry, I couldn't process that.";
+      botMsg.className = "chat-msg bot fade-in";
+      botMsg.textContent = data.reply || "I'm having trouble connecting right now.";
       chatBody.appendChild(botMsg);
-      
-      chatBody.scrollTop = chatBody.scrollHeight;
-    } catch (error) {
-      console.error("Error:", error);
-      const errorMsg = document.createElement("div");
-      errorMsg.className = "chat-msg bot error";
-      errorMsg.textContent = "Error connecting to server. Please try again.";
-      chatBody.appendChild(errorMsg);
+    } catch (e) {
+      chatBody.removeChild(typing);
+      const err = document.createElement("div");
+      err.className = "chat-msg bot error";
+      err.textContent = "Oops! Something went wrong.";
+      chatBody.appendChild(err);
     }
+    chatBody.scrollTop = chatBody.scrollHeight;
   }
 
-  // Send on button click
-  chatSend.addEventListener("click", sendMessage);
-
-  // Send on Enter key
-  chatInput.addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      sendMessage();
-    }
+  chatSend.addEventListener("click", () => sendMessage());
+  chatInput.addEventListener("keypress", (e) => e.key === "Enter" && sendMessage());
+  
+  // Handle chips
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const msg = chip.getAttribute('data-msg');
+      sendMessage(msg);
+    });
   });
 });
 </script>

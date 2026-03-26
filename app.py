@@ -3,10 +3,8 @@ import joblib
 import pandas as pd
 from flask import send_from_directory
 import os
-from flask import session, redirect, url_for
 from datetime import timedelta, datetime
 from pathlib import Path
-from flask import Flask, request, jsonify, render_template
 import requests
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -18,6 +16,7 @@ import re
 from functools import wraps
 import time
 import numpy as np
+from werkzeug.utils import secure_filename
 
 # ============================================
 # 🔐 SECURITY & VALIDATION UTILITIES,
@@ -241,9 +240,17 @@ app.config.update(
 
 # ============================================
 # 🗄️ DATABASE CONFIGURATION (SQLite + SQLAlchemy)
-# ============================================
+# =============
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Constants for uploads
+UPLOAD_FOLDER = os.path.join(basedir, 'static', 'uploads')
+RESUME_FOLDER = os.path.join(UPLOAD_FOLDER, 'resumes')
+ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'maasarthi.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -374,6 +381,8 @@ class UserProfile(db.Model):
     language_preference = db.Column(db.String(50), nullable=True)
     device_type = db.Column(db.String(50), nullable=True)
     bio = db.Column(db.Text, nullable=True)
+    experience = db.Column(db.Text, nullable=True)
+    resume_path = db.Column(db.String(255), nullable=True)
     profile_completed = db.Column(db.Boolean, default=False)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     
@@ -419,6 +428,29 @@ class SkillSearchHistory(db.Model):
     
     def __repr__(self):
         return f'<SkillSearchHistory {self.skill_name}>'
+
+class UserActivity(db.Model):
+    """Track application-wide user activities"""
+    __tablename__ = 'user_activities'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    activity_type = db.Column(db.String(50), nullable=False) # e.g. application, login, profile_update
+    description = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    
+    def __repr__(self):
+        return f'<UserActivity {self.activity_type} for User {self.user_id}>'
+
+def log_activity(user_id, activity_type, description):
+    """Helper to log user activity"""
+    try:
+        activity = UserActivity(user_id=user_id, activity_type=activity_type, description=description)
+        db.session.add(activity)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"Failed to log activity: {str(e)}")
 
 
 class Organization(db.Model):
@@ -469,8 +501,32 @@ class OrganizationJob(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.now)
     
+    # Relationships
+    applications = db.relationship('JobApplication', backref='job', lazy=True, cascade='all, delete-orphan')
+    
     def __repr__(self):
         return f'<OrganizationJob {self.title}>'
+
+class JobApplication(db.Model):
+    """User applications for jobs"""
+    __tablename__ = 'job_applications'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    job_id = db.Column(db.Integer, db.ForeignKey('organization_jobs.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    full_name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(254), nullable=False)
+    phone = db.Column(db.String(15), nullable=False)
+    resume_path = db.Column(db.String(500), nullable=False)
+    cover_letter = db.Column(db.Text, nullable=True)
+    status = db.Column(db.String(50), default='Pending') # Pending, Reviewed, Shortlisted, Rejected
+    applied_at = db.Column(db.DateTime, default=datetime.now)
+    
+    # Relationship back to user
+    user = db.relationship('User', backref=db.backref('job_applications', lazy=True))
+    
+    def __repr__(self):
+        return f'<JobApplication {self.full_name} for Job {self.job_id}>'
 
 class TrainingCourse(db.Model):
     """Training materials uploaded by organizations"""
@@ -1305,6 +1361,9 @@ def login():
         session['login_time'] = datetime.now().isoformat()
         session.permanent = True
         
+        # Log login activity
+        log_activity(user.id, 'login', 'Logged into the platform')
+        
         # Update last login time in database
         user.last_login = datetime.now()
         db.session.commit()
@@ -1483,27 +1542,51 @@ def dashboard():
     user_skills = UserSkill.query.filter_by(user_id=user.id).all()
     
     # Calculate statistics
-    completion_rate = int((len(completed_tasks) / max(len(user_tasks), 1)) * 100) if user_tasks else 0
+    job_applications_count = JobApplication.query.filter_by(user_id=user.id).count()
+    completed_courses_count = 0 # Placeholder for now, can be linked to a CourseEnrollment model if added
     
-    # Default statistics (can be enhanced with more models)
-    dashboard_stats = {
-        'job_applications': 12,
-        'active_skills': len(user_skills),
-        'completion_rate': completion_rate,
-        'monthly_earnings': '28,000'
-    }
+    # Calculate profile completion
+    profile = UserProfile.query.filter_by(user_id=user.id).first()
+    completion_rate = 0
+    has_basic = False
+    has_skills = len(user_skills) > 0
+    has_experience = False
+    has_resume = False
+    
+    if profile:
+        has_basic = all([profile.age, profile.education, profile.location])
+        has_experience = bool(profile.experience)
+        has_resume = bool(profile.resume_path)
+        
+        # Calculate percentage (each major section is 25%)
+        completion_rate = 0
+        if has_basic: completion_rate += 25
+        if has_skills: completion_rate += 25
+        if has_experience: completion_rate += 25
+        if has_resume: completion_rate += 25
+    
+    # Get recent activity
+    recent_activities = UserActivity.query.filter_by(user_id=user.id).order_by(UserActivity.created_at.desc()).limit(5).all()
+    
+    # Get recent job recommendations (real ones from search history)
+    recent_searches = JobSearchHistory.query.filter_by(user_id=user.id).order_by(JobSearchHistory.created_at.desc()).limit(3).all()
     
     return render_template(
         'dashboard.html',
         user_name=user_name,
-        user=get_current_user(),
+        user=user,
         last_recommendation=last_recommendation,
         user_skills=user_skills,
-        job_applications=dashboard_stats['job_applications'],
-        active_skills=dashboard_stats['active_skills'],
-        completion_rate=dashboard_stats['completion_rate'],
-        monthly_earnings=dashboard_stats['monthly_earnings'],
-        upcoming_reminders=upcoming_reminders[:5],  # Top 5 upcoming reminders
+        job_applications=job_applications_count,
+        active_skills=len(user_skills),
+        completion_rate=completion_rate,
+        recent_activities=recent_activities,
+        recent_searches=recent_searches,
+        has_basic=has_basic,
+        has_skills=has_skills,
+        has_experience=has_experience,
+        has_resume=has_resume,
+        upcoming_reminders=upcoming_reminders[:5],
         pending_tasks=len([t for t in user_tasks if not t.is_completed]),
         user_tasks=user_tasks
     )
@@ -1520,6 +1603,50 @@ def logout():
     
     session.clear()
     return redirect('/')
+
+@app.route('/edit-profile', methods=['GET', 'POST'])
+def edit_profile():
+    """
+    Route for updating user profile and uploading resume
+    """
+    if 'user_email' not in session:
+        return redirect('/login')
+        
+    user = User.query.filter_by(email=session['user_email']).first()
+    profile = UserProfile.query.filter_by(user_id=user.id).first()
+    
+    if not profile:
+        profile = UserProfile(user_id=user.id)
+        db.session.add(profile)
+        db.session.commit()
+
+    if request.method == 'POST':
+        profile.age = request.form.get('age')
+        profile.education = request.form.get('education')
+        profile.location = request.form.get('location')
+        profile.experience = request.form.get('experience')
+        profile.bio = request.form.get('bio')
+        
+        # Handle Resume Upload
+        if 'resume' in request.files:
+            file = request.files['resume']
+            if file and allowed_file(file.filename):
+                filename = secure_filename(f"resume_{user.id}_{file.filename}")
+                if not os.path.exists(RESUME_FOLDER):
+                    os.makedirs(RESUME_FOLDER)
+                file_path = os.path.join(RESUME_FOLDER, filename)
+                file.save(file_path)
+                profile.resume_path = os.path.join('uploads', 'resumes', filename)
+        
+        db.session.commit()
+        
+        # Log activity
+        log_activity(user.id, "Updated profile details", "profile")
+        
+        flash("Profile updated successfully!", "success")
+        return redirect(url_for('dashboard'))
+        
+    return render_template('edit_profile.html', profile=profile, user=user)
 
 # ✅ Helper function to get language text
 def get_text():
@@ -2470,22 +2597,51 @@ def predict():
             db.session.rollback()
 
     # ============================================
-    # FETCH PARTNER ORGANIZATION JOBS
+    # FETCH & MATCH PARTNER ORGANIZATION JOBS
     # ============================================
     try:
         all_org_jobs = OrganizationJob.query.filter_by(is_active=True).all()
         matched_org_jobs = []
-        search_terms = [t.lower() for t in [domain, primary_skill] if t and t != 'General']
         
-        for job in all_org_jobs:
-            text_to_search = f"{job.title} {job.description} {job.requirements}".lower()
-            if not search_terms:
-                matched_org_jobs.append(job)
-            elif any(term in text_to_search for term in search_terms):
-                matched_org_jobs.append(job)
+        # Ensure vectorizer is loaded (global from load_dataset)
+        global vectorizer, X
+        if vectorizer is None:
+            # Attempt to load if not already
+            from app import load_dataset
+            load_dataset()
+            
+        if vectorizer is not None and all_org_jobs:
+            # Transform user query (Domain + Skills)
+            user_query = f"{domain} {primary_skill} {secondary_skill}".lower()
+            user_vec = vectorizer.transform([user_query])
+            
+            # Transform all live jobs
+            job_texts = [f"{j.title} {j.description} {j.requirements}".lower() for j in all_org_jobs]
+            job_vecs = vectorizer.transform(job_texts)
+            
+            # Calculate similarities
+            similarities = cosine_similarity(user_vec, job_vecs).flatten()
+            
+            for i, job in enumerate(all_org_jobs):
+                score = float(similarities[i])
+                # Lower threshold to catch more potential matches, then sort
+                if score > 0.02: 
+                    job.match_score = int(score * 100)
+                    matched_org_jobs.append(job)
+            
+            # Sort by match score
+            matched_org_jobs.sort(key=lambda x: getattr(x, 'match_score', 0), reverse=True)
+        else:
+            # Fallback to keyword match
+            search_terms = [t.lower() for t in [domain, primary_skill] if t and t != 'General']
+            for job in all_org_jobs:
+                text_to_search = f"{job.title} {job.description} {job.requirements}".lower()
+                if not search_terms or any(term in text_to_search for term in search_terms):
+                    job.match_score = 50
+                    matched_org_jobs.append(job)
                 
     except Exception as e:
-        print(f"Error fetching org jobs: {e}")
+        print(f"Error matching org jobs: {e}")
         matched_org_jobs = []
 
     return render_template(
@@ -3318,6 +3474,120 @@ def get_dashboard_stats():
         }
     })
 
+# ============================================
+# 📁 JOB APPLICATION ROUTES
+# ============================================
+
+@app.route('/apply/<int:job_id>', methods=['GET', 'POST'])
+@login_required
+def apply_job(job_id):
+    t = get_text()
+    job = OrganizationJob.query.get_or_404(job_id)
+    user = User.query.filter_by(email=session['user_email']).first()
+    
+    if request.method == 'POST':
+        full_name = request.form.get('full_name')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        cover_letter = request.form.get('cover_letter')
+        
+        # Handle file upload
+        if 'resume' not in request.files:
+            flash('No resume file uploaded.', 'error')
+            return redirect(request.url)
+        
+        file = request.files['resume']
+        if file.filename == '':
+            flash('No selected file.', 'error')
+            return redirect(request.url)
+        
+        if file and allowed_file(file.filename):
+            filename = secure_filename(f"{user.id}_{job_id}_{file.filename}")
+            file_path = os.path.join(RESUME_FOLDER, filename)
+            file.save(file_path)
+            
+            # Save application to DB
+            application = JobApplication(
+                job_id=job_id,
+                user_id=user.id,
+                full_name=full_name,
+                email=email,
+                phone=phone,
+                resume_path=filename,
+                cover_letter=cover_letter
+            )
+            db.session.add(application)
+            db.session.commit()
+            
+            # Log application activity
+            log_activity(user.id, 'application', f"Applied for {job.title} at {job.organization.company_name}")
+            
+            flash('Your application has been submitted successfully!', 'success')
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Invalid file type. Please upload PDF, DOC, or DOCX.', 'error')
+            return redirect(request.url)
+            
+    return render_template('apply_job.html', job=job, user=user, t=t)
+
+@app.route('/org/applications')
+def org_applications():
+    if 'org_id' not in session:
+        flash('Please login as an organization.', 'info')
+        return redirect(url_for('org_login'))
+    
+    t = get_text()
+    org_id = session['org_id']
+    org = Organization.query.get(org_id)
+    
+    # Get all jobs for this org and their applications
+    jobs = OrganizationJob.query.filter_by(org_id=org_id).all()
+    job_ids = [job.id for job in jobs]
+    applications = JobApplication.query.filter(JobApplication.job_id.in_(job_ids)).order_by(JobApplication.applied_at.desc()).all()
+    
+    return render_template('organizations/applications.html', org=org, applications=applications, t=t)
+
+@app.route('/org/application/<int:app_id>')
+def org_application_detail(app_id):
+    if 'org_id' not in session:
+        return redirect(url_for('org_login'))
+    
+    t = get_text()
+    application = JobApplication.query.get_or_404(app_id)
+    
+    # Verify this application belongs to the current org's job
+    if application.job.org_id != session['org_id']:
+        flash('Unauthorized access.', 'error')
+        return redirect(url_for('org_applications'))
+        
+    return render_template('organizations/application_detail.html', app=application, t=t)
+
+@app.route('/org/application/<int:app_id>/status', methods=['POST'])
+def update_application_status(app_id):
+    if 'org_id' not in session:
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+    
+    application = JobApplication.query.get_or_404(app_id)
+    if application.job.org_id != session['org_id']:
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+        
+    new_status = request.form.get('status')
+    if new_status in ['Pending', 'Reviewed', 'Shortlisted', 'Rejected']:
+        application.status = new_status
+        db.session.commit()
+        flash(f'Application status updated to {new_status}.', 'success')
+        return redirect(url_for('org_application_detail', app_id=app_id))
+    
+    return jsonify({'success': False, 'error': 'Invalid status'}), 400
+
+@app.route('/my-applications')
+@login_required
+def my_applications():
+    t = get_text()
+    user = User.query.filter_by(email=session['user_email']).first()
+    applications = JobApplication.query.filter_by(user_id=user.id).order_by(JobApplication.applied_at.desc()).all()
+    return render_template('my_applications.html', applications=applications, t=t, user=get_current_user())
+
 # ✅ Frontend Page Routes
 @app.route('/organizations/register', methods=['GET', 'POST'])
 def org_register_page():
@@ -3435,7 +3705,11 @@ def org_dashboard():
     jobs = OrganizationJob.query.filter_by(org_id=org_id).order_by(OrganizationJob.created_at.desc()).all()
     courses = TrainingCourse.query.filter_by(org_id=org_id).order_by(TrainingCourse.created_at.desc()).all()
     
-    return render_template('organizations/dashboard.html', org=org, jobs=jobs, courses=courses, **t)
+    # Get application count
+    job_ids = [job.id for job in jobs]
+    application_count = JobApplication.query.filter(JobApplication.job_id.in_(job_ids)).count()
+    
+    return render_template('organizations/dashboard.html', org=org, jobs=jobs, courses=courses, application_count=application_count, **t)
 
 @app.route('/org/jobs/add', methods=['POST'])
 def org_add_job():

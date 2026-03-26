@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Manage Applications | MaaSarthi</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 20px;
+        }
+        .header-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 700;
+            color: #555;
+        }
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .status-pending { background: #fff8e1; color: #f57f17; }
+        .status-reviewed { background: #e3f2fd; color: #1976d2; }
+        .status-shortlisted { background: #e8f5e9; color: #2e7d32; }
+        .status-rejected { background: #ffebee; color: #c62828; }
+        
+        .btn-view {
+            color: var(--primary-pink);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .btn-view:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    {% include '_navbar.html' %}
+
+    <div class="dashboard-container">
+        <div class="header-section">
+            <div>
+                <h1>Job Applications</h1>
+                <p>Manage applicants for your job openings</p>
+            </div>
+            <a href="{{ url_for('org_dashboard') }}" class="btn" style="border: 1px solid #ddd; padding: 10px 20px;">Back to Dashboard</a>
+        </div>
+
+        <div class="card">
+            {% if applications %}
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Applicant</th>
+                            <th>Job Title</th>
+                            <th>Applied On</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications %}
+                        <tr>
+                            <td>
+                                <div style="font-weight: 700;">{{ app.full_name }}</div>
+                                <div style="font-size: 0.85rem; color: #777;">{{ app.email }}</div>
+                            </td>
+                            <td>{{ app.job.title }}</td>
+                            <td>{{ app.applied_at.strftime('%d %b %Y') }}</td>
+                            <td>
+                                <span class="status-badge status-{{ app.status.lower() }}">{{ app.status }}</span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('org_application_detail', app_id=app.id) }}" class="btn-view">View Details</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 40px;">
+                <p style="color: #888;">No applications received yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

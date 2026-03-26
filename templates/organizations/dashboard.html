@@ -135,6 +135,11 @@
             <div>
                 <h1 class="welcome-text">Welcome, {{ org.company_name }}</h1>
                 <p style="color: #666; margin-top: 5px;">Manage your organization's jobs and internships here.</p>
+                <div style="margin-top: 15px; display: flex; gap: 15px;">
+                    <a href="{{ url_for('org_applications') }}" class="btn" style="background: var(--primary-pink); color: white; border: none; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Manage Applications ({{ application_count }})
+                    </a>
+                </div>
             </div>
             <a href="{{ url_for('org_logout') }}" class="btn" style="background: transparent; color: #555; border: 1px solid #ddd; padding: 10px 20px;">Log Out</a>
         </div>

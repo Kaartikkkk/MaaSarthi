@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>My Applications | MaaSarthi</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 100px auto 40px;
+            padding: 20px;
+        }
+        h1 { margin-bottom: 30px; color: var(--primary-dark); }
+        .app-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .status-pending { background: #fff8e1; color: #f57f17; }
+        .status-reviewed { background: #e3f2fd; color: #1976d2; }
+        .status-shortlisted { background: #e8f5e9; color: #2e7d32; }
+        .status-rejected { background: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+    {% include '_navbar.html' %}
+
+    <div class="container">
+        <h1>My Job Applications</h1>
+
+        {% if applications %}
+            {% for app in applications %}
+            <div class="app-card">
+                <div>
+                    <h3 style="margin: 0; color: var(--primary-pink);">{{ app.job.title }}</h3>
+                    <p style="margin: 5px 0 0; color: #666; font-size: 0.9rem;">Organization: {{ app.job.organization.company_name }}</p>
+                    <p style="margin: 5px 0 0; color: #999; font-size: 0.8rem;">Applied on: {{ app.applied_at.strftime('%d %b %Y') }}</p>
+                </div>
+                <div>
+                    <span class="status-badge status-{{ app.status.lower() }}">{{ app.status }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div style="text-align: center; padding: 50px; background: white; border-radius: 12px; border: 1px dashed #ddd;">
+                <p style="color: #888;">You haven't applied to any jobs yet.</p>
+                <a href="{{ url_for('jobs') }}" class="btn btn-primary" style="margin-top: 20px; text-decoration: none;">Browse Available Jobs</a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% include 'chatbot.html' %}
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Update Profile | MaaSarthi</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <style>
+        .edit-profile-container {
+            max-width: 800px;
+            margin: 100px auto 40px;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        .header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .header h1 { color: var(--primary-dark); font-size: 1.8rem; margin: 0; }
+        .header p { color: #666; margin-top: 5px; }
+        
+        .form-section { margin-bottom: 25px; }
+        .form-section h3 { font-size: 1.1rem; color: #333; margin-bottom: 15px; border-left: 4px solid var(--primary-pink); padding-left: 10px; }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group.full { grid-column: 1 / span 2; }
+        
+        label { font-weight: 600; color: #555; font-size: 0.9rem; }
+        input, select, textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--primary-pink); outline: none; }
+        
+        .file-upload {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .file-upload:hover { border-color: var(--primary-pink); background: #fff0f3; }
+        
+        .btn-save {
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3); }
+        
+        .resume-status {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #4caf50;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    {% include '_navbar.html' %}
+
+    <div class="edit-profile-container">
+        <div class="header">
+            <h1>Update Your Profile</h1>
+            <p>Complete your profile to unlock more job opportunities.</p>
+        </div>
+
+        <form action="{{ url_for('edit_profile') }}" method="POST" enctype="multipart/form-data">
+            <div class="form-section">
+                <h3>Basic Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" name="age" value="{{ profile.age or '' }}" placeholder="e.g., 28">
+                    </div>
+                    <div class="form-group">
+                        <label for="education">Education</label>
+                        <select id="education" name="education">
+                            <option value="">Select Education</option>
+                            <option value="High School" {% if profile.education == 'High School' %}selected{% endif %}>High School</option>
+                            <option value="Graduate" {% if profile.education == 'Graduate' %}selected{% endif %}>Graduate</option>
+                            <option value="Post Graduate" {% if profile.education == 'Post Graduate' %}selected{% endif %}>Post Graduate</option>
+                            <option value="Diploma" {% if profile.education == 'Diploma' %}selected{% endif %}>Diploma</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label for="location">Location (City)</label>
+                        <input type="text" id="location" name="location" value="{{ profile.location or '' }}" placeholder="e.g., Mumbai, Maharashtra">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Work Experience</h3>
+                <div class="form-group full">
+                    <label for="experience">Experience Summary</label>
+                    <textarea id="experience" name="experience" rows="4" placeholder="Briefly describe your past work, internships, or volunteering experience...">{{ profile.experience or '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Resume Upload</h3>
+                <div class="form-group full">
+                    <label>Upload Professional Resume (PDF/DOC)</label>
+                    <div class="file-upload" onclick="document.getElementById('resume').click()">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" style="margin-bottom: 10px;">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                        </svg>
+                        <p id="fileName">{% if profile.resume_path %}Update existing resume{% else %}Click to upload or drag and drop{% endif %}</p>
+                        <input type="file" id="resume" name="resume" style="display: none;" onchange="updateFileName(this)">
+                    </div>
+                    {% if profile.resume_path %}
+                    <div class="resume-status">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        Resume already uploaded: {{ profile.resume_path.split('/')[-1] }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>About You</h3>
+                <div class="form-group full">
+                    <label for="bio">Bio / Professional Summary</label>
+                    <textarea id="bio" name="bio" rows="3" placeholder="A short intro about yourself...">{{ profile.bio or '' }}</textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-save">Save Profile Changes</button>
+        </form>
+    </div>
+
+    <script>
+        function updateFileName(input) {
+            const fileNameDisplay = document.getElementById('fileName');
+            if (input.files && input.files.length > 0) {
+                fileNameDisplay.textContent = "Selected: " + input.files[0].name;
+                fileNameDisplay.style.color = "var(--primary-pink)";
+            }
+        }
+    </script>
+</body>
+</html>

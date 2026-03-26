@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Application Detail | MaaSarthi</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <style>
+        .detail-container {
+            max-width: 900px;
+            margin: 100px auto 40px;
+            padding: 20px;
+        }
+        .header-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .info-item label {
+            display: block;
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 4px;
+        }
+        .info-item span {
+            font-weight: 600;
+            color: #333;
+        }
+        .resume-preview {
+            background: #f8f9fa;
+            border: 2px dashed #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .btn-status {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            transition: opacity 0.3s;
+        }
+        .btn-status:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    {% include '_navbar.html' %}
+
+    <div class="detail-container">
+        <div class="header-section">
+            <div>
+                <h1>Application Details</h1>
+                <p>For Job: {{ app.job.title }}</p>
+            </div>
+            <a href="{{ url_for('org_applications') }}" class="btn" style="border: 1px solid #ddd; padding: 10px 20px;">Back to List</a>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Applicant Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Full Name</label>
+                    <span>{{ app.full_name }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Email Address</label>
+                    <a href="mailto:{{ app.email }}">{{ app.email }}</a>
+                </div>
+                <div class="info-item">
+                    <label>Phone Number</label>
+                    <span>{{ app.phone }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Applied At</label>
+                    <span>{{ app.applied_at.strftime('%d %b %Y, %H:%M') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Resume & Cover Letter</h2>
+            
+            <div class="info-item" style="margin-bottom: 20px;">
+                <label>Cover Letter / Message</label>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; font-style: italic; color: #555;">
+                    {{ app.cover_letter if app.cover_letter else "No message provided." }}
+                </div>
+            </div>
+
+            <div class="info-item">
+                <label>Resume File</label>
+                <div class="resume-preview">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" style="margin-bottom: 10px;">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <span>{{ app.resume_path }}</span>
+                    <a href="{{ url_for('static', filename='uploads/resumes/' + app.resume_path) }}" target="_blank" class="btn btn-primary" style="margin-top: 15px; padding: 8px 16px;">Download/View Resume</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Update Application Status</h2>
+            <p style="margin-bottom: 15px; color: #666;">Current Status: <strong>{{ app.status }}</strong></p>
+            <form action="{{ url_for('update_application_status', app_id=app.id) }}" method="POST" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="submit" name="status" value="Reviewed" class="btn-status reviewed" style="background: #e3f2fd; color: #1976d2;">Mark Reviewed</button>
+                <button type="submit" name="status" value="Shortlisted" class="btn-status shortlisted" style="background: #e8f5e9; color: #2e7d32;">Shortlist Candidate</button>
+                <button type="submit" name="status" value="Rejected" class="btn-status rejected" style="background: #ffebee; color: #c62828;">Reject Application</button>
+                <button type="submit" name="status" value="Pending" class="btn-status pending" style="background: #eee; color: #555;">Reset to Pending</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
