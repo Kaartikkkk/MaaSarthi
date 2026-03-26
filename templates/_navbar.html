@@ -23,6 +23,7 @@
             <a href="{{ url_for('home') }}" class="nav-link {% if request.endpoint == 'home' %}active{% endif %}">Home</a>
             <a href="{{ url_for('jobs') }}" class="nav-link {% if request.endpoint in ['jobs', 'result'] %}active{% endif %}">Find Jobs</a>
             <a href="{{ url_for('skills') }}" class="nav-link {% if request.endpoint in ['skills', 'skills_result'] %}active{% endif %}">Train a Skill</a>
+            <a href="{{ url_for('sahayata') }}" class="nav-link {% if request.endpoint == 'sahayata' %}active{% endif %}" style="color: #4db6ac; font-weight: 600;">Sahayata</a>
             <a href="/#about" class="nav-link">About Us</a>
             {% if session.get('org_id') %}
             <a href="{{ url_for('org_dashboard') }}" class="nav-link {% if request.endpoint == 'org_dashboard' %}active{% endif %}">Dashboard</a>

@@ -329,6 +329,22 @@ class ContactMessage(db.Model):
         return f'<ContactMessage from {self.email}>'
 
 
+class MentalHealthRequest(db.Model):
+    """Mental health callback request model"""
+    __tablename__ = 'mental_health_requests'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    request_type = db.Column(db.String(50), default='Expert Consultation')
+    status = db.Column(db.String(20), default='Pending') # Pending, Scheduled, Completed
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    
+    user = db.relationship('User', backref=db.backref('mental_health_requests', lazy=True))
+    
+    def __repr__(self):
+        return f'<MentalHealthRequest {self.id} for user {self.user_id}>'
+
+
 class JobRecommendation(db.Model):
     """Job recommendation model"""
     __tablename__ = 'job_recommendations'
@@ -1713,6 +1729,56 @@ def favicon():
 def home():
     t = get_text()
     return render_template("home.html", t=t, user=get_current_user())
+
+# ✅ MaaSarthi Sahayata (Mental Health Support)
+@app.route("/sahayata")
+@app.route("/mental-health")
+def sahayata():
+    """
+    Mental Health Support Page (MaaSarthi Sahayata)
+    """
+    t = get_text()
+    
+    # Static data for helplines and resources
+    helplines = [
+        {"name": "Women Helpline (India)", "number": "181", "desc": "24/7 dedicated helpline for women in distress."},
+        {"name": "Vandrevala Foundation", "number": "9999 666 555", "desc": "Free 24/7 counseling support for mental wellness."},
+        {"name": "AASRA Helpline", "number": "9820466726", "desc": "Professional support for those in distress or suicidal thoughts."},
+        {"name": "National Mental Health Helpline", "number": "14416", "desc": "Tele-MANAS national mental health support line."}
+    ]
+    
+    wellness_links = [
+        {"title": "5-Minute Grounding Exercise", "url": "https://www.youtube.com/results?search_query=5+minute+grounding+exercise", "icon": "🧘"},
+        {"title": "Guided Meditation for Mothers", "url": "https://www.youtube.com/results?search_query=guided+meditation+for+new+mothers", "icon": "✨"},
+        {"title": "Quick Breathing Techniques", "url": "https://www.youtube.com/results?search_query=4-7-8+breathing+technique", "icon": "💨"}
+    ]
+    
+    return render_template("mental_health.html", t=t, helplines=helplines, wellness_links=wellness_links, user=get_current_user())
+
+@app.route("/request-consultation", methods=["POST"])
+def request_consultation():
+    """
+    Handle mental health callback requests
+    """
+    try:
+        user_email = session.get('user_email')
+        if not user_email:
+            return jsonify({"success": False, "message": "Please login to request a callback."}), 401
+            
+        user = User.query.filter_by(email=user_email).first()
+        if not user:
+            return jsonify({"success": False, "message": "User not found."}), 404
+            
+        # Create request
+        new_request = MentalHealthRequest(user_id=user.id)
+        db.session.add(new_request)
+        db.session.commit()
+        
+        return jsonify({"success": True, "message": "Callback request submitted! Our specialist will contact you soon."})
+    except Exception as e:
+        print(f"Error requesting consultation: {e}")
+        db.session.rollback()
+        return jsonify({"success": False, "message": "Failed to submit request."}), 500
 
 # ✅ Skills page
 
@@ -3122,6 +3188,7 @@ def admin_dashboard():
     tasks = Task.query.order_by(Task.created_at.desc()).all()
     reminders = Reminder.query.order_by(Reminder.created_at.desc()).all()
     organizations = Organization.query.order_by(Organization.created_at.desc()).all()
+    mh_requests = MentalHealthRequest.query.order_by(MentalHealthRequest.created_at.desc()).all()
     
     # Create a dict of user_id to profile for easy lookup
     profiles_dict = {p.user_id: p for p in user_profiles}
@@ -3143,6 +3210,7 @@ def admin_dashboard():
         job_searches=job_searches,
         skill_searches=skill_searches,
         contact_messages=contact_messages,
+        mh_requests=mh_requests,
         tasks=tasks,
         reminders=reminders,
         organizations=organizations,

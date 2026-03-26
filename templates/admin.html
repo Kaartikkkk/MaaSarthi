@@ -757,6 +757,11 @@
                 <div class="banner-stat-val" id="bstat-msgs">{{ stats.messages if stats else 0 }}</div>
                 <div class="banner-stat-lbl">Messages</div>
             </div>
+            <div class="banner-divider"></div>
+            <div class="banner-stat">
+                <div class="banner-stat-val" id="bstat-mh">{{ mh_requests|length if mh_requests else 0 }}</div>
+                <div class="banner-stat-lbl">MH Support</div>
+            </div>
         </div>
     </div>
 
@@ -833,6 +838,18 @@
                 <div class="stat-lbl">Reminders</div>
             </div>
         </div>
+        <div class="stat-card">
+            <div class="stat-icon-wrap" style="background: var(--pale-pink); border: 1px solid var(--primary-pink);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 6v6l4 2"></path>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <div class="stat-val" id="sc-mh">{{ mh_requests|length if mh_requests else 0 }}</div>
+                <div class="stat-lbl" style="color: var(--primary-pink);">MH Support</div>
+            </div>
+        </div>
     </div>
 
     <!-- TABS -->
@@ -842,6 +859,7 @@
         <button class="tab-btn" onclick="showPanel('job-searches',this)"><span class="tab-dot"></span>Job Searches</button>
         <button class="tab-btn" onclick="showPanel('skill-searches',this)"><span class="tab-dot"></span>Skill Searches</button>
         <button class="tab-btn" onclick="showPanel('contacts',this)"><span class="tab-dot"></span>Messages</button>
+        <button class="tab-btn" onclick="showPanel('mh-requests',this)"><span class="tab-dot"></span>MH Support</button>
         <button class="tab-btn" onclick="showPanel('tasks',this)"><span class="tab-dot"></span>Tasks</button>
         <button class="tab-btn" onclick="showPanel('reminders',this)"><span class="tab-dot"></span>Reminders</button>
     </div>
@@ -1139,6 +1157,69 @@
                 </div>
                 <h3>No messages yet</h3>
                 <p>Contact form submissions will appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- MENTAL HEALTH REQUESTS PANEL -->
+    <div id="mh-requests" class="panel">
+        <div class="panel-card">
+            <div class="panel-head">
+                <div class="panel-title">
+                    <div class="panel-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg>
+                    </div>
+                    Mental Health Callback Requests
+                    <span class="panel-count" id="cnt-mh">{{ mh_requests|length if mh_requests else 0 }}</span>
+                </div>
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" placeholder="Search requests..." onkeyup="filterTable(this,'mh-table')">
+                </div>
+            </div>
+            {% if mh_requests %}
+            <div class="table-scroll">
+                <table id="mh-table">
+                    <thead><tr><th>ID</th><th>User</th><th>Email</th><th>Type</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody>
+                    {% for req in mh_requests %}
+                    <tr>
+                        <td class="id-cell">#{{ req.id }}</td>
+                        <td class="name-cell">{{ req.user.name if req.user else 'Unknown' }}</td>
+                        <td>{{ req.user.email if req.user else '—' }}</td>
+                        <td><span class="badge badge-info">{{ req.request_type }}</span></td>
+                        <td>{{ req.created_at.strftime('%b %d, %x %H:%M') if req.created_at else '—' }}</td>
+                        <td>
+                            {% if req.status == 'Pending' %}
+                                <span class="badge badge-warning">{{ req.status }}</span>
+                            {% elif req.status == 'Completed' %}
+                                <span class="badge badge-success">{{ req.status }}</span>
+                            {% else %}
+                                <span class="badge badge-info">{{ req.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="badge badge-pink" style="cursor:pointer; border:none;" onclick="alert('Contact user at {{ req.user.email }}')">Mark Done</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 6v6l4 2"></path>
+                    </svg>
+                </div>
+                <h3>No mental health requests yet</h3>
+                <p>User callback requests will appear here.</p>
             </div>
             {% endif %}
         </div>
