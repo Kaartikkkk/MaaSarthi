@@ -27,11 +27,10 @@
 .nav-container {
     max-width: var(--container-width);
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 2rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
 .logo {
@@ -108,6 +107,76 @@
 .nav-link:hover::after,
 .nav-link.active::after {
     width: 100%;
+}
+
+/* Navbar Search */
+.nav-search {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    max-width: 500px;
+}
+
+.nav-search-form {
+    width: 100%;
+    max-width: 320px;
+}
+
+.nav-search-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(255, 77, 109, 0.04);
+    border: 1.5px solid rgba(255, 77, 109, 0.12);
+    padding: 0.45rem 1rem;
+    border-radius: 50px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-search-group:focus-within {
+    background: white;
+    border-color: var(--primary-pink);
+    box-shadow: 0 8px 25px rgba(255, 77, 109, 0.15);
+    max-width: 350px; /* Slight expansion */
+}
+
+.nav-search-icon {
+    color: var(--primary-pink);
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+
+.nav-search-group:focus-within .nav-search-icon {
+    opacity: 1;
+}
+
+.nav-search-group input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.nav-search-group input::placeholder {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.nav-search-group input:focus {
+    outline: none;
+}
+
+[data-theme="dark"] .nav-search-group {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .nav-search-group:focus-within {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-pink);
 }
 
 .lang-switch {
@@ -210,6 +279,49 @@
 .btn-signup:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(255, 77, 109, 0.35);
+}
+
+/* Nav More Dropdown */
+.nav-dropdown-wrap {
+    position: relative;
+}
+
+.nav-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 15px);
+    left: 0;
+    width: 220px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1001;
+}
+
+.nav-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.nav-dropdown-menu .dropdown-item {
+    padding: 0.7rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .nav-dropdown-menu {
+    background: #1a0a0e;
+    border-color: rgba(255, 77, 109, 0.2);
+}
+
+[data-theme="dark"] .nav-dropdown-menu .dropdown-item:hover {
+    background: rgba(255, 77, 109, 0.1);
 }
 
 /* ========================================

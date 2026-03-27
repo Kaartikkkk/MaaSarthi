@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
@@ -22,6 +23,11 @@
      ======================================== -->
     <section class="result-hero">
         <div class="hero-bg"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
         <div class="container">
             <div class="result-hero-content">
                 <div class="match-pill">
@@ -167,7 +173,7 @@
                             <span class="profile-grade">Grade {{ results.profile_grade }}</span>
                         </div>
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: {{ results.profile_completeness }}%"></div>
+                            <div class="progress-bar-fill" style="width: {{ results.profile_completeness or 0 }}%"></div>
                         </div>
                     </div>
                 </div>
@@ -339,6 +345,22 @@
                         <span class="job-count">{{ jobs|length }} AI opportunities</span>
                     </div>
 
+                    <!-- Enhanced Real-time Controls -->
+                    <div class="result-controls">
+                        <div class="search-filter-wrap">
+                            <i class="fas fa-search search-icon-inline"></i>
+                            <input type="text" id="jobSearchInput" placeholder="Filter by job title or company name...">
+                        </div>
+                        <div class="sort-wrap">
+                            <span style="font-size: 0.9rem; font-weight: 600; color: #666;">Sort by:</span>
+                            <select id="jobSortSelect" class="sort-select">
+                                <option value="default">Best Match</option>
+                                <option value="salary">Highest Salary</option>
+                                <option value="match">Match Score</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- Other predicted job titles from model -->
                     {% if results.job_predictions|length > 1 %}
                     <div class="other-predictions">
@@ -354,7 +376,12 @@
 
                     <div class="jobs-list">
                         {% for job in jobs %}
-                        <div class="job-card">
+                        <div class="job-card" data-job-id="{{ loop.index }}" data-match="{{ confidence_score }}" data-index="{{ loop.index }}">
+                            <!-- Real-time Compatibility Badge -->
+                            <div class="compatibility-badge">
+                                <div class="compatibility-dot"></div>
+                                <span>{{ confidence_score }}% Compatible</span>
+                            </div>
                             <div class="job-card-header">
                                 <div class="company-logo">
                                     <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
@@ -367,6 +394,9 @@
                                     <p class="company-name">{{ job.company }}</p>
                                 </div>
                                 <div class="job-salary">
+                                    <button class="save-btn" title="Save Job">
+                                        <i class="far fa-heart"></i>
+                                    </button>
                                     <span class="salary-value">{{ job.salary }}</span>
                                     <span class="salary-label">per month</span>
                                 </div>
@@ -534,6 +564,7 @@
     {% include 'chatbot.html' %}
 
     <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/result_features.js') }}"></script>
     <script>
         function shareWhatsApp() {
             const text = "Check out MaaSarthi - I found great job opportunities! Visit: " + window.location.origin;

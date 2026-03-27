@@ -1789,13 +1789,13 @@ def admin_update_call_status(call_id):
         
     status = request.form.get('status')
     if status not in ['Called', 'Cancelled', 'Pending']:
-        flash('Invalid status.', 'error')
+        flash('Invalid status.', 'admin_error')
         return redirect(url_for('admin_dashboard') + '#calls')
         
     call = ConsultationRequest.query.get_or_404(call_id)
     call.status = status
     db.session.commit()
-    flash(f'Call status for {call.user.name} updated to {status}.', 'success')
+    flash(f'Call status for {call.user.name} updated to {status}.', 'admin_info')
     return redirect(url_for('admin_dashboard') + '#calls')
 
 # ✅ Skills page
@@ -1955,6 +1955,82 @@ def find_jobs_nearby():
     location = session.get("location", "")
     q = f"{query} {location}".strip()
     return redirect(f"https://www.google.com/search?q={q.replace(' ', '+')}+jobs+near+me")
+
+@app.route("/search-jobs")
+def search_jobs():
+    """Direct job search without form filling"""
+    query = request.args.get("q", "").strip()
+    if not query:
+        return redirect(url_for('home'))
+        
+    t = get_text()
+    
+    # Construct mock results for the search query
+    # We'll use a subset of the logic from /predict but simplified
+    confidence_percentage = 85
+    results = {
+        'income': 25000,
+        'income_low': 20000,
+        'income_high': 35000,
+        'profile_grade': 'A',
+        'profile_completeness': 75,
+        'job_predictions': [{'label': query, 'confidence': 0.95}],
+        'mother_suitability': 'Highly Suitable',
+        'mother_suitability_confidence': 0.92,
+        'wlb_score': 8.5
+    }
+    
+    # Generic job recommendations based on query
+    job_recommendations = [
+        {
+            "title": f"Freelance {query}",
+            "company": "Sahaayata Connect",
+            "salary": "₹15,000 - ₹22,000",
+            "type": "Part-time",
+            "location": "Remote / WFH",
+            "work_mode": "Remote",
+            "description": f"Flexible project-based role for {query} professionals. Ideal for mothers needing work-life balance.",
+            "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
+        },
+        {
+            "title": f"Senior {query} Lead",
+            "company": "Metropolitan Services",
+            "salary": "₹35,000 - ₹50,000",
+            "type": "Full-time",
+            "location": "Delhi, NCR",
+            "work_mode": "On-site",
+            "description": f"Lead our {query} division. Require at least 3 years of experience and excellent communication skills.",
+            "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
+        },
+        {
+            "title": f"Junior {query} Associate",
+            "company": "Bright Future Co.",
+            "salary": "₹18,000 - ₹25,000",
+            "type": "Full-time",
+            "location": "Hybrid",
+            "work_mode": "Hybrid",
+            "description": f"Entry-level opening for {query}. We provide full training and mother-friendly work environment.",
+            "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
+        },
+        {
+            "title": f"Independent {query} Consultant",
+            "company": "Global Solutions",
+            "salary": "₹20,000 - ₹30,000",
+            "type": "Contract",
+            "location": "Remote",
+            "work_mode": "Remote",
+            "description": f"Consult on various {query} tasks. Set your own hours and work from the comfort of your home.",
+            "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
+        }
+    ]
+    
+    return render_template(
+        "search_results.html",
+        t=t,
+        query=query,
+        jobs=job_recommendations,
+        user=get_current_user()
+    )
 
 # ✅ Jobs page
 @app.route("/jobs")
@@ -3173,10 +3249,10 @@ def admin_login():
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session['is_admin'] = True
             session['admin_username'] = username
-            flash('Admin login successful!', 'success')
+            flash('Admin login successful!', 'admin_success')
             return redirect(url_for('admin_dashboard'))
         else:
-            flash('Invalid admin credentials. Please try again.', 'error')
+            flash('Invalid admin credentials. Please try again.', 'admin_error')
             return redirect(url_for('admin_login'))
     
     return render_template('admin_login.html')
@@ -3186,7 +3262,7 @@ def admin_logout():
     """Admin logout"""
     session.pop('is_admin', None)
     session.pop('admin_username', None)
-    flash('Admin logged out successfully.', 'success')
+    flash('Admin logged out successfully.', 'admin_success')
     return redirect(url_for('home'))
 
 @app.route('/admin')
@@ -3194,7 +3270,7 @@ def admin_dashboard():
     """Admin dashboard to view all database information"""
     # Check if admin is logged in
     if not session.get('is_admin'):
-        flash('Please login as admin to access the dashboard.', 'error')
+        flash('Please login as admin to access the dashboard.', 'admin_error')
         return redirect(url_for('admin_login'))
     
     # Get all data from database
@@ -3738,7 +3814,7 @@ def admin_approve_org(org_id):
     org = Organization.query.get_or_404(org_id)
     org.status = 'Approved'
     db.session.commit()
-    flash(f'{org.company_name} has been approved.', 'success')
+    flash(f'{org.company_name} has been approved.', 'admin_success')
     return redirect(url_for('admin_dashboard') + '#organizations')
 
 @app.route('/admin/org/<int:org_id>/decline', methods=['POST'])
@@ -3748,7 +3824,7 @@ def admin_decline_org(org_id):
     org = Organization.query.get_or_404(org_id)
     org.status = 'Declined'
     db.session.commit()
-    flash(f'{org.company_name} has been declined.', 'error')
+    flash(f'{org.company_name} has been declined.', 'admin_error')
     return redirect(url_for('admin_dashboard') + '#organizations')
 
 @app.route('/admin/org/<int:org_id>/delete', methods=['POST'])
@@ -3759,7 +3835,7 @@ def admin_delete_org(org_id):
     company_name = org.company_name
     db.session.delete(org)
     db.session.commit()
-    flash(f'Organization {company_name} and all its data have been removed.', 'success')
+    flash(f'Organization {company_name} and all its data have been removed.', 'admin_success')
     return redirect(url_for('admin_dashboard') + '#organizations')
 
 @app.route('/admin/org/add', methods=['POST'])
@@ -3796,10 +3872,10 @@ def admin_add_org():
         )
         db.session.add(new_org)
         db.session.commit()
-        flash(f'Organization {company_name} added successfully!', 'success')
+        flash(f'Organization {company_name} added successfully!', 'admin_success')
     except Exception as e:
         db.session.rollback()
-        flash(f'Error adding organization: {str(e)}', 'error')
+        flash(f'Error adding organization: {str(e)}', 'admin_error')
         
     return redirect(url_for('admin_dashboard') + '#organizations')
 

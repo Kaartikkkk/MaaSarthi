@@ -64,9 +64,11 @@
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} animate-slide-up">
-                            {{ message }}
-                        </div>
+                        {% if category.startswith('admin_') %}
+                            <div class="alert alert-{{ category.replace('admin_', '') }} animate-slide-up">
+                                {{ message }}
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
             {% endwith %}

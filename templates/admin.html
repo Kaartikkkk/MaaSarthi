@@ -987,6 +987,17 @@
             box-shadow: var(--shadow-md);
         }
 
+        /* ALERT STYLES */
+        .admin-alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .admin-alert-success { background: #d1fae5; color: #065f46; }
+        .admin-alert-error { background: #fee2e2; color: #991b1b; }
+        .admin-alert-info { background: #e0f2fe; color: #075985; }
+
     </style>
 </head>
 
@@ -1026,6 +1037,20 @@
     </nav>
 
     <div class="main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alerts" style="padding: 1rem 2rem 0;">
+                    {% for category, message in messages %}
+                        {% if category.startswith('admin_') %}
+                            {% set type = category.replace('admin_', '') %}
+                            <div class="admin-alert admin-alert-{{ type }}">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
         <!-- HEADER -->
         <div class="page-header">
@@ -1410,7 +1435,7 @@
                                 <td>
                                     <div class="conf-wrap">
                                         <div class="conf-bar">
-                                            <div class="conf-fill" style="width:{{ job.confidence_score or 0 }}%"></div>
+                                            <div class="conf-fill" style="width: {{ job.confidence_score or 0 }}%"></div>
                                         </div>
                                         <span class="conf-pct">{{ "%.0f"|format(job.confidence_score or 0) }}%</span>
                                     </div>

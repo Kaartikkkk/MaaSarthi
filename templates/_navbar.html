@@ -24,13 +24,30 @@
             <a href="{{ url_for('jobs') }}" class="nav-link {% if request.endpoint in ['jobs', 'result'] %}active{% endif %}">Find Jobs</a>
             <a href="{{ url_for('skills') }}" class="nav-link {% if request.endpoint in ['skills', 'skills_result'] %}active{% endif %}">Train a Skill</a>
             <a href="{{ url_for('sahayata') }}" class="nav-link {% if request.endpoint == 'sahayata' %}active{% endif %}" style="color: #4db6ac; font-weight: 600;">Sahayata</a>
-            <a href="/#about" class="nav-link">About Us</a>
-            {% if session.get('org_id') %}
-            <a href="{{ url_for('org_dashboard') }}" class="nav-link {% if request.endpoint == 'org_dashboard' %}active{% endif %}">Dashboard</a>
-            {% else %}
-            <a href="{{ url_for('org_register_page') }}" class="nav-link {% if request.endpoint == 'org_register_page' %}active{% endif %}">Register Organization</a>
-            {% endif %}
-            <a href="{{ url_for('contact') }}" class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}">Contact</a>
+            
+            <div class="nav-dropdown-wrap">
+                <a href="#" class="nav-link" onclick="toggleNavDropdown(event)">More <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+                <div class="nav-dropdown-menu" id="moreNavDropdown">
+                    <a href="/#about" class="dropdown-item">About Us</a>
+                    <a href="{{ url_for('contact') }}" class="dropdown-item">Contact</a>
+                    {% if not session.get('org_id') %}
+                    <a href="{{ url_for('org_register_page') }}" class="dropdown-item">Register Organization</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Job Search -->
+        <div class="nav-search">
+            <form action="/search-jobs" method="GET" class="nav-search-form">
+                <div class="nav-search-group">
+                    <svg class="nav-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" name="q" placeholder="Search jobs..." required>
+                </div>
+            </form>
         </div>
 
         <div class="nav-actions" style="display: flex; align-items: center; gap: 1.2rem; flex-shrink: 0;">
@@ -182,12 +199,24 @@ function toggleDropdown() {
     menu.classList.toggle('show');
 }
 
-// Close dropdown when clicking outside
+function toggleNavDropdown(e) {
+    e.preventDefault();
+    const menu = document.getElementById('moreNavDropdown');
+    menu.classList.toggle('show');
+}
+
+// Close dropdowns when clicking outside
 document.addEventListener('click', function(e) {
-    const dropdown = document.querySelector('.profile-dropdown');
-    const menu = document.getElementById('dropdownMenu');
-    if (dropdown && menu && !dropdown.contains(e.target)) {
-        menu.classList.remove('show');
+    const profileDropdown = document.querySelector('.profile-dropdown');
+    const profileMenu = document.getElementById('dropdownMenu');
+    const navDropdownWrap = document.querySelector('.nav-dropdown-wrap');
+    const navMenu = document.getElementById('moreNavDropdown');
+
+    if (profileDropdown && profileMenu && !profileDropdown.contains(e.target)) {
+        profileMenu.classList.remove('show');
+    }
+    if (navDropdownWrap && navMenu && !navDropdownWrap.contains(e.target)) {
+        navMenu.classList.remove('show');
     }
 });
 

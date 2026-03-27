@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ t.title }} | Search Results</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/search_results.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    {% include '_navbar.html' %}
+
+    <div class="search-page-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <main class="search-container">
+        <header class="search-header">
+            <div class="header-content">
+                <span class="results-badge">Job Discovery</span>
+                <h1>Showing results for <span class="query-text">"{{ query }}"</span></h1>
+                <p class="results-count">Found {{ jobs|length }} relevant opportunities for you</p>
+            </div>
+            
+            <div class="search-bar-inner">
+                <form action="/search-jobs" method="GET" class="inner-search-form">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="q" value="{{ query }}" placeholder="Search and explore jobs...">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+        </header>
+
+        <section class="results-grid">
+            <div class="jobs-column">
+                {% if jobs %}
+                    {% for job in jobs %}
+                    <div class="job-card-premium" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                        <div class="card-glass"></div>
+                        <div class="card-content">
+                            <div class="card-top">
+                                <div class="company-brand">
+                                    <div class="brand-box">
+                                        <i class="fas fa-briefcase"></i>
+                                    </div>
+                                    <div class="brand-text">
+                                        <h3>{{ job.title }}</h3>
+                                        <p>{{ job.company }}</p>
+                                    </div>
+                                </div>
+                                <div class="salary-tag">
+                                    <span class="amount">{{ job.salary }}</span>
+                                    <span class="period">/ month</span>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <p class="job-desc">{{ job.description }}</p>
+                                
+                                <div class="job-tags">
+                                    <span class="tag"><i class="fas fa-map-marker-alt"></i> {{ job.location }}</span>
+                                    <span class="tag"><i class="fas fa-laptop-house"></i> {{ job.work_mode }}</span>
+                                    <span class="tag"><i class="fas fa-clock"></i> {{ job.type }}</span>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="portal-links">
+                                    <span class="apply-hint">Apply now on:</span>
+                                    <div class="link-icons">
+                                        <a href="{{ job.apply_links.linkedin }}" class="portal-icon" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                                        <a href="{{ job.apply_links.naukri }}" class="portal-icon" title="Naukri"><i class="fas fa-external-link-alt"></i></a>
+                                        <a href="{{ job.apply_links.indeed }}" class="portal-icon" title="Indeed"><i class="fas fa-globe"></i></a>
+                                    </div>
+                                </div>
+                                <button class="btn-save-job" onclick="toggleSave(this, '{{ loop.index }}')">
+                                    <i class="far fa-heart"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-results">
+                        <i class="fas fa-search-minus"></i>
+                        <h2>No exact matches found</h2>
+                        <p>Try searching with different keywords or browse our popular categories.</p>
+                        <a href="/jobs" class="btn-primary">Browse All Jobs</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <aside class="search-sidebar">
+                <div class="sidebar-card">
+                    <h3>Refine Search</h3>
+                    <div class="filter-group">
+                        <label>Location</label>
+                        <select>
+                            <option>All Locations</option>
+                            <option>Remote</option>
+                            <option>Delhi</option>
+                            <option>Mumbai</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Job Type</label>
+                        <div class="check-options">
+                            <label><input type="checkbox" checked> Full-time</label>
+                            <label><input type="checkbox" checked> Part-time</label>
+                            <label><input type="checkbox"> Freelance</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-card promo-card">
+                    <div class="promo-content">
+                        <h3>Get Personalized AI Recommendations</h3>
+                        <p>Fill out your profile to get 100% matched jobs with AI insights.</p>
+                        <a href="/jobs" class="btn-promo">Get Matched</a>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script>
+        function toggleSave(btn, id) {
+            const icon = btn.querySelector('i');
+            icon.classList.toggle('far');
+            icon.classList.toggle('fas');
+            btn.classList.toggle('saved');
+            if (btn.classList.contains('saved')) {
+                btn.innerHTML = '<i class="fas fa-heart"></i> Saved';
+            } else {
+                btn.innerHTML = '<i class="far fa-heart"></i> Save';
+            }
+        }
+    </script>
+</body>
+</html>

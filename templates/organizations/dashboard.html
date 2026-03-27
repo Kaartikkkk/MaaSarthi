@@ -124,9 +124,11 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="flash-msg {% if category == 'success' %}flash-success{% else %}flash-error{% endif %}">
-                        {{ message }}
-                    </div>
+                    {% if not category.startswith('admin_') %}
+                        <div class="flash-msg {% if category == 'success' %}flash-success{% else %}flash-error{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         {% endwith %}
