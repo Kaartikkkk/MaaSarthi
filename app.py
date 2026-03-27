@@ -546,6 +546,22 @@ class TrainingCourse(db.Model):
         return f'<TrainingCourse {self.title}>'
 
 # Create all database tables
+class ConsultationRequest(db.Model):
+    """Mental health consultation requests from Sahayata page"""
+    __tablename__ = 'consultation_requests'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    status = db.Column(db.String(50), default='Pending') # Pending, Called, Cancelled
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    
+    # Relationship back to user
+    user = db.relationship('User', backref=db.backref('consultations', lazy=True))
+
+    def __repr__(self):
+        return f'<ConsultationRequest {self.id} for User {self.user_id}>'
+
 with app.app_context():
     db.create_all()
     print("✅ Database tables created successfully!")
@@ -1738,6 +1754,49 @@ def sahayata():
     ]
     
     return render_template("mental_health.html", t=t, helplines=helplines, wellness_links=wellness_links, user=get_current_user())
+
+@app.route('/request-consultation', methods=['POST'])
+@login_required
+def request_consultation():
+    """Handle callback requests from Sahayata page"""
+    user_data = get_current_user()
+    if not user_data:
+        return jsonify(success=False, message="Please login first.")
+        
+    user = User.query.filter_by(email=user_data['email']).first()
+    if not user:
+        return jsonify(success=False, message="User not found.")
+        
+    # Check for existing pending request
+    existing = ConsultationRequest.query.filter_by(user_id=user.id, status='Pending').first()
+    if existing:
+        return jsonify(success=False, message="You already have a pending callback request. Our experts will call you soon!")
+
+    try:
+        new_request = ConsultationRequest(user_id=user.id)
+        db.session.add(new_request)
+        db.session.commit()
+        return jsonify(success=True, message="Your request has been sent! An expert will call you shortly.")
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(success=False, message=f"Failed to submit request: {str(e)}")
+
+@app.route('/admin/calls/<int:call_id>/status', methods=['POST'])
+def admin_update_call_status(call_id):
+    """Update status of a consultation request (Called, Cancelled)"""
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+        
+    status = request.form.get('status')
+    if status not in ['Called', 'Cancelled', 'Pending']:
+        flash('Invalid status.', 'error')
+        return redirect(url_for('admin_dashboard') + '#calls')
+        
+    call = ConsultationRequest.query.get_or_404(call_id)
+    call.status = status
+    db.session.commit()
+    flash(f'Call status for {call.user.name} updated to {status}.', 'success')
+    return redirect(url_for('admin_dashboard') + '#calls')
 
 # ✅ Skills page
 
@@ -3147,6 +3206,7 @@ def admin_dashboard():
     tasks = Task.query.order_by(Task.created_at.desc()).all()
     reminders = Reminder.query.order_by(Reminder.created_at.desc()).all()
     organizations = Organization.query.order_by(Organization.created_at.desc()).all()
+    call_requests = ConsultationRequest.query.order_by(ConsultationRequest.created_at.desc()).all()
     
     # Create a dict of user_id to profile for easy lookup
     profiles_dict = {p.user_id: p for p in user_profiles}
@@ -3159,7 +3219,8 @@ def admin_dashboard():
         'messages': len(contact_messages),
         'tasks': len(tasks),
         'reminders': len(reminders),
-        'organizations': len(organizations)
+        'organizations': len(organizations),
+        'calls': len(call_requests)
     }
     
     return render_template('admin.html',
@@ -3171,6 +3232,7 @@ def admin_dashboard():
         tasks=tasks,
         reminders=reminders,
         organizations=organizations,
+        call_requests=call_requests,
         stats=stats
     )
 
