@@ -329,22 +329,6 @@ class ContactMessage(db.Model):
         return f'<ContactMessage from {self.email}>'
 
 
-class MentalHealthRequest(db.Model):
-    """Mental health callback request model"""
-    __tablename__ = 'mental_health_requests'
-    
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    request_type = db.Column(db.String(50), default='Expert Consultation')
-    status = db.Column(db.String(20), default='Pending') # Pending, Scheduled, Completed
-    created_at = db.Column(db.DateTime, default=datetime.now)
-    
-    user = db.relationship('User', backref=db.backref('mental_health_requests', lazy=True))
-    
-    def __repr__(self):
-        return f'<MentalHealthRequest {self.id} for user {self.user_id}>'
-
-
 class JobRecommendation(db.Model):
     """Job recommendation model"""
     __tablename__ = 'job_recommendations'
@@ -1755,31 +1739,6 @@ def sahayata():
     
     return render_template("mental_health.html", t=t, helplines=helplines, wellness_links=wellness_links, user=get_current_user())
 
-@app.route("/request-consultation", methods=["POST"])
-def request_consultation():
-    """
-    Handle mental health callback requests
-    """
-    try:
-        user_email = session.get('user_email')
-        if not user_email:
-            return jsonify({"success": False, "message": "Please login to request a callback."}), 401
-            
-        user = User.query.filter_by(email=user_email).first()
-        if not user:
-            return jsonify({"success": False, "message": "User not found."}), 404
-            
-        # Create request
-        new_request = MentalHealthRequest(user_id=user.id)
-        db.session.add(new_request)
-        db.session.commit()
-        
-        return jsonify({"success": True, "message": "Callback request submitted! Our specialist will contact you soon."})
-    except Exception as e:
-        print(f"Error requesting consultation: {e}")
-        db.session.rollback()
-        return jsonify({"success": False, "message": "Failed to submit request."}), 500
-
 # ✅ Skills page
 
 # ✅ Skills page
@@ -3188,7 +3147,6 @@ def admin_dashboard():
     tasks = Task.query.order_by(Task.created_at.desc()).all()
     reminders = Reminder.query.order_by(Reminder.created_at.desc()).all()
     organizations = Organization.query.order_by(Organization.created_at.desc()).all()
-    mh_requests = MentalHealthRequest.query.order_by(MentalHealthRequest.created_at.desc()).all()
     
     # Create a dict of user_id to profile for easy lookup
     profiles_dict = {p.user_id: p for p in user_profiles}
@@ -3210,7 +3168,6 @@ def admin_dashboard():
         job_searches=job_searches,
         skill_searches=skill_searches,
         contact_messages=contact_messages,
-        mh_requests=mh_requests,
         tasks=tasks,
         reminders=reminders,
         organizations=organizations,
@@ -3674,6 +3631,11 @@ def org_register_page():
             flash(error_msg, 'error')
             return redirect(url_for('org_register_page'))
             
+        email = request.form.get('email', '').strip().lower()
+        if Organization.query.filter_by(email=email).first():
+            flash('This email is already registered.', 'error')
+            return redirect(url_for('org_register_page'))
+            
         try:
             password_hash, salt = SecurityUtils.hash_password(password)
             new_org = Organization(
@@ -3694,11 +3656,11 @@ def org_register_page():
                 pincode=request.form.get('pincode'),
                 password_hash=password_hash,
                 salt=salt,
-                status='Approved'
+                status='Pending'
             )
             db.session.add(new_org)
             db.session.commit()
-            flash('Organization registered successfully! You can now log in.', 'success')
+            flash('Organization registered successfully! Your account is awaiting admin approval.', 'success')
             return redirect(url_for('org_login'))
         except Exception as e:
             db.session.rollback()
@@ -3725,6 +3687,58 @@ def admin_decline_org(org_id):
     org.status = 'Declined'
     db.session.commit()
     flash(f'{org.company_name} has been declined.', 'error')
+    return redirect(url_for('admin_dashboard') + '#organizations')
+
+@app.route('/admin/org/<int:org_id>/delete', methods=['POST'])
+def admin_delete_org(org_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+    org = Organization.query.get_or_404(org_id)
+    company_name = org.company_name
+    db.session.delete(org)
+    db.session.commit()
+    flash(f'Organization {company_name} and all its data have been removed.', 'success')
+    return redirect(url_for('admin_dashboard') + '#organizations')
+
+@app.route('/admin/org/add', methods=['POST'])
+def admin_add_org():
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+    
+    company_name = request.form.get('company_name')
+    email = request.form.get('email', '').strip().lower()
+    password = request.form.get('password', 'MaaSarthi@123') # default password if not provided
+    
+    if Organization.query.filter_by(email=email).first():
+        flash('This email is already registered.', 'error')
+        return redirect(url_for('admin_dashboard') + '#organizations')
+        
+    try:
+        password_hash, salt = SecurityUtils.hash_password(password)
+        new_org = Organization(
+            company_name=company_name,
+            org_type=request.form.get('org_type', 'Other'),
+            industry=request.form.get('industry', 'Other'),
+            org_size=request.form.get('org_size', '1-10'),
+            contact_name=request.form.get('contact_name', 'Admin Added'),
+            designation=request.form.get('designation', 'Manager'),
+            email=email,
+            phone_number=request.form.get('phone_number', '0000000000'),
+            address=request.form.get('address', 'N/A'),
+            city=request.form.get('city', 'N/A'),
+            state=request.form.get('state', 'N/A'),
+            pincode=request.form.get('pincode', '000000'),
+            password_hash=password_hash,
+            salt=salt,
+            status='Approved' # Admin added orgs are auto-approved
+        )
+        db.session.add(new_org)
+        db.session.commit()
+        flash(f'Organization {company_name} added successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error adding organization: {str(e)}', 'error')
+        
     return redirect(url_for('admin_dashboard') + '#organizations')
 
 # ✅ Organization Portal Routes

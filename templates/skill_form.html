@@ -1,226 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ t.title }} | {{ t.train_skill }}</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
-  <!-- Modular CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t.title }} | {{ t.train_skill }}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
+    <!-- Modular CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
 </head>
 
 <body>
 
-  {% include '_navbar.html' %}
+    {% include '_navbar.html' %}
 
-  <div class="page-wrap" style="padding-top: 80px;">
+    <div class="page-wrap" style="padding-top: 80px;">
 
-    <div class="top-mini">
-      <a href="/" class="back-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;vertical-align:middle;"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>{{ t.back }}</a>
-      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2"/></svg>{{ t.train_skill }}</span>
+        <div class="top-mini">
+            <a href="/" class="back-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                    style="margin-right:4px;vertical-align:middle;">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                </svg>{{ t.back }}</a>
+            <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
+                    style="margin-right:6px;vertical-align:middle;">
+                    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" />
+                    <circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="2" />
+                    <circle cx="12" cy="12" r="2" />
+                </svg>{{ t.train_skill }}</span>
+        </div>
+
+        <div class="form-card">
+            <h2>{{ t.skill_heading }}</h2>
+            <p>{{ t.skill_sub }}</p>
+
+            <!-- ✅ Progress Bar -->
+            <div class="progress-wrap">
+                <div class="progress-steps">
+                    <div class="step active">
+                        <span class="dot">1</span>
+                        <span class="label">{{ t.skill }}</span>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" id="step2">
+                        <span class="dot">2</span>
+                        <span class="label">{{ t.select }}</span>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" id="step3">
+                        <span class="dot">3</span>
+                        <span class="label">{{ t.get_training }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ✅ TRAINING FORM -->
+            <form action="/skills-result" method="POST">
+
+                <div class="field">
+                    <label>{{ t.skill }}</label>
+
+                    <select name="skill_select" id="skill_select" required
+                        onchange="toggleOtherSkill(); updateSkillInfo(); moveStep(2);">
+                        <option value="">{{ t.choose }}</option>
+
+                        {% for key, value in t.skills_map.items() %}
+                        <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- ✅ Skill Info Card -->
+                <div class="mini-card" id="skillInfoCard" style="display:none;">
+                    <div class="mini-head">
+                        <h4 id="skillTitle">{{ t.skill }}</h4>
+                        <span class="badge" id="earningBadge">₹</span>
+                    </div>
+
+                    <p id="skillDesc"></p>
+
+                    <div class="mini-metrics">
+                        <div class="metric">
+                            <span class="metric-title">Difficulty</span>
+                            <span class="metric-value" id="difficulty">Easy</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-title">Time</span>
+                            <span class="metric-value" id="learnTime">2-4 weeks</span>
+                        </div>
+                    </div>
+
+                    <div class="mini-tags" id="skillTags"></div>
+                </div>
+
+                <!-- ✅ If OTHER selected -->
+                <div class="field" id="otherSkillBox" style="display:none;">
+                    <label>{{ t.skill }}</label>
+                    <input type="text" name="skill_other" placeholder="{{ t.choose }}..." />
+                </div>
+
+                <div class="grid-form">
+
+                    <!-- ✅ LEVEL -->
+                    <div class="field">
+                        <label>{{ t.level }}</label>
+                        <select name="level" required onchange="moveStep(2);">
+                            {% for key, value in t.level_list.items() %}
+                            <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- ✅ HOURS -->
+                    <div class="field">
+                        <label>{{ t.hours }}</label>
+                        <select name="hours" required onchange="moveStep(2);">
+                            {% for key, value in t.hours_list.items() %}
+                            <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- ✅ GOAL -->
+                    <div class="field">
+                        <label>{{ t.goal }}</label>
+                        <select name="goal" required onchange="moveStep(3);">
+                            {% for key, value in t.goal_list.items() %}
+                            <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- ✅ LEARNING MODE -->
+                    <div class="field">
+                        <label>{{ t.learning_mode }}</label>
+                        <select name="learning_mode" required onchange="moveStep(3);">
+                            {% for key, value in t.learning_mode_list.items() %}
+                            <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- ✅ Preferred Language -->
+                    <div class="field full">
+                        <label>{{ t.preferred_language }}</label>
+                        <select name="language" required onchange="moveStep(3);">
+                            <option value="Hindi">Hindi</option>
+                            <option value="English">English</option>
+                            <option value="Both">Both</option>
+                        </select>
+                    </div>
+
+                    <!-- ✅ What you will get -->
+                    <div class="full">
+                        <div class="mini-card">
+                            <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="#10B981"
+                                    style="margin-right:6px;vertical-align:middle;">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                </svg>{{ t.what_you_get }}</h4>
+                            <ul class="mini-list">
+                                {% for item in t.what_list %}
+                                <li>{{ item }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="field full">
+                        <div class="button-group">
+                            <button class="btn btn-primary" type="submit">{{ t.get_training }}</button>
+                            <a class="btn btn-secondary" href="/jobs">{{ t.find_jobs }}</a>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
     </div>
 
-    <div class="form-card">
-      <h2>{{ t.skill_heading }}</h2>
-      <p>{{ t.skill_sub }}</p>
+    <script>
+        function toggleOtherSkill() {
+            const selected = document.getElementById("skill_select").value;
+            const otherBox = document.getElementById("otherSkillBox");
 
-      <!-- ✅ Progress Bar -->
-      <div class="progress-wrap">
-        <div class="progress-steps">
-          <div class="step active">
-            <span class="dot">1</span>
-            <span class="label">{{ t.skill }}</span>
-          </div>
-          <div class="line"></div>
-          <div class="step" id="step2">
-            <span class="dot">2</span>
-            <span class="label">{{ t.select }}</span>
-          </div>
-          <div class="line"></div>
-          <div class="step" id="step3">
-            <span class="dot">3</span>
-            <span class="label">{{ t.get_training }}</span>
-          </div>
-        </div>
-      </div>
+            if (selected === "OTHER") {
+                otherBox.style.display = "block";
+            } else {
+                otherBox.style.display = "none";
+            }
+        }
 
-      <!-- ✅ TRAINING FORM -->
-      <form action="/skills-result" method="POST">
+        function moveStep(stepNo) {
+            const s2 = document.getElementById("step2");
+            const s3 = document.getElementById("step3");
 
-        <div class="field">
-          <label>{{ t.skill }}</label>
+            if (stepNo >= 2) s2.classList.add("active");
+            if (stepNo >= 3) s3.classList.add("active");
+        }
 
-          <select name="skill_select" id="skill_select" required
-                  onchange="toggleOtherSkill(); updateSkillInfo(); moveStep(2);">
-            <option value="">{{ t.choose }}</option>
+        function updateSkillInfo() {
+            const skill = document.getElementById("skill_select").value;
+            const card = document.getElementById("skillInfoCard");
 
-            {% for key, value in t.skills_map.items() %}
-              <option value="{{ key }}">{{ value }}</option>
-            {% endfor %}
-          </select>
-        </div>
+            if (!skill || skill === "OTHER") {
+                card.style.display = "none";
+                return;
+            }
 
-        <!-- ✅ Skill Info Card -->
-        <div class="mini-card" id="skillInfoCard" style="display:none;">
-          <div class="mini-head">
-            <h4 id="skillTitle">{{ t.skill }}</h4>
-            <span class="badge" id="earningBadge">₹</span>
-          </div>
+            card.style.display = "block";
+            document.getElementById("skillTitle").innerText = skill;
+            document.getElementById("skillDesc").innerText =
+                skill + " selected. You will get a personalized roadmap and best resources.";
 
-          <p id="skillDesc"></p>
+            document.getElementById("difficulty").innerText = "Easy";
+            document.getElementById("learnTime").innerText = "2-6 weeks";
+            document.getElementById("earningBadge").innerText = "₹ Income";
 
-          <div class="mini-metrics">
-            <div class="metric">
-              <span class="metric-title">Difficulty</span>
-              <span class="metric-value" id="difficulty">Easy</span>
-            </div>
-            <div class="metric">
-              <span class="metric-title">Time</span>
-              <span class="metric-value" id="learnTime">2-4 weeks</span>
-            </div>
-          </div>
+            const tags = document.getElementById("skillTags");
+            tags.innerHTML = "";
 
-          <div class="mini-tags" id="skillTags"></div>
-        </div>
+            ["High Demand", "Beginner Friendly", "Good Income"].forEach(t => {
+                const span = document.createElement("span");
+                span.className = "tag";
+                span.innerText = t;
+                tags.appendChild(span);
+            });
+        }
+    </script>
 
-        <!-- ✅ If OTHER selected -->
-        <div class="field" id="otherSkillBox" style="display:none;">
-          <label>{{ t.skill }}</label>
-          <input type="text" name="skill_other" placeholder="{{ t.choose }}..." />
-        </div>
+    {% include 'chatbot.html' %}
 
-        <div class="grid-form">
-
-          <!-- ✅ LEVEL -->
-          <div class="field">
-            <label>{{ t.level }}</label>
-            <select name="level" required onchange="moveStep(2);">
-              {% for key, value in t.level_list.items() %}
-                <option value="{{ key }}">{{ value }}</option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- ✅ HOURS -->
-          <div class="field">
-            <label>{{ t.hours }}</label>
-            <select name="hours" required onchange="moveStep(2);">
-              {% for key, value in t.hours_list.items() %}
-                <option value="{{ key }}">{{ value }}</option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- ✅ GOAL -->
-          <div class="field">
-            <label>{{ t.goal }}</label>
-            <select name="goal" required onchange="moveStep(3);">
-              {% for key, value in t.goal_list.items() %}
-                <option value="{{ key }}">{{ value }}</option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- ✅ LEARNING MODE -->
-          <div class="field">
-            <label>{{ t.learning_mode }}</label>
-            <select name="learning_mode" required onchange="moveStep(3);">
-              {% for key, value in t.learning_mode_list.items() %}
-                <option value="{{ key }}">{{ value }}</option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- ✅ Preferred Language -->
-          <div class="field full">
-            <label>{{ t.preferred_language }}</label>
-            <select name="language" required onchange="moveStep(3);">
-              <option value="Hindi">Hindi</option>
-              <option value="English">English</option>
-              <option value="Both">Both</option>
-            </select>
-          </div>
-
-          <!-- ✅ What you will get -->
-          <div class="full">
-            <div class="mini-card">
-              <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="#10B981" style="margin-right:6px;vertical-align:middle;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>{{ t.what_you_get }}</h4>
-              <ul class="mini-list">
-                {% for item in t.what_list %}
-                  <li>{{ item }}</li>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-
-          <div class="field full">
-            <div class="button-group">
-              <button class="btn btn-primary" type="submit">{{ t.get_training }}</button>
-              <a class="btn btn-secondary" href="/jobs">{{ t.find_jobs }}</a>
-            </div>
-          </div>
-
-        </div>
-      </form>
-
-    </div>
-  </div>
-
-  <script>
-    function toggleOtherSkill() {
-      const selected = document.getElementById("skill_select").value;
-      const otherBox = document.getElementById("otherSkillBox");
-
-      if (selected === "OTHER") {
-        otherBox.style.display = "block";
-      } else {
-        otherBox.style.display = "none";
-      }
-    }
-
-    function moveStep(stepNo) {
-      const s2 = document.getElementById("step2");
-      const s3 = document.getElementById("step3");
-
-      if (stepNo >= 2) s2.classList.add("active");
-      if (stepNo >= 3) s3.classList.add("active");
-    }
-
-    function updateSkillInfo() {
-      const skill = document.getElementById("skill_select").value;
-      const card = document.getElementById("skillInfoCard");
-
-      if (!skill || skill === "OTHER") {
-        card.style.display = "none";
-        return;
-      }
-
-      card.style.display = "block";
-      document.getElementById("skillTitle").innerText = skill;
-      document.getElementById("skillDesc").innerText =
-        skill + " selected. You will get a personalized roadmap and best resources.";
-
-      document.getElementById("difficulty").innerText = "Easy";
-      document.getElementById("learnTime").innerText = "2-6 weeks";
-      document.getElementById("earningBadge").innerText = "₹ Income";
-
-      const tags = document.getElementById("skillTags");
-      tags.innerHTML = "";
-
-      ["High Demand", "Beginner Friendly", "Good Income"].forEach(t => {
-        const span = document.createElement("span");
-        span.className = "tag";
-        span.innerText = t;
-        tags.appendChild(span);
-      });
-    }
-  </script>
-
-{% include 'chatbot.html' %}
-
-<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
 </body>
+
 </html>

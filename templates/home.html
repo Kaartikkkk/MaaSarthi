@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,414 +16,520 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
 </head>
+
 <body>
 
-{% include '_navbar.html' %}
+    {% include '_navbar.html' %}
 
-<section class="hero-split">
-    <div class="hero-image-side">
-        <img src="{{ url_for('static', filename='images/CoverPage.png') }}" alt="MaaSarthi Hero" class="hero-cover-img">
-    </div>
-    
-    <!-- Live Animated Background Effects -->
-    <div class="hero-live-effects">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-    </div>
-    
-    <div class="hero-content-side">
-        <div class="hero-content-inner">
-            <h1 class="hero-brand">MaaSarthi</h1>
-            <p class="hero-subline">{{ t.hero_desc }}</p>
-            <div class="hero-action-buttons">
-                <a href="/jobs" class="btn-outline-pill">{{ t.find_jobs }}</a>
-                <a href="/skills" class="btn-gradient-pill">{{ t.train_skill }}</a>
+    <section class="hero-split">
+        <div class="hero-image-side">
+            <img src="{{ url_for('static', filename='images/CoverPage.png') }}" alt="MaaSarthi Hero"
+                class="hero-cover-img">
+        </div>
+
+        <!-- Live Animated Background Effects -->
+        <div class="hero-live-effects">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+        </div>
+
+        <div class="hero-content-side">
+            <div class="hero-content-inner">
+                <h1 class="hero-brand">MaaSarthi</h1>
+                <p class="hero-subline">{{ t.hero_desc }}</p>
+                <div class="hero-action-buttons">
+                    <a href="/jobs" class="btn-outline-pill">{{ t.find_jobs }}</a>
+                    <a href="/skills" class="btn-gradient-pill">{{ t.train_skill }}</a>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- ========================================
+    <!-- ========================================
      FEATURES SECTION
      ======================================== -->
-<section class="features">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">{{ t.why_choose }}</h2>
-            <p class="section-subtitle">{{ t.why_choose_desc }}</p>
-        </div>
-        
-        <div class="feature-grid">
-            <div class="feature-card">
-                <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="var(--primary-pink)"><circle cx="12" cy="12" r="10" fill="none" stroke="var(--primary-pink)" stroke-width="2"/><circle cx="12" cy="12" r="6" fill="none" stroke="var(--primary-pink)" stroke-width="2"/><circle cx="12" cy="12" r="2"/></svg></span>
-                <h3>{{ t.personalized_matching }}</h3>
-                <p>{{ t.matching_desc }}</p>
-                <a href="/jobs" class="feature-link">{{ t.explore_jobs }}</a>
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">{{ t.why_choose }}</h2>
+                <p class="section-subtitle">{{ t.why_choose_desc }}</p>
             </div>
-            
-            <div class="feature-card">
-                <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="var(--primary-pink)"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg></span>
-                <h3>{{ t.free_training }}</h3>
-                <p>{{ t.training_desc }}</p>
-                <a href="/skills" class="feature-link">{{ t.browse_courses }}</a>
-            </div>
-            
-            <div class="feature-card">
-                <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="var(--primary-pink)"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></span>
-                <h3>{{ t.flexible_work }}</h3>
-                <p>{{ t.flexible_desc }}</p>
-                <a href="/jobs" class="feature-link">{{ t.view_options }}</a>
-            </div>
-            
-            <div class="feature-card">
-                <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="var(--primary-pink)"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
-                <h3>{{ t.community }}</h3>
-                <p>{{ t.community_desc }}</p>
-                <a href="#community" class="feature-link">{{ t.join_community }}</a>
-            </div>
-            
-            <div class="feature-card">
-                <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="var(--primary-pink)"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg></span>
-                <h3>{{ t.certification }}</h3>
-                <p>{{ t.certification_desc }}</p>
-                <a href="/skills" class="feature-link">{{ t.get_certified }}</a>
-            </div>
-            
-            <div class="feature-card">
-                <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="var(--primary-pink)"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></span>
-                <h3>{{ t.guidance_24_7 }}</h3>
-                <p>{{ t.guidance_desc }}</p>
-                <a href="/contact" class="feature-link">{{ t.contact_us }}</a>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- ========================================
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24"
+                            fill="var(--primary-pink)">
+                            <circle cx="12" cy="12" r="10" fill="none" stroke="var(--primary-pink)" stroke-width="2" />
+                            <circle cx="12" cy="12" r="6" fill="none" stroke="var(--primary-pink)" stroke-width="2" />
+                            <circle cx="12" cy="12" r="2" />
+                        </svg></span>
+                    <h3>{{ t.personalized_matching }}</h3>
+                    <p>{{ t.matching_desc }}</p>
+                    <a href="/jobs" class="feature-link">{{ t.explore_jobs }}</a>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24"
+                            fill="var(--primary-pink)">
+                            <path
+                                d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z" />
+                        </svg></span>
+                    <h3>{{ t.free_training }}</h3>
+                    <p>{{ t.training_desc }}</p>
+                    <a href="/skills" class="feature-link">{{ t.browse_courses }}</a>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24"
+                            fill="var(--primary-pink)">
+                            <path
+                                d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
+                        </svg></span>
+                    <h3>{{ t.flexible_work }}</h3>
+                    <p>{{ t.flexible_desc }}</p>
+                    <a href="/jobs" class="feature-link">{{ t.view_options }}</a>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24"
+                            fill="var(--primary-pink)">
+                            <path
+                                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                        </svg></span>
+                    <h3>{{ t.community }}</h3>
+                    <p>{{ t.community_desc }}</p>
+                    <a href="#community" class="feature-link">{{ t.join_community }}</a>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24"
+                            fill="var(--primary-pink)">
+                            <path
+                                d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" />
+                        </svg></span>
+                    <h3>{{ t.certification }}</h3>
+                    <p>{{ t.certification_desc }}</p>
+                    <a href="/skills" class="feature-link">{{ t.get_certified }}</a>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon"><svg width="32" height="32" viewBox="0 0 24 24"
+                            fill="var(--primary-pink)">
+                            <path
+                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                        </svg></span>
+                    <h3>{{ t.guidance_24_7 }}</h3>
+                    <p>{{ t.guidance_desc }}</p>
+                    <a href="/contact" class="feature-link">{{ t.contact_us }}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
      HOW IT WORKS SECTION
      ======================================== -->
-<section class="how-it-works">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">{{ t.how_it_works }}</h2>
-            <p class="section-subtitle">{{ t.how_it_works_desc }}</p>
-        </div>
-        
-        <div class="steps-container">
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <h3>{{ t.create_profile }}</h3>
-                    <p>{{ t.profile_desc }}</p>
-                </div>
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">{{ t.how_it_works }}</h2>
+                <p class="section-subtitle">{{ t.how_it_works_desc }}</p>
             </div>
-            
-            <div class="step-connector"></div>
-            
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <h3>{{ t.get_matches }}</h3>
-                    <p>{{ t.matches_desc }}</p>
-                </div>
-            </div>
-            
-            <div class="step-connector"></div>
-            
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <h3>{{ t.start_earning }}</h3>
-                    <p>{{ t.earning_desc }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- ========================================
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>{{ t.create_profile }}</h3>
+                        <p>{{ t.profile_desc }}</p>
+                    </div>
+                </div>
+
+                <div class="step-connector"></div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>{{ t.get_matches }}</h3>
+                        <p>{{ t.matches_desc }}</p>
+                    </div>
+                </div>
+
+                <div class="step-connector"></div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>{{ t.start_earning }}</h3>
+                        <p>{{ t.earning_desc }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
      POPULAR SKILLS SECTION
      ======================================== -->
-<section class="popular-skills">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">{{ t.popular_skills }}</h2>
-            <p class="section-subtitle">{{ t.popular_skills_desc }}</p>
-        </div>
-        
-        <div class="skills-grid">
-            <div class="skill-tag">Data Entry</div>
-            <div class="skill-tag">Content Writing</div>
-            <div class="skill-tag">Graphic Design</div>
-            <div class="skill-tag">Social Media Management</div>
-            <div class="skill-tag">Tailoring & Stitching</div>
-            <div class="skill-tag">Cooking & Baking</div>
-            <div class="skill-tag">Childcare Services</div>
-            <div class="skill-tag">Online Tutoring</div>
-            <div class="skill-tag">Beauty & Makeup</div>
-            <div class="skill-tag">E-commerce Management</div>
-            <div class="skill-tag">Bookkeeping</div>
-            <div class="skill-tag">Voice Over Artist</div>
-            <div class="skill-tag">Translation Services</div>
-            <div class="skill-tag">Photography</div>
-            <div class="skill-tag">Yoga Instruction</div>
-        </div>
-        
-        <div class="text-center">
-            <a href="/skills" class="btn btn-primary btn-large">{{ t.view_all_skills }}</a>
-        </div>
-    </div>
-</section>
+    <section class="popular-skills">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">{{ t.popular_skills }}</h2>
+                <p class="section-subtitle">{{ t.popular_skills_desc }}</p>
+            </div>
 
-<!-- ========================================
+            <div class="skills-grid">
+                <div class="skill-tag">Data Entry</div>
+                <div class="skill-tag">Content Writing</div>
+                <div class="skill-tag">Graphic Design</div>
+                <div class="skill-tag">Social Media Management</div>
+                <div class="skill-tag">Tailoring & Stitching</div>
+                <div class="skill-tag">Cooking & Baking</div>
+                <div class="skill-tag">Childcare Services</div>
+                <div class="skill-tag">Online Tutoring</div>
+                <div class="skill-tag">Beauty & Makeup</div>
+                <div class="skill-tag">E-commerce Management</div>
+                <div class="skill-tag">Bookkeeping</div>
+                <div class="skill-tag">Voice Over Artist</div>
+                <div class="skill-tag">Translation Services</div>
+                <div class="skill-tag">Photography</div>
+                <div class="skill-tag">Yoga Instruction</div>
+            </div>
+
+            <div class="text-center">
+                <a href="/skills" class="btn btn-primary btn-large">{{ t.view_all_skills }}</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
      TESTIMONIALS SECTION
      ======================================== -->
-<section class="testimonials">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">{{ t.success_stories }}</h2>
-            <p class="section-subtitle">{{ t.success_desc }}</p>
-        </div>
-        
-        <div class="testimonial-grid">
-            <div class="testimonial-card">
-                <div class="testimonial-rating"><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
-                <p class="testimonial-text">"MaaSarthi helped me start my content writing career from home. Now I earn ₹30,000 per month while taking care of my kids!"</p>
-                <div class="testimonial-author">
-                    <div class="author-avatar"><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--primary-pink)"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></div>
-                    <div>
-                        <div class="author-name">Priya Sharma</div>
-                        <div class="author-role">Content Writer, Mumbai</div>
-                    </div>
-                </div>
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">{{ t.success_stories }}</h2>
+                <p class="section-subtitle">{{ t.success_desc }}</p>
             </div>
-            
-            <div class="testimonial-card">
-                <div class="testimonial-rating"><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
-                <p class="testimonial-text">"The free training courses are amazing! I learned graphic design and now work as a freelancer earning ₹45,000 monthly."</p>
-                <div class="testimonial-author">
-                    <div class="author-avatar"><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--primary-pink)"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></div>
-                    <div>
-                        <div class="author-name">Anjali Verma</div>
-                        <div class="author-role">Graphic Designer, Delhi</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="testimonial-card">
-                <div class="testimonial-rating"><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
-                <p class="testimonial-text">"I started with data entry and now manage social media for 5 clients. MaaSarthi gave me financial independence!"</p>
-                <div class="testimonial-author">
-                    <div class="author-avatar"><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--primary-pink)"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></div>
-                    <div>
-                        <div class="author-name">Sneha Patel</div>
-                        <div class="author-role">Social Media Manager, Bangalore</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- ========================================
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating"><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg></div>
+                    <p class="testimonial-text">"MaaSarthi helped me start my content writing career from home. Now I
+                        earn ₹30,000 per month while taking care of my kids!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"><svg width="24" height="24" viewBox="0 0 24 24"
+                                fill="var(--primary-pink)">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+                            </svg></div>
+                        <div>
+                            <div class="author-name">Priya Sharma</div>
+                            <div class="author-role">Content Writer, Mumbai</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-rating"><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg></div>
+                    <p class="testimonial-text">"The free training courses are amazing! I learned graphic design and now
+                        work as a freelancer earning ₹45,000 monthly."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"><svg width="24" height="24" viewBox="0 0 24 24"
+                                fill="var(--primary-pink)">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+                            </svg></div>
+                        <div>
+                            <div class="author-name">Anjali Verma</div>
+                            <div class="author-role">Graphic Designer, Delhi</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-rating"><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB800">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg></div>
+                    <p class="testimonial-text">"I started with data entry and now manage social media for 5 clients.
+                        MaaSarthi gave me financial independence!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"><svg width="24" height="24" viewBox="0 0 24 24"
+                                fill="var(--primary-pink)">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+                            </svg></div>
+                        <div>
+                            <div class="author-name">Sneha Patel</div>
+                            <div class="author-role">Social Media Manager, Bangalore</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
      ABOUT US SECTION
      ======================================== -->
-<section class="about-section" id="about">
-    <!-- Background Elements -->
-    <div class="about-bg-shapes">
-        <div class="about-shape about-shape-1"></div>
-        <div class="about-shape about-shape-2"></div>
-        <div class="about-shape about-shape-3"></div>
-    </div>
-    
-    <div class="container">
-        <div class="section-header">
-            <span class="section-badge">✨ Who We Are</span>
-            <h2 class="section-title">{{ t.about_us }}</h2>
-            <p class="section-subtitle">Empowering Mothers Across India</p>
+    <section class="about-section" id="about">
+        <!-- Background Elements -->
+        <div class="about-bg-shapes">
+            <div class="about-shape about-shape-1"></div>
+            <div class="about-shape about-shape-2"></div>
+            <div class="about-shape about-shape-3"></div>
         </div>
-        
-        <div class="about-grid">
-            <!-- Mission Card -->
-            <div class="about-card">
-                <div class="about-card-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                </div>
-                <h3>Our Mission</h3>
-                <p>MaaSarthi is dedicated to empowering homemakers and mothers by connecting them with flexible work opportunities that fit their lifestyle. We believe every mother deserves the chance to achieve financial independence while caring for her family.</p>
-            </div>
-            
-            <!-- Vision Card -->
-            <div class="about-card">
-                <div class="about-card-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                </div>
-                <h3>Our Vision</h3>
-                <p>To create a world where every woman, regardless of her circumstances, has access to meaningful employment opportunities. We envision empowered mothers building stronger families and communities across India.</p>
-            </div>
-            
-            <!-- What We Do Card -->
-            <div class="about-card">
-                <div class="about-card-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                    </svg>
-                </div>
-                <h3>What We Do</h3>
-                <p>We provide a platform that matches your skills with genuine work opportunities. Whether you're skilled in data entry, content writing, graphic design, or traditional crafts – we help you find work that values your talent.</p>
-            </div>
-            
-            <!-- Why Choose Us Card -->
-            <div class="about-card">
-                <div class="about-card-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                </div>
-                <h3>Why Choose Us</h3>
-                <p>With AI-powered job matching, verified employers, flexible schedules, and multilingual support in Hindi and English, MaaSarthi ensures you find the perfect opportunity that fits your skills and schedule.</p>
-            </div>
-        </div>
-        
-        <!-- Impact Stats -->
-        <div class="about-impact">
-            <h3 class="impact-title">Our Impact</h3>
-            <div class="about-stats">
-                <div class="about-stat">
-                    <span class="stat-num">10,000+</span>
-                    <span class="stat-text">Mothers Empowered</span>
-                </div>
-                <div class="about-stat">
-                    <span class="stat-num">500+</span>
-                    <span class="stat-text">Partner Companies</span>
-                </div>
-                <div class="about-stat">
-                    <span class="stat-num">₹5Cr+</span>
-                    <span class="stat-text">Total Earnings</span>
-                </div>
-                <div class="about-stat">
-                    <span class="stat-num">50+</span>
-                    <span class="stat-text">Cities Covered</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- ========================================
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">✨ Who We Are</span>
+                <h2 class="section-title">{{ t.about_us }}</h2>
+                <p class="section-subtitle">Empowering Mothers Across India</p>
+            </div>
+
+            <div class="about-grid">
+                <!-- Mission Card -->
+                <div class="about-card">
+                    <div class="about-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Our Mission</h3>
+                    <p>MaaSarthi is dedicated to empowering homemakers and mothers by connecting them with flexible work
+                        opportunities that fit their lifestyle. We believe every mother deserves the chance to achieve
+                        financial independence while caring for her family.</p>
+                </div>
+
+                <!-- Vision Card -->
+                <div class="about-card">
+                    <div class="about-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path
+                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3>Our Vision</h3>
+                    <p>To create a world where every woman, regardless of her circumstances, has access to meaningful
+                        employment opportunities. We envision empowered mothers building stronger families and
+                        communities across India.</p>
+                </div>
+
+                <!-- What We Do Card -->
+                <div class="about-card">
+                    <div class="about-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3>What We Do</h3>
+                    <p>We provide a platform that matches your skills with genuine work opportunities. Whether you're
+                        skilled in data entry, content writing, graphic design, or traditional crafts – we help you find
+                        work that values your talent.</p>
+                </div>
+
+                <!-- Why Choose Us Card -->
+                <div class="about-card">
+                    <div class="about-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3>Why Choose Us</h3>
+                    <p>With AI-powered job matching, verified employers, flexible schedules, and multilingual support in
+                        Hindi and English, MaaSarthi ensures you find the perfect opportunity that fits your skills and
+                        schedule.</p>
+                </div>
+            </div>
+
+            <!-- Impact Stats -->
+            <div class="about-impact">
+                <h3 class="impact-title">Our Impact</h3>
+                <div class="about-stats">
+                    <div class="about-stat">
+                        <span class="stat-num">10,000+</span>
+                        <span class="stat-text">Mothers Empowered</span>
+                    </div>
+                    <div class="about-stat">
+                        <span class="stat-num">500+</span>
+                        <span class="stat-text">Partner Companies</span>
+                    </div>
+                    <div class="about-stat">
+                        <span class="stat-num">₹5Cr+</span>
+                        <span class="stat-text">Total Earnings</span>
+                    </div>
+                    <div class="about-stat">
+                        <span class="stat-num">50+</span>
+                        <span class="stat-text">Cities Covered</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
      CONTACT SECTION
      ======================================== -->
-<!-- ========================================
+    <!-- ========================================
      CALL TO ACTION SECTION
      ======================================== -->
-<section class="cta">
-    <div class="cta-content">
-        <h2>{{ t.ready_to_start }}</h2>
-        <p>{{ t.join_thousands }}</p>
-        <div class="cta-buttons">
-            <a href="/jobs" class="btn btn-primary btn-large">{{ t.get_started_today }}</a>
-            <a href="/contact" class="btn btn-secondary btn-large">{{ t.talk_to_expert }}</a>
+    <section class="cta">
+        <div class="cta-content">
+            <h2>{{ t.ready_to_start }}</h2>
+            <p>{{ t.join_thousands }}</p>
+            <div class="cta-buttons">
+                <a href="/jobs" class="btn btn-primary btn-large">{{ t.get_started_today }}</a>
+                <a href="/contact" class="btn btn-secondary btn-large">{{ t.talk_to_expert }}</a>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- ========================================
+    <!-- ========================================
      FOOTER
      ======================================== -->
-<footer class="footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div>
-                <h3 class="footer-title">🌸 MaaSarthi</h3>
-                <p class="footer-desc">{{ t.footer_desc }}</p>
-                <div class="social-links">
-                    <a href="#" class="social-link">📘</a>
-                    <a href="#" class="social-link">📷</a>
-                    <a href="#" class="social-link">🐦</a>
-                    <a href="#" class="social-link">💼</a>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3 class="footer-title">🌸 MaaSarthi</h3>
+                    <p class="footer-desc">{{ t.footer_desc }}</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">📘</a>
+                        <a href="#" class="social-link">📷</a>
+                        <a href="#" class="social-link">🐦</a>
+                        <a href="#" class="social-link">💼</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="footer-title">{{ t.quick_links }}</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">{{ t.home }}</a></li>
+                        <li><a href="/jobs">{{ t.find_jobs }}</a></li>
+                        <li><a href="/skills">{{ t.train_skill }}</a></li>
+                        <li><a href="#about">{{ t.about_us }}</a></li>
+                        <li><a href="/contact">{{ t.contact }}</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="footer-title">{{ t.categories }}</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">{{ t.data_entry }}</a></li>
+                        <li><a href="#">{{ t.content_writing }}</a></li>
+                        <li><a href="#">{{ t.graphic_design }}</a></li>
+                        <li><a href="#">{{ t.online_tutoring }}</a></li>
+                        <li><a href="#">{{ t.freelance_work }}</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="footer-title">{{ t.support }}</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">{{ t.help_center }}</a></li>
+                        <li><a href="#">{{ t.privacy_policy }}</a></li>
+                        <li><a href="#">{{ t.terms_service }}</a></li>
+                        <li><a href="#">{{ t.faqs }}</a></li>
+                        <li><a href="#">{{ t.career_guidance }}</a></li>
+                    </ul>
                 </div>
             </div>
-            
-            <div>
-                <h3 class="footer-title">{{ t.quick_links }}</h3>
-                <ul class="footer-links">
-                    <li><a href="/">{{ t.home }}</a></li>
-                    <li><a href="/jobs">{{ t.find_jobs }}</a></li>
-                    <li><a href="/skills">{{ t.train_skill }}</a></li>
-                    <li><a href="#about">{{ t.about_us }}</a></li>
-                    <li><a href="/contact">{{ t.contact }}</a></li>
-                </ul>
-            </div>
-            
-            <div>
-                <h3 class="footer-title">{{ t.categories }}</h3>
-                <ul class="footer-links">
-                    <li><a href="#">{{ t.data_entry }}</a></li>
-                    <li><a href="#">{{ t.content_writing }}</a></li>
-                    <li><a href="#">{{ t.graphic_design }}</a></li>
-                    <li><a href="#">{{ t.online_tutoring }}</a></li>
-                    <li><a href="#">{{ t.freelance_work }}</a></li>
-                </ul>
-            </div>
-            
-            <div>
-                <h3 class="footer-title">{{ t.support }}</h3>
-                <ul class="footer-links">
-                    <li><a href="#">{{ t.help_center }}</a></li>
-                    <li><a href="#">{{ t.privacy_policy }}</a></li>
-                    <li><a href="#">{{ t.terms_service }}</a></li>
-                    <li><a href="#">{{ t.faqs }}</a></li>
-                    <li><a href="#">{{ t.career_guidance }}</a></li>
-                </ul>
+
+            <div class="footer-bottom">
+                <p>{{ t.copyright }}</p>
             </div>
         </div>
-        
-        <div class="footer-bottom">
-            <p>{{ t.copyright }}</p>
-        </div>
-    </div>
-</footer>
+    </footer>
 
-{% include 'chatbot.html' %}
+    {% include 'chatbot.html' %}
 
-<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
 
-{% if user %}
-<script>
-// Profile dropdown toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const profileBtn = document.getElementById('profileBtn');
-    const profileDropdown = document.querySelector('.profile-dropdown');
-    
-    if (profileBtn && profileDropdown) {
-        profileBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('active');
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!profileDropdown.contains(e.target)) {
-                profileDropdown.classList.remove('active');
+    {% if user %}
+    <script>
+        // Profile dropdown toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const profileBtn = document.getElementById('profileBtn');
+            const profileDropdown = document.querySelector('.profile-dropdown');
+
+            if (profileBtn && profileDropdown) {
+                profileBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    profileDropdown.classList.toggle('active');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function (e) {
+                    if (!profileDropdown.contains(e.target)) {
+                        profileDropdown.classList.remove('active');
+                    }
+                });
+
+                // Close dropdown on escape key
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') {
+                        profileDropdown.classList.remove('active');
+                    }
+                });
             }
         });
-        
-        // Close dropdown on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                profileDropdown.classList.remove('active');
-            }
-        });
-    }
-});
-</script>
-{% endif %}
+    </script>
+    {% endif %}
 </body>
+
 </html>

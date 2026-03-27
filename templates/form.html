@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>{{ t.title }} | {{ t.find_jobs }}</title>
     <meta charset="UTF-8" />
@@ -10,199 +11,271 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
 </head>
+
 <body>
 
-{% include '_navbar.html' %}
-
-<div class="page-wrap" style="padding-top: 80px;">
-
-    <div class="top-mini">
-        <a href="/" class="back-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;vertical-align:middle;"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>{{ t.back }}</a>
-        <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle;"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>{{ t.find_jobs }}</span>
+    <div class="live-texture-bg">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
     </div>
 
-    <div class="form-card">
-        <h2>{{ t.job_heading }}</h2>
-        <p>{{ t.job_sub }}</p>
+    {% include '_navbar.html' %}
 
-        <form action="/predict" method="POST">
-            <!-- Section 1: Personal Info -->
-            <div class="form-section-label">Personal Information</div>
-            <div class="grid-form">
-                <div class="field">
-                    <label>{{ t.age }}</label>
-                    <input type="number" name="age" placeholder="e.g. 28" min="18" max="60" required>
-                </div>
+    <div class="page-wrap" style="padding-top: 80px;">
 
-                <div class="field">
-                    <label>{{ t.marital_status }}</label>
-                    <select name="marital_status" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for key, value in t.marital_status_list.items() %}
-                          <option value="{{ key }}">{{ value }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+        <div class="top-mini">
+            <a href="/" class="back-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                    style="margin-right:4px;vertical-align:middle;">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                </svg>{{ t.back }}</a>
+            <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
+                    style="margin-right:6px;vertical-align:middle;">
+                    <path
+                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                </svg>{{ t.find_jobs }}</span>
+        </div>
 
-                <div class="field">
-                    <label>{{ t.kids }}</label>
-                    <input type="number" name="kids" placeholder="0 - 5" min="0" max="10" required>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.experience_years }}</label>
-                    <input type="number" name="experience_years" placeholder="e.g. 2" min="0" max="40" required>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.education }}</label>
-                    <select name="education" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for key, value in t.education_list.items() %}
-                          <option value="{{ key }}">{{ value }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.language }}</label>
-                    <select name="language" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for key, value in t.language_list.items() %}
-                          <option value="{{ key }}">{{ value }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+        <!-- ✅ Premium Stepper -->
+        <div class="stepper-container">
+            <div class="step-item active" id="step-item-1">
+                <div class="step-num">1</div>
+                <div class="step-label">Basic</div>
             </div>
-
-            <!-- Section 2: Skills & Domain -->
-            <div class="form-section-label">Skills &amp; Domain</div>
-            <div class="grid-form">
-                <div class="field">
-                    <label>{{ t.sector }}</label>
-                    <select name="sector" id="sector-select" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for s in t.sector_list %}
-                          <option value="{{ s }}">{{ s }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.domain }}</label>
-                    <select name="domain" id="domain-select" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for d in t.domain_list %}
-                          <option value="{{ d }}">{{ d }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.main_skill }}</label>
-                    <input type="text" name="primary_skill" id="primary-skill-input" list="skill-suggestions" placeholder="e.g. Excel, Python, Baking" required>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.secondary_skill }}</label>
-                    <input type="text" name="secondary_skill" id="secondary-skill-input" list="skill-suggestions" placeholder="e.g. Communication, Marketing">
-                </div>
-
-                <datalist id="skill-suggestions"></datalist>
+            <div class="step-item" id="step-item-2">
+                <div class="step-num">2</div>
+                <div class="step-label">Skills</div>
             </div>
-
-            <!-- Section 3: Work Preferences -->
-            <div class="form-section-label">Work Preferences</div>
-            <div class="grid-form">
-                <div class="field">
-                    <label>{{ t.hours }}</label>
-                    <input type="number" name="hours" placeholder="e.g. 4" min="1" max="16" required>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.work_mode }}</label>
-                    <select name="work_mode" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for key, value in t.work_mode_list.items() %}
-                          <option value="{{ key }}">{{ value }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.work_type }}</label>
-                    <select name="work_type" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for key, value in t.work_type_list.items() %}
-                          <option value="{{ key }}">{{ value }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.shift_type }}</label>
-                    <select name="shift_type" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for key, value in t.shift_type_list.items() %}
-                          <option value="{{ key }}">{{ value }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.city_type }}</label>
-                    <select name="city_type" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for key, value in t.city_type_list.items() %}
-                          <option value="{{ key }}">{{ value }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label>{{ t.device }}</label>
-                    <select name="device" required>
-                        <option value="">{{ t.choose }}</option>
-                        {% for key, value in t.device_list.items() %}
-                          <option value="{{ key }}">{{ value }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="field full">
-                    <label>{{ t.location_optional }}</label>
-                    <input type="text" name="location" placeholder="e.g. Mumbai, Delhi, Pune">
-                </div>
-
-                <div class="field full" style="display:flex; flex-direction:row; gap:1rem; align-items:center; justify-content:center;">
-                    <button class="btn" type="submit">{{ t.get_rec }}</button>
-                    <a class="btn-outline" href="/skills">{{ t.train_instead }}</a>
-                </div>
+            <div class="step-item" id="step-item-3">
+                <div class="step-num">3</div>
+                <div class="step-label">Work</div>
             </div>
-        </form>
-    </div>
-</div>
+        </div>
+
+        <div class="form-card">
+            <h2>{{ t.job_heading }}</h2>
+            <p>{{ t.job_sub }}</p>
+
+            <form action="/predict" method="POST" id="job-form">
+                <!-- Step 1: Personal Info -->
+                <div class="form-step active" id="step-1">
+                    <div class="form-section-label">Personal Information</div>
+                    <div class="grid-form">
+                        <div class="field">
+                            <label>{{ t.age }}</label>
+                            <input type="number" name="age" placeholder="e.g. 28" min="18" max="60" required>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.marital_status }}</label>
+                            <select name="marital_status" required>
+                                <option value="">{{ t.choose }}</option>
+                                {% for key, value in t.marital_status_list.items() %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.kids }}</label>
+                            <input type="number" name="kids" placeholder="0 - 5" min="0" max="10" required>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.experience_years }}</label>
+                            <input type="number" name="experience_years" placeholder="e.g. 2" min="0" max="40" required>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.education }}</label>
+                            <select name="education" required>
+                                <option value="">{{ t.choose }}</option>
+                                {% for key, value in t.education_list.items() %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.language }}</label>
+                            <select name="language" required>
+                                <option value="">{{ t.choose }}</option>
+                                {% for key, value in t.language_list.items() %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="step-nav">
+                        <div></div> <!-- empty div for flex spacing -->
+                        <button type="button" class="btn" onclick="nextStep(2)">Next Step &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Skills & Domain -->
+                <div class="form-step" id="step-2">
+                    <div class="form-section-label">Skills &amp; Domain</div>
+                    <div class="grid-form" style="margin-bottom: 2rem;">
+                        <div class="field">
+                            <label>{{ t.sector }}</label>
+                            <select name="sector" id="sector-select" required>
+                                <option value="">{{ t.choose }}</option>
+                                {% for s in t.sector_list %}
+                                <option value="{{ s }}">{{ s }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.domain }}</label>
+                            <select name="domain" id="domain-select" required>
+                                <option value="">{{ t.choose }}</option>
+                                {% for d in t.domain_list %}
+                                <option value="{{ d }}">{{ d }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.main_skill }}</label>
+                            <input type="text" name="primary_skill" id="primary-skill-input" list="skill-suggestions"
+                                placeholder="e.g. Excel, Python, Baking" required>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.secondary_skill }}</label>
+                            <input type="text" name="secondary_skill" id="secondary-skill-input" list="skill-suggestions"
+                                placeholder="e.g. Communication, Marketing">
+                        </div>
+
+                        <datalist id="skill-suggestions"></datalist>
+                    </div>
+                    <div class="step-nav">
+                        <button type="button" class="btn btn-back" onclick="nextStep(1)">&larr; Back</button>
+                        <button type="button" class="btn" onclick="nextStep(3)">Next Step &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Work Preferences -->
+                <div class="form-step" id="step-3">
+                    <div class="form-section-label">Work Preferences</div>
+                    <div class="grid-form">
+                        <div class="field">
+                            <label>{{ t.hours }}</label>
+                            <input type="number" name="hours" placeholder="e.g. 4" min="1" max="16" required>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.work_mode }}</label>
+                            <select name="work_mode" required>
+                                <option value="">{{ t.choose }}</option>
+                                {% for key, value in t.work_mode_list.items() %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.work_type }}</label>
+                            <select name="work_type" required>
+                                <option value="">{{ t.choose }}</option>
+                                {% for key, value in t.work_type_list.items() %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.shift_type }}</label>
+                            <select name="shift_type" required>
+                                <option value="">{{ t.choose }}</option>
+                                {% for key, value in t.shift_type_list.items() %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.city_type }}</label>
+                            <select name="city_type" required>
+                                <option value="">{{ t.choose }}</option>
+                                {% for key, value in t.city_type_list.items() %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>{{ t.device }}</label>
+                            <select name="device" required>
+                                <option value="">{{ t.choose }}</option>
+                                {% for key, value in t.device_list.items() %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="field full">
+                            <label>{{ t.location_optional }}</label>
+                            <input type="text" name="location" placeholder="e.g. Mumbai, Delhi, Pune">
+                        </div>
+
+                    </div>
+                    <div class="step-nav">
+                        <button type="button" class="btn btn-back" onclick="nextStep(2)">&larr; Back</button>
+                        <button type="submit" class="btn">{{ t.get_rec }}</button>
+                    </div>
+                    <div class="field full" style="text-align: center; margin-top: 1.5rem;">
+                        <a class="btn-outline" href="/skills" style="border:none; text-decoration: none; color: var(--text-light);">{{ t.train_instead }}</a>
+                    </div>
+                </div>
+            </form>
+        </div>
 
 
-<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sectorSelect = document.getElementById('sector-select');
-        const domainSelect = document.getElementById('domain-select');
-        const skillDatalist = document.getElementById('skill-suggestions');
-        
-        // mappings injected from flask/jinja
-        const sectorMapping = {{ t.sector_domain_mapping | tojson }};
-        const domainSkillMapping = {{ t.domain_skill_mapping | tojson }};
-        const allDomains = {{ t.domain_list | tojson }};
-        
-        sectorSelect.addEventListener('change', function() {
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    <script>
+        function nextStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            // Show current step
+            document.getElementById('step-' + step).classList.add('active');
+
+            // Update stepper
+            document.querySelectorAll('.step-item').forEach((item, idx) => {
+                if (idx + 1 < step) {
+                    item.classList.add('completed');
+                    item.classList.remove('active');
+                } else if (idx + 1 === step) {
+                    item.classList.remove('completed');
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('completed');
+                    item.classList.remove('active');
+                }
+            });
+
+            // Scroll to top of card
+            document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const sectorSelect = document.getElementById('sector-select');
+            const domainSelect = document.getElementById('domain-select');
+            const skillDatalist = document.getElementById('skill-suggestions');
+
+            // mappings injected from flask/jinja
+            const sectorMapping = {{ t.sector_domain_mapping | tojson }};
+            const domainSkillMapping = {{ t.domain_skill_mapping | tojson }};
+            const allDomains = {{ t.domain_list | tojson }};
+
+        sectorSelect.addEventListener('change', function () {
             const selectedSector = this.value;
             const domains = sectorMapping[selectedSector] || [];
-            
+
             // Clear domains
             domainSelect.innerHTML = '<option value="">{{ t.choose }}</option>';
-            
+
             if (domains.length > 0) {
                 domains.forEach(d => {
                     const option = document.createElement('option');
@@ -222,12 +295,12 @@
             }
         });
 
-        domainSelect.addEventListener('change', function() {
+        domainSelect.addEventListener('change', function () {
             const selectedDomain = this.value;
             const skills = domainSkillMapping[selectedDomain] || [];
-            
+
             skillDatalist.innerHTML = '';
-            
+
             const skillsToDisplay = skills.length > 0 ? skills : (domainSkillMapping["General"] || []);
             skillsToDisplay.forEach(s => {
                 const option = document.createElement('option');
@@ -236,6 +309,7 @@
             });
         });
     });
-</script>
+    </script>
 </body>
+
 </html>

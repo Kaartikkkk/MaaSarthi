@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | MaaSarthi</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         :root {
             /* Pink Color Palette - Matching base.css */
@@ -17,20 +24,20 @@
             --accent-pink: #ffb3c1;
             --soft-pink: #ffc2d1;
             --pale-pink: #ffe5ec;
-            
+
             /* Supporting Colors */
             --bg-dark: #1a0a0e;
             --bg-card: #2d1417;
             --bg-light: #fff5f7;
             --bg-white: #ffffff;
             --bg-grey: #f8f9fa;
-            
+
             /* Text Colors */
             --text-primary: #1a0a0e;
             --text-secondary: #5a3f47;
             --text-light: #8a6d75;
             --text-white: #ffffff;
-            
+
             /* Effects */
             --border-color: #ffd4dc;
             --border-light: #e0e0e0;
@@ -38,23 +45,23 @@
             --shadow-md: 0 4px 15px rgba(255, 77, 109, 0.15);
             --shadow-lg: 0 10px 30px rgba(255, 77, 109, 0.2);
             --shadow-xl: 0 20px 50px rgba(255, 77, 109, 0.25);
-            
+
             /* Gradients */
             --gradient-primary: linear-gradient(135deg, #ff4d6d 0%, #ff85a1 100%);
             --gradient-soft: linear-gradient(135deg, #ff85a1 0%, #ffb3c1 100%);
-            
+
             /* Additional Colors */
             --blue: #3b82f6;
-            --blue-bg: rgba(59,130,246,0.1);
+            --blue-bg: rgba(59, 130, 246, 0.1);
             --green: #10b981;
-            --green-bg: rgba(16,185,129,0.1);
+            --green-bg: rgba(16, 185, 129, 0.1);
             --purple: #8b5cf6;
-            --purple-bg: rgba(139,92,246,0.1);
+            --purple-bg: rgba(139, 92, 246, 0.1);
             --orange: #f59e0b;
-            --orange-bg: rgba(245,158,11,0.1);
+            --orange-bg: rgba(245, 158, 11, 0.1);
             --cyan: #06b6d4;
-            --cyan-bg: rgba(6,182,212,0.1);
-            
+            --cyan-bg: rgba(6, 182, 212, 0.1);
+
             /* Animation */
             --animation-duration: 0.6s;
             --animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
@@ -70,22 +77,46 @@
 
         /* ANIMATIONS */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .animate-fadeIn { animation: fadeIn 0.5s var(--animation-easing); }
-        .animate-fadeInUp { animation: fadeInUp 0.6s var(--animation-easing); }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s var(--animation-easing);
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s var(--animation-easing);
+        }
 
         /* NAVBAR */
         .navbar {
@@ -192,8 +223,13 @@
             box-shadow: var(--shadow-lg);
         }
 
-        .btn-refresh svg { transition: transform 0.4s; }
-        .btn-refresh:hover svg { transform: rotate(180deg); }
+        .btn-refresh svg {
+            transition: transform 0.4s;
+        }
+
+        .btn-refresh:hover svg {
+            transform: rotate(180deg);
+        }
 
         .btn-logout {
             display: flex;
@@ -284,9 +320,11 @@
         .welcome-banner::before {
             content: '';
             position: absolute;
-            top: -60px; right: -60px;
-            width: 200px; height: 200px;
-            background: rgba(255,255,255,0.1);
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             pointer-events: none;
         }
@@ -294,14 +332,19 @@
         .welcome-banner::after {
             content: '';
             position: absolute;
-            bottom: -80px; right: 120px;
-            width: 160px; height: 160px;
-            background: rgba(255,255,255,0.08);
+            bottom: -80px;
+            right: 120px;
+            width: 160px;
+            height: 160px;
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 50%;
             pointer-events: none;
         }
 
-        .banner-text { position: relative; z-index: 1; }
+        .banner-text {
+            position: relative;
+            z-index: 1;
+        }
 
         .banner-text h2 {
             font-size: 1.5rem;
@@ -311,7 +354,7 @@
         }
 
         .banner-text p {
-            color: rgba(255,255,255,0.9);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 0.9375rem;
             font-weight: 500;
         }
@@ -324,7 +367,9 @@
             z-index: 1;
         }
 
-        .banner-stat { text-align: center; }
+        .banner-stat {
+            text-align: center;
+        }
 
         .banner-stat-val {
             font-size: 2rem;
@@ -336,7 +381,7 @@
         .banner-stat-lbl {
             font-size: 0.7rem;
             font-weight: 600;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             text-transform: uppercase;
             letter-spacing: 0.08em;
             margin-top: 0.25rem;
@@ -345,7 +390,7 @@
         .banner-divider {
             width: 1px;
             height: 40px;
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         /* STAT CARDS */
@@ -371,17 +416,36 @@
             animation: fadeInUp 0.5s var(--animation-easing) backwards;
         }
 
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.15s; }
-        .stat-card:nth-child(3) { animation-delay: 0.2s; }
-        .stat-card:nth-child(4) { animation-delay: 0.25s; }
-        .stat-card:nth-child(5) { animation-delay: 0.3s; }
-        .stat-card:nth-child(6) { animation-delay: 0.35s; }
+        .stat-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:nth-child(4) {
+            animation-delay: 0.25s;
+        }
+
+        .stat-card:nth-child(5) {
+            animation-delay: 0.3s;
+        }
+
+        .stat-card:nth-child(6) {
+            animation-delay: 0.35s;
+        }
 
         .stat-card::after {
             content: '';
             position: absolute;
-            bottom: 0; left: 0; right: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             height: 3px;
             background: var(--card-accent, var(--gradient-primary));
             transform: scaleX(0);
@@ -395,14 +459,33 @@
             border-color: var(--border-color);
         }
 
-        .stat-card:hover::after { transform: scaleX(1); }
+        .stat-card:hover::after {
+            transform: scaleX(1);
+        }
 
-        .stat-card:nth-child(1) { --card-accent: var(--gradient-primary); }
-        .stat-card:nth-child(2) { --card-accent: linear-gradient(90deg,#3b82f6,#60a5fa); }
-        .stat-card:nth-child(3) { --card-accent: linear-gradient(90deg,#10b981,#34d399); }
-        .stat-card:nth-child(4) { --card-accent: linear-gradient(90deg,#8b5cf6,#a78bfa); }
-        .stat-card:nth-child(5) { --card-accent: linear-gradient(90deg,#f59e0b,#fbbf24); }
-        .stat-card:nth-child(6) { --card-accent: linear-gradient(90deg,#06b6d4,#22d3ee); }
+        .stat-card:nth-child(1) {
+            --card-accent: var(--gradient-primary);
+        }
+
+        .stat-card:nth-child(2) {
+            --card-accent: linear-gradient(90deg, #3b82f6, #60a5fa);
+        }
+
+        .stat-card:nth-child(3) {
+            --card-accent: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        .stat-card:nth-child(4) {
+            --card-accent: linear-gradient(90deg, #8b5cf6, #a78bfa);
+        }
+
+        .stat-card:nth-child(5) {
+            --card-accent: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+
+        .stat-card:nth-child(6) {
+            --card-accent: linear-gradient(90deg, #06b6d4, #22d3ee);
+        }
 
         .stat-icon-wrap {
             width: 50px;
@@ -414,14 +497,34 @@
             flex-shrink: 0;
         }
 
-        .si-pink   { background: var(--pale-pink); }
-        .si-blue   { background: var(--blue-bg); }
-        .si-green  { background: var(--green-bg); }
-        .si-purple { background: var(--purple-bg); }
-        .si-orange { background: var(--orange-bg); }
-        .si-cyan   { background: var(--cyan-bg); }
+        .si-pink {
+            background: var(--pale-pink);
+        }
 
-        .stat-info { flex: 1; min-width: 0; }
+        .si-blue {
+            background: var(--blue-bg);
+        }
+
+        .si-green {
+            background: var(--green-bg);
+        }
+
+        .si-purple {
+            background: var(--purple-bg);
+        }
+
+        .si-orange {
+            background: var(--orange-bg);
+        }
+
+        .si-cyan {
+            background: var(--cyan-bg);
+        }
+
+        .stat-info {
+            flex: 1;
+            min-width: 0;
+        }
 
         .stat-val {
             font-size: 1.75rem;
@@ -491,11 +594,19 @@
             flex-shrink: 0;
         }
 
-        .tab-btn.active .tab-dot { opacity: 1; }
+        .tab-btn.active .tab-dot {
+            opacity: 1;
+        }
 
         /* PANELS */
-        .panel { display: none; animation: fadeInUp 0.3s var(--animation-easing); }
-        .panel.active { display: block; }
+        .panel {
+            display: none;
+            animation: fadeInUp 0.3s var(--animation-easing);
+        }
+
+        .panel.active {
+            display: block;
+        }
 
         /* PANEL CARD */
         .panel-card {
@@ -547,7 +658,9 @@
         }
 
         /* Search */
-        .search-box { position: relative; }
+        .search-box {
+            position: relative;
+        }
 
         .search-box svg {
             position: absolute;
@@ -574,7 +687,9 @@
             transition: all 0.3s var(--animation-easing);
         }
 
-        .search-box input::placeholder { color: var(--text-light); }
+        .search-box input::placeholder {
+            color: var(--text-light);
+        }
 
         .search-box input:focus {
             border-color: var(--primary-pink-light);
@@ -584,11 +699,19 @@
         }
 
         /* TABLE */
-        .table-scroll { overflow-x: auto; }
+        .table-scroll {
+            overflow-x: auto;
+        }
 
-        table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8125rem;
+        }
 
-        thead tr { background: var(--bg-grey); }
+        thead tr {
+            background: var(--bg-grey);
+        }
 
         th {
             font-size: 0.7rem;
@@ -620,17 +743,49 @@
             color: var(--text-primary);
         }
 
-        tbody tr { transition: background 0.2s; }
-        tbody tr:hover { background: var(--pale-pink); }
-        tbody tr:last-child td { border-bottom: none; }
+        tbody tr {
+            transition: background 0.2s;
+        }
 
-        .salary-val { font-weight: 700; color: var(--green); }
+        tbody tr:hover {
+            background: var(--pale-pink);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .salary-val {
+            font-weight: 700;
+            color: var(--green);
+        }
 
         /* Confidence */
-        .conf-wrap { display: flex; align-items: center; gap: 0.5rem; }
-        .conf-bar { width: 60px; height: 6px; background: #f0f0f0; border-radius: 6px; overflow: hidden; }
-        .conf-fill { height: 100%; background: var(--gradient-primary); border-radius: 6px; }
-        .conf-pct { font-size: 0.75rem; font-weight: 700; color: var(--primary-pink); }
+        .conf-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .conf-bar {
+            width: 60px;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .conf-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 6px;
+        }
+
+        .conf-pct {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary-pink);
+        }
 
         /* BADGES */
         .badge {
@@ -653,14 +808,36 @@
             flex-shrink: 0;
         }
 
-        .badge-success { background: var(--green-bg);  color: #059669; }
-        .badge-warning { background: var(--orange-bg);  color: #d97706; }
-        .badge-info    { background: var(--blue-bg);  color: #3b82f6; }
-        .badge-pink    { background: var(--pale-pink);  color: var(--primary-pink); }
-        .badge-purple  { background: var(--purple-bg);  color: #8b5cf6; }
+        .badge-success {
+            background: var(--green-bg);
+            color: #059669;
+        }
+
+        .badge-warning {
+            background: var(--orange-bg);
+            color: #d97706;
+        }
+
+        .badge-info {
+            background: var(--blue-bg);
+            color: #3b82f6;
+        }
+
+        .badge-pink {
+            background: var(--pale-pink);
+            color: var(--primary-pink);
+        }
+
+        .badge-purple {
+            background: var(--purple-bg);
+            color: #8b5cf6;
+        }
 
         /* EMPTY STATE */
-        .empty-state { padding: 4rem 2rem; text-align: center; }
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
 
         .empty-icon {
             width: 64px;
@@ -674,679 +851,938 @@
             margin: 0 auto 1rem;
         }
 
-        .empty-state h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; }
-        .empty-state p  { font-size: 0.875rem; color: var(--text-light); }
+        .empty-state h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.35rem;
+        }
+
+        .empty-state p {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .main { padding: 1.5rem 1rem 3rem; }
-            .nav-inner { padding: 0 1rem; }
-            .welcome-banner { flex-direction: column; text-align: center; }
-            .banner-stats { width: 100%; justify-content: space-around; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .search-box input, .search-box input:focus { width: 100%; }
-            .page-title { font-size: 1.5rem; }
+            .main {
+                padding: 1.5rem 1rem 3rem;
+            }
+
+            .nav-inner {
+                padding: 0 1rem;
+            }
+
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .banner-stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .search-box input,
+            .search-box input:focus {
+                width: 100%;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
         }
 
         @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .nav-badge { display: none; }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-badge {
+                display: none;
+            }
         }
+        /* MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-xl);
+            animation: fadeInUp 0.3s var(--animation-easing);
+        }
+
+        .modal-header {
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .modal-form .field {
+            margin-bottom: 1.25rem;
+        }
+
+        .modal-form label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .modal-form input, .modal-form select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .modal-footer {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn-cancel {
+            background: #eee;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-confirm {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+        }
+
     </style>
 </head>
+
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-    <div class="nav-inner">
-        <a href="/" class="nav-brand">
-            <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="MaaSarthi Logo">
-            <span>MaaSarthi</span>
-        </a>
-        <div class="nav-right">
-            <span class="nav-badge">Admin Panel</span>
-            <div class="nav-admin-pill">
-                <div class="admin-avatar">A</div>
-                <span class="admin-label">Admin</span>
-            </div>
-            <button class="btn-refresh" onclick="location.reload()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                </svg>
-                Refresh
-            </button>
-            <a href="{{ url_for('admin_logout') }}" class="btn-logout">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-                Logout
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="MaaSarthi Logo">
+                <span>MaaSarthi</span>
             </a>
-        </div>
-    </div>
-</nav>
-
-<div class="main">
-
-    <!-- HEADER -->
-    <div class="page-header">
-        <div class="page-eyebrow">Control Center</div>
-        <h1 class="page-title">Admin Dashboard</h1>
-        <p class="page-sub">Monitor and manage all MaaSarthi platform activity</p>
-    </div>
-
-    <!-- WELCOME BANNER -->
-    <div class="welcome-banner">
-        <div class="banner-text">
-            <h2>Welcome back, Admin!</h2>
-            <p>Here's a snapshot of your MaaSarthi platform today.</p>
-        </div>
-        <div class="banner-stats">
-            <div class="banner-stat">
-                <div class="banner-stat-val" id="bstat-users">{{ stats.users if stats else 0 }}</div>
-                <div class="banner-stat-lbl">Users</div>
-            </div>
-            <div class="banner-divider"></div>
-            <div class="banner-stat">
-                <div class="banner-stat-val" id="bstat-jobs">{{ stats.job_searches if stats else 0 }}</div>
-                <div class="banner-stat-lbl">Job Searches</div>
-            </div>
-            <div class="banner-divider"></div>
-            <div class="banner-stat">
-                <div class="banner-stat-val" id="bstat-msgs">{{ stats.messages if stats else 0 }}</div>
-                <div class="banner-stat-lbl">Messages</div>
-            </div>
-            <div class="banner-divider"></div>
-            <div class="banner-stat">
-                <div class="banner-stat-val" id="bstat-mh">{{ mh_requests|length if mh_requests else 0 }}</div>
-                <div class="banner-stat-lbl">MH Support</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- STAT CARDS -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon-wrap si-pink">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
-            </div>
-            <div class="stat-info">
-                <div class="stat-val" id="sc-users">{{ stats.users if stats else 0 }}</div>
-                <div class="stat-lbl">Total Users</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon-wrap si-blue">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                    <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
-                </svg>
-            </div>
-            <div class="stat-info">
-                <div class="stat-val" id="sc-jobs">{{ stats.job_searches if stats else 0 }}</div>
-                <div class="stat-lbl">Job Searches</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon-wrap si-green">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                </svg>
-            </div>
-            <div class="stat-info">
-                <div class="stat-val" id="sc-skills">{{ stats.skill_searches if stats else 0 }}</div>
-                <div class="stat-lbl">Skill Searches</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon-wrap si-purple">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22 6 12 13 2 6"/>
-                </svg>
-            </div>
-            <div class="stat-info">
-                <div class="stat-val" id="sc-msgs">{{ stats.messages if stats else 0 }}</div>
-                <div class="stat-lbl">Messages</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon-wrap si-orange">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                    <polyline points="22 4 12 14.01 9 11.01"/>
-                </svg>
-            </div>
-            <div class="stat-info">
-                <div class="stat-val" id="sc-tasks">{{ stats.tasks if stats else 0 }}</div>
-                <div class="stat-lbl">Tasks</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon-wrap si-cyan">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
-                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                    <path d="M13.73 21a2 2 0 01-3.46 0"/>
-                </svg>
-            </div>
-            <div class="stat-info">
-                <div class="stat-val" id="sc-reminders">{{ stats.reminders if stats else 0 }}</div>
-                <div class="stat-lbl">Reminders</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon-wrap" style="background: var(--pale-pink); border: 1px solid var(--primary-pink);">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M12 6v6l4 2"></path>
-                </svg>
-            </div>
-            <div class="stat-info">
-                <div class="stat-val" id="sc-mh">{{ mh_requests|length if mh_requests else 0 }}</div>
-                <div class="stat-lbl" style="color: var(--primary-pink);">MH Support</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TABS -->
-    <div class="tabs-wrap">
-        <button class="tab-btn active" onclick="showPanel('users',this)"><span class="tab-dot"></span>Users</button>
-        <button class="tab-btn" onclick="showPanel('organizations',this)"><span class="tab-dot"></span>Organizations</button>
-        <button class="tab-btn" onclick="showPanel('job-searches',this)"><span class="tab-dot"></span>Job Searches</button>
-        <button class="tab-btn" onclick="showPanel('skill-searches',this)"><span class="tab-dot"></span>Skill Searches</button>
-        <button class="tab-btn" onclick="showPanel('contacts',this)"><span class="tab-dot"></span>Messages</button>
-        <button class="tab-btn" onclick="showPanel('mh-requests',this)"><span class="tab-dot"></span>MH Support</button>
-        <button class="tab-btn" onclick="showPanel('tasks',this)"><span class="tab-dot"></span>Tasks</button>
-        <button class="tab-btn" onclick="showPanel('reminders',this)"><span class="tab-dot"></span>Reminders</button>
-    </div>
-
-    <!-- USERS PANEL -->
-    <div id="users" class="panel active">
-        <div class="panel-card">
-            <div class="panel-head">
-                <div class="panel-title">
-                    <div class="panel-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                    </div>
-                    Registered Users
-                    <span class="panel-count" id="cnt-users">{{ users|length if users else 0 }}</span>
+            <div class="nav-right">
+                <span class="nav-badge">Admin Panel</span>
+                <div class="nav-admin-pill">
+                    <div class="admin-avatar">A</div>
+                    <span class="admin-label">Admin</span>
                 </div>
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" placeholder="Search users..." onkeyup="filterTable(this,'users-table')">
+                <button class="btn-refresh" onclick="location.reload()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Refresh
+                </button>
+                <a href="{{ url_for('admin_logout') }}" class="btn-logout">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main">
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div class="page-eyebrow">Control Center</div>
+            <h1 class="page-title">Admin Dashboard</h1>
+            <p class="page-sub">Monitor and manage all MaaSarthi platform activity</p>
+        </div>
+
+        <!-- WELCOME BANNER -->
+        <div class="welcome-banner">
+            <div class="banner-text">
+                <h2>Welcome back, Admin!</h2>
+                <p>Here's a snapshot of your MaaSarthi platform today.</p>
+            </div>
+            <div class="banner-stats">
+                <div class="banner-stat">
+                    <div class="banner-stat-val" id="bstat-users">{{ stats.users if stats else 0 }}</div>
+                    <div class="banner-stat-lbl">Users</div>
+                </div>
+                <div class="banner-divider"></div>
+                <div class="banner-stat">
+                    <div class="banner-stat-val" id="bstat-jobs">{{ stats.job_searches if stats else 0 }}</div>
+                    <div class="banner-stat-lbl">Job Searches</div>
+                </div>
+                <div class="banner-divider"></div>
+                <div class="banner-stat">
+                    <div class="banner-stat-val" id="bstat-msgs">{{ stats.messages if stats else 0 }}</div>
+                    <div class="banner-stat-lbl">Messages</div>
                 </div>
             </div>
-            {% if users %}
-            <div class="table-scroll">
-                <table id="users-table">
-                    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Age</th><th>Joined</th><th>Last Login</th><th>Status</th></tr></thead>
-                    <tbody>
-                    {% for user in users %}
-                    <tr>
-                        <td class="id-cell">#{{ user.id }}</td>
-                        <td class="name-cell">{{ user.name }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.phone or '—' }}</td>
-                        <td>{{ profiles_dict[user.id].age if profiles_dict.get(user.id) else '—' }}</td>
-                        <td>{{ user.created_at.strftime('%b %d, %Y') if user.created_at else '—' }}</td>
-                        <td>{{ user.last_login.strftime('%b %d, %Y') if user.last_login else 'Never' }}</td>
-                        <td>{% if user.is_active %}<span class="badge badge-success">Active</span>{% else %}<span class="badge badge-warning">Inactive</span>{% endif %}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon-wrap si-pink">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                        stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
                     </svg>
                 </div>
-                <h3>No users yet</h3>
-                <p>Registered users will appear here.</p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- ORGANIZATIONS PANEL -->
-    <div id="organizations" class="panel">
-        <div class="panel-card">
-            <div class="panel-head">
-                <div class="panel-title">
-                    <div class="panel-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="16" rx="2" ry="2"/>
-                            <line x1="8" y1="8" x2="16" y2="8"/>
-                            <line x1="8" y1="12" x2="16" y2="12"/>
-                            <line x1="8" y1="16" x2="16" y2="16"/>
-                        </svg>
-                    </div>
-                    Registered Organizations
-                    <span class="panel-count" id="cnt-orgs">{{ organizations|length if organizations else 0 }}</span>
-                </div>
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" placeholder="Search organizations..." onkeyup="filterTable(this,'orgs-table')">
+                <div class="stat-info">
+                    <div class="stat-val" id="sc-users">{{ stats.users if stats else 0 }}</div>
+                    <div class="stat-lbl">Total Users</div>
                 </div>
             </div>
-            {% if organizations %}
-            <div class="table-scroll">
-                <table id="orgs-table">
-                    <thead><tr><th>ID</th><th>Company Name</th><th>Type</th><th>Industry</th><th>Contact Person</th><th>Phone</th><th>Email</th><th>City</th><th>Date Joined</th><th>Status</th><th>Actions</th></tr></thead>
-                    <tbody>
-                    {% for org in organizations %}
-                    <tr>
-                        <td class="id-cell">#{{ org.id }}</td>
-                        <td class="name-cell">{{ org.company_name }}</td>
-                        <td><span class="badge badge-purple">{{ org.org_type }}</span></td>
-                        <td>{{ org.industry }}</td>
-                        <td>{{ org.contact_name }} ({{ org.designation }})</td>
-                        <td>{{ org.phone_number }}</td>
-                        <td>{{ org.email }}</td>
-                        <td>{{ org.city }}</td>
-                        <td>{{ org.created_at.strftime('%b %d, %Y') if org.created_at else '—' }}</td>
-                        <td>
-                            {% if org.status == 'Approved' %}
-                                <span class="badge badge-success" style="background-color: #d1fae5; color: #065f46;">Approved</span>
-                            {% elif org.status == 'Declined' %}
-                                <span class="badge badge-danger" style="background-color: #fee2e2; color: #991b1b;">Declined</span>
-                            {% else %}
-                                <span class="badge badge-info" style="background-color: #e0f2fe; color: #075985;">Pending</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if org.status == 'Pending' %}
-                            <div style="display: flex; gap: 5px;">
-                                <form action="{{ url_for('admin_approve_org', org_id=org.id) }}" method="POST" style="margin: 0;">
-                                    <button type="submit" style="background-color: #10b981; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; border: none; cursor: pointer;">Approve</button>
-                                </form>
-                                <form action="{{ url_for('admin_decline_org', org_id=org.id) }}" method="POST" style="margin: 0;">
-                                    <button type="submit" style="background-color: #ef4444; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; border: none; cursor: pointer;">Decline</button>
-                                </form>
-                            </div>
-                            {% else %}
-                            <span style="color: #999; font-size: 0.85rem;">—</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="16" rx="2" ry="2"/>
-                        <line x1="8" y1="8" x2="16" y2="8"/>
-                        <line x1="8" y1="12" x2="16" y2="12"/>
-                        <line x1="8" y1="16" x2="16" y2="16"/>
+            <div class="stat-card">
+                <div class="stat-icon-wrap si-blue">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                        <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
                     </svg>
                 </div>
-                <h3>No organizations yet</h3>
-                <p>Registered organizations will appear here.</p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- JOB SEARCHES PANEL -->
-    <div id="job-searches" class="panel">
-        <div class="panel-card">
-            <div class="panel-head">
-                <div class="panel-title">
-                    <div class="panel-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                            <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
-                        </svg>
-                    </div>
-                    Job Search History
-                    <span class="panel-count" id="cnt-jobs">{{ job_searches|length if job_searches else 0 }}</span>
-                </div>
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" placeholder="Search job searches..." onkeyup="filterTable(this,'job-table')">
+                <div class="stat-info">
+                    <div class="stat-val" id="sc-jobs">{{ stats.job_searches if stats else 0 }}</div>
+                    <div class="stat-lbl">Job Searches</div>
                 </div>
             </div>
-            {% if job_searches %}
-            <div class="table-scroll">
-                <table id="job-table">
-                    <thead><tr><th>ID</th><th>User</th><th>Domain</th><th>Skill</th><th>Education</th><th>Location</th><th>Predicted Job</th><th>Salary Range</th><th>Confidence</th><th>Date</th></tr></thead>
-                    <tbody>
-                    {% for job in job_searches %}
-                    <tr>
-                        <td class="id-cell">#{{ job.id }}</td>
-                        <td class="name-cell">{{ job.user_id }}</td>
-                        <td>{{ job.domain or '—' }}</td>
-                        <td>{{ job.skill or '—' }}</td>
-                        <td><span class="badge badge-info">{{ job.education or '—' }}</span></td>
-                        <td>{{ job.location or '—' }}</td>
-                        <td><span class="badge badge-pink">{{ job.predicted_job or '—' }}</span></td>
-                        <td class="salary-val">₹{{ "{:,}".format(job.predicted_salary_low or 0) }} – ₹{{ "{:,}".format(job.predicted_salary_high or 0) }}</td>
-                        <td>
-                            <div class="conf-wrap">
-                                <div class="conf-bar"><div class="conf-fill" style="width:{{ job.confidence_score or 0 }}%"></div></div>
-                                <span class="conf-pct">{{ "%.0f"|format(job.confidence_score or 0) }}%</span>
-                            </div>
-                        </td>
-                        <td>{{ job.created_at.strftime('%b %d, %Y') if job.created_at else '—' }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                        <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+            <div class="stat-card">
+                <div class="stat-icon-wrap si-green">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                     </svg>
                 </div>
-                <h3>No job searches yet</h3>
-                <p>Job search history will appear here.</p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- SKILL SEARCHES PANEL -->
-    <div id="skill-searches" class="panel">
-        <div class="panel-card">
-            <div class="panel-head">
-                <div class="panel-title">
-                    <div class="panel-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                        </svg>
-                    </div>
-                    Skill Search History
-                    <span class="panel-count" id="cnt-skills">{{ skill_searches|length if skill_searches else 0 }}</span>
-                </div>
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" placeholder="Search skill searches..." onkeyup="filterTable(this,'skill-table')">
+                <div class="stat-info">
+                    <div class="stat-val" id="sc-skills">{{ stats.skill_searches if stats else 0 }}</div>
+                    <div class="stat-lbl">Skill Searches</div>
                 </div>
             </div>
-            {% if skill_searches %}
-            <div class="table-scroll">
-                <table id="skill-table">
-                    <thead><tr><th>ID</th><th>User ID</th><th>Skill Name</th><th>Date</th></tr></thead>
-                    <tbody>
-                    {% for skill in skill_searches %}
-                    <tr>
-                        <td class="id-cell">#{{ skill.id }}</td>
-                        <td class="name-cell">{{ skill.user_id }}</td>
-                        <td><span class="badge badge-purple">{{ skill.skill_name }}</span></td>
-                        <td>{{ skill.created_at.strftime('%b %d, %Y') if skill.created_at else '—' }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            <div class="stat-card">
+                <div class="stat-icon-wrap si-purple">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22 6 12 13 2 6" />
                     </svg>
                 </div>
-                <h3>No skill searches yet</h3>
-                <p>Skill search history will appear here.</p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- CONTACTS PANEL -->
-    <div id="contacts" class="panel">
-        <div class="panel-card">
-            <div class="panel-head">
-                <div class="panel-title">
-                    <div class="panel-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                            <polyline points="22 6 12 13 2 6"/>
-                        </svg>
-                    </div>
-                    Contact Messages
-                    <span class="panel-count" id="cnt-msgs">{{ contact_messages|length if contact_messages else 0 }}</span>
-                </div>
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" placeholder="Search messages..." onkeyup="filterTable(this,'contacts-table')">
+                <div class="stat-info">
+                    <div class="stat-val" id="sc-msgs">{{ stats.messages if stats else 0 }}</div>
+                    <div class="stat-lbl">Messages</div>
                 </div>
             </div>
-            {% if contact_messages %}
-            <div class="table-scroll">
-                <table id="contacts-table">
-                    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>Date</th><th>Status</th></tr></thead>
-                    <tbody>
-                    {% for msg in contact_messages %}
-                    <tr>
-                        <td class="id-cell">#{{ msg.id }}</td>
-                        <td class="name-cell">{{ msg.name }}</td>
-                        <td>{{ msg.email }}</td>
-                        <td>{{ msg.subject or '—' }}</td>
-                        <td title="{{ msg.message }}" style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ msg.message[:55] }}{% if msg.message|length > 55 %}...{% endif %}</td>
-                        <td>{{ msg.created_at.strftime('%b %d, %Y') if msg.created_at else '—' }}</td>
-                        <td>{% if msg.is_read %}<span class="badge badge-success">Read</span>{% else %}<span class="badge badge-warning">Unread</span>{% endif %}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                        <polyline points="22 6 12 13 2 6"/>
+            <div class="stat-card">
+                <div class="stat-icon-wrap si-orange">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
                     </svg>
                 </div>
-                <h3>No messages yet</h3>
-                <p>Contact form submissions will appear here.</p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- MENTAL HEALTH REQUESTS PANEL -->
-    <div id="mh-requests" class="panel">
-        <div class="panel-card">
-            <div class="panel-head">
-                <div class="panel-title">
-                    <div class="panel-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 6v6l4 2"></path>
-                        </svg>
-                    </div>
-                    Mental Health Callback Requests
-                    <span class="panel-count" id="cnt-mh">{{ mh_requests|length if mh_requests else 0 }}</span>
-                </div>
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" placeholder="Search requests..." onkeyup="filterTable(this,'mh-table')">
+                <div class="stat-info">
+                    <div class="stat-val" id="sc-tasks">{{ stats.tasks if stats else 0 }}</div>
+                    <div class="stat-lbl">Tasks</div>
                 </div>
             </div>
-            {% if mh_requests %}
-            <div class="table-scroll">
-                <table id="mh-table">
-                    <thead><tr><th>ID</th><th>User</th><th>Email</th><th>Type</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
-                    <tbody>
-                    {% for req in mh_requests %}
-                    <tr>
-                        <td class="id-cell">#{{ req.id }}</td>
-                        <td class="name-cell">{{ req.user.name if req.user else 'Unknown' }}</td>
-                        <td>{{ req.user.email if req.user else '—' }}</td>
-                        <td><span class="badge badge-info">{{ req.request_type }}</span></td>
-                        <td>{{ req.created_at.strftime('%b %d, %x %H:%M') if req.created_at else '—' }}</td>
-                        <td>
-                            {% if req.status == 'Pending' %}
-                                <span class="badge badge-warning">{{ req.status }}</span>
-                            {% elif req.status == 'Completed' %}
-                                <span class="badge badge-success">{{ req.status }}</span>
-                            {% else %}
-                                <span class="badge badge-info">{{ req.status }}</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <button class="badge badge-pink" style="cursor:pointer; border:none;" onclick="alert('Contact user at {{ req.user.email }}')">Mark Done</button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M12 6v6l4 2"></path>
+            <div class="stat-card">
+                <div class="stat-icon-wrap si-cyan">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2">
+                        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 01-3.46 0" />
                     </svg>
                 </div>
-                <h3>No mental health requests yet</h3>
-                <p>User callback requests will appear here.</p>
+                <div class="stat-info">
+                    <div class="stat-val" id="sc-reminders">{{ stats.reminders if stats else 0 }}</div>
+                    <div class="stat-lbl">Reminders</div>
+                </div>
             </div>
-            {% endif %}
         </div>
-    </div>
 
-    <!-- TASKS PANEL -->
-    <div id="tasks" class="panel">
-        <div class="panel-card">
-            <div class="panel-head">
-                <div class="panel-title">
-                    <div class="panel-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                            <polyline points="22 4 12 14.01 9 11.01"/>
+        <!-- TABS -->
+        <div class="tabs-wrap">
+            <button class="tab-btn active" onclick="showPanel('users',this)"><span class="tab-dot"></span>Users</button>
+            <button class="tab-btn" onclick="showPanel('organizations',this)"><span
+                    class="tab-dot"></span>Organizations</button>
+            <button class="tab-btn" onclick="showPanel('job-searches',this)"><span class="tab-dot"></span>Job
+                Searches</button>
+            <button class="tab-btn" onclick="showPanel('skill-searches',this)"><span class="tab-dot"></span>Skill
+                Searches</button>
+            <button class="tab-btn" onclick="showPanel('contacts',this)"><span class="tab-dot"></span>Messages</button>
+            <button class="tab-btn" onclick="showPanel('tasks',this)"><span class="tab-dot"></span>Tasks</button>
+            <button class="tab-btn" onclick="showPanel('reminders',this)"><span
+                    class="tab-dot"></span>Reminders</button>
+        </div>
+
+        <!-- USERS PANEL -->
+        <div id="users" class="panel active">
+            <div class="panel-card">
+                <div class="panel-head">
+                    <div class="panel-title">
+                        <div class="panel-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                                stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        Registered Users
+                        <span class="panel-count" id="cnt-users">{{ users|length if users else 0 }}</span>
+                    </div>
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" placeholder="Search users..." onkeyup="filterTable(this,'users-table')">
+                    </div>
+                </div>
+                {% if users %}
+                <div class="table-scroll">
+                    <table id="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Age</th>
+                                <th>Joined</th>
+                                <th>Last Login</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td class="id-cell">#{{ user.id }}</td>
+                                <td class="name-cell">{{ user.name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.phone or '—' }}</td>
+                                <td>{{ profiles_dict[user.id].age if profiles_dict.get(user.id) else '—' }}</td>
+                                <td>{{ user.created_at.strftime('%b %d, %Y') if user.created_at else '—' }}</td>
+                                <td>{{ user.last_login.strftime('%b %d, %Y') if user.last_login else 'Never' }}</td>
+                                <td>{% if user.is_active %}<span class="badge badge-success">Active</span>{% else
+                                    %}<span class="badge badge-warning">Inactive</span>{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
                         </svg>
                     </div>
-                    User Tasks
-                    <span class="panel-count" id="cnt-tasks">{{ tasks|length if tasks else 0 }}</span>
+                    <h3>No users yet</h3>
+                    <p>Registered users will appear here.</p>
                 </div>
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" placeholder="Search tasks..." onkeyup="filterTable(this,'tasks-table')">
-                </div>
+                {% endif %}
             </div>
-            {% if tasks %}
-            <div class="table-scroll">
-                <table id="tasks-table">
-                    <thead><tr><th>ID</th><th>User</th><th>Task</th><th>Status</th><th>Created</th></tr></thead>
-                    <tbody>
-                    {% for task in tasks %}
-                    <tr>
-                        <td class="id-cell">#{{ task.id }}</td>
-                        <td class="name-cell">{{ task.user.name if task.user else 'Unknown' }}</td>
-                        <td style="font-weight:600;color:var(--text-primary);">{{ task.task_text }}</td>
-                        <td>{% if task.is_completed %}<span class="badge badge-success">Completed</span>{% else %}<span class="badge badge-warning">Pending</span>{% endif %}</td>
-                        <td>{{ task.created_at.strftime('%b %d, %Y') if task.created_at else '—' }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                        <polyline points="22 4 12 14.01 9 11.01"/>
-                    </svg>
-                </div>
-                <h3>No tasks yet</h3>
-                <p>User tasks will appear here.</p>
-            </div>
-            {% endif %}
         </div>
-    </div>
 
-    <!-- REMINDERS PANEL -->
-    <div id="reminders" class="panel">
-        <div class="panel-card">
-            <div class="panel-head">
-                <div class="panel-title">
-                    <div class="panel-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                            <path d="M13.73 21a2 2 0 01-3.46 0"/>
+        <!-- ORGANIZATIONS PANEL -->
+        <div id="organizations" class="panel">
+            <div class="panel-card">
+                <div class="panel-head">
+                    <div class="panel-title">
+                        <div class="panel-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="16" rx="2" ry="2" />
+                                <line x1="8" y1="8" x2="16" y2="8" />
+                                <line x1="8" y1="12" x2="16" y2="12" />
+                                <line x1="8" y1="16" x2="16" y2="16" />
+                            </svg>
+                        </div>
+                        Registered Organizations
+                        <span class="panel-count" id="cnt-orgs">{{ organizations|length if organizations else 0
+                            }}</span>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <button class="btn-refresh" onclick="openAddOrgModal()" style="background: var(--green); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Add Organization
+                        </button>
+                        <div class="search-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input type="text" placeholder="Search organizations..."
+                                onkeyup="filterTable(this,'orgs-table')">
+                        </div>
+                    </div>
+                </div>
+                {% if organizations %}
+                <div class="table-scroll">
+                    <table id="orgs-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Company Name</th>
+                                <th>Type</th>
+                                <th>Industry</th>
+                                <th>Contact Person</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>City</th>
+                                <th>Date Joined</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for org in organizations %}
+                            <tr>
+                                <td class="id-cell">#{{ org.id }}</td>
+                                <td class="name-cell">{{ org.company_name }}</td>
+                                <td><span class="badge badge-purple">{{ org.org_type }}</span></td>
+                                <td>{{ org.industry }}</td>
+                                <td>{{ org.contact_name }} ({{ org.designation }})</td>
+                                <td>{{ org.phone_number }}</td>
+                                <td>{{ org.email }}</td>
+                                <td>{{ org.city }}</td>
+                                <td>{{ org.created_at.strftime('%b %d, %Y') if org.created_at else '—' }}</td>
+                                <td>
+                                    {% if org.status == 'Approved' %}
+                                    <span class="badge badge-success"
+                                        style="background-color: #d1fae5; color: #065f46;">Approved</span>
+                                    {% elif org.status == 'Declined' %}
+                                    <span class="badge badge-danger"
+                                        style="background-color: #fee2e2; color: #991b1b;">Declined</span>
+                                    {% else %}
+                                    <span class="badge badge-info"
+                                        style="background-color: #e0f2fe; color: #075985;">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 5px;">
+                                        {% if org.status == 'Pending' %}
+                                        <form action="{{ url_for('admin_approve_org', org_id=org.id) }}" method="POST"
+                                            style="margin: 0;">
+                                            <button type="submit"
+                                                style="background-color: #10b981; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; border: none; cursor: pointer;">Approve</button>
+                                        </form>
+                                        <form action="{{ url_for('admin_decline_org', org_id=org.id) }}" method="POST"
+                                            style="margin: 0;">
+                                            <button type="submit"
+                                                style="background-color: #ef4444; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; border: none; cursor: pointer;">Decline</button>
+                                        </form>
+                                        {% endif %}
+                                        <form action="{{ url_for('admin_delete_org', org_id=org.id) }}" method="POST"
+                                            style="margin: 0;" onsubmit="return confirm('Are you sure you want to remove this organization and all its data?');">
+                                            <button type="submit"
+                                                style="background-color: #333; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; border: none; cursor: pointer;">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                            stroke-width="2">
+                            <rect x="3" y="4" width="18" height="16" rx="2" ry="2" />
+                            <line x1="8" y1="8" x2="16" y2="8" />
+                            <line x1="8" y1="12" x2="16" y2="12" />
+                            <line x1="8" y1="16" x2="16" y2="16" />
                         </svg>
                     </div>
-                    User Reminders
-                    <span class="panel-count" id="cnt-reminders">{{ reminders|length if reminders else 0 }}</span>
+                    <h3>No organizations yet</h3>
+                    <p>Registered organizations will appear here.</p>
                 </div>
-                <div class="search-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" placeholder="Search reminders..." onkeyup="filterTable(this,'reminders-table')">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- JOB SEARCHES PANEL -->
+        <div id="job-searches" class="panel">
+            <div class="panel-card">
+                <div class="panel-head">
+                    <div class="panel-title">
+                        <div class="panel-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                                stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                                <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
+                            </svg>
+                        </div>
+                        Job Search History
+                        <span class="panel-count" id="cnt-jobs">{{ job_searches|length if job_searches else 0 }}</span>
+                    </div>
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" placeholder="Search job searches..." onkeyup="filterTable(this,'job-table')">
+                    </div>
                 </div>
-            </div>
-            {% if reminders %}
-            <div class="table-scroll">
-                <table id="reminders-table">
-                    <thead><tr><th>ID</th><th>User</th><th>Title</th><th>Description</th><th>Due Date</th><th>Status</th><th>Created</th></tr></thead>
-                    <tbody>
-                    {% for reminder in reminders %}
-                    <tr>
-                        <td class="id-cell">#{{ reminder.id }}</td>
-                        <td class="name-cell">{{ reminder.user.name if reminder.user else 'Unknown' }}</td>
-                        <td style="font-weight:600;color:var(--text-primary);">{{ reminder.title }}</td>
-                        <td>{{ reminder.description or '—' }}</td>
-                        <td><span class="badge badge-info">{{ reminder.due_date.strftime('%b %d, %Y') if reminder.due_date else '—' }}</span></td>
-                        <td>{% if reminder.is_completed %}<span class="badge badge-success">Completed</span>{% else %}<span class="badge badge-warning">Pending</span>{% endif %}</td>
-                        <td>{{ reminder.created_at.strftime('%b %d, %Y') if reminder.created_at else '—' }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)" stroke-width="2">
-                        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                        <path d="M13.73 21a2 2 0 01-3.46 0"/>
-                    </svg>
+                {% if job_searches %}
+                <div class="table-scroll">
+                    <table id="job-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Domain</th>
+                                <th>Skill</th>
+                                <th>Education</th>
+                                <th>Location</th>
+                                <th>Predicted Job</th>
+                                <th>Salary Range</th>
+                                <th>Confidence</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in job_searches %}
+                            <tr>
+                                <td class="id-cell">#{{ job.id }}</td>
+                                <td class="name-cell">{{ job.user_id }}</td>
+                                <td>{{ job.domain or '—' }}</td>
+                                <td>{{ job.skill or '—' }}</td>
+                                <td><span class="badge badge-info">{{ job.education or '—' }}</span></td>
+                                <td>{{ job.location or '—' }}</td>
+                                <td><span class="badge badge-pink">{{ job.predicted_job or '—' }}</span></td>
+                                <td class="salary-val">₹{{ "{:,}".format(job.predicted_salary_low or 0) }} – ₹{{
+                                    "{:,}".format(job.predicted_salary_high or 0) }}</td>
+                                <td>
+                                    <div class="conf-wrap">
+                                        <div class="conf-bar">
+                                            <div class="conf-fill" style="width:{{ job.confidence_score or 0 }}%"></div>
+                                        </div>
+                                        <span class="conf-pct">{{ "%.0f"|format(job.confidence_score or 0) }}%</span>
+                                    </div>
+                                </td>
+                                <td>{{ job.created_at.strftime('%b %d, %Y') if job.created_at else '—' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <h3>No reminders yet</h3>
-                <p>User reminders will appear here.</p>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                            stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                            <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
+                        </svg>
+                    </div>
+                    <h3>No job searches yet</h3>
+                    <p>Job search history will appear here.</p>
+                </div>
+                {% endif %}
             </div>
-            {% endif %}
+        </div>
+
+        <!-- SKILL SEARCHES PANEL -->
+        <div id="skill-searches" class="panel">
+            <div class="panel-card">
+                <div class="panel-head">
+                    <div class="panel-title">
+                        <div class="panel-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                                stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                            </svg>
+                        </div>
+                        Skill Search History
+                        <span class="panel-count" id="cnt-skills">{{ skill_searches|length if skill_searches else 0
+                            }}</span>
+                    </div>
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" placeholder="Search skill searches..."
+                            onkeyup="filterTable(this,'skill-table')">
+                    </div>
+                </div>
+                {% if skill_searches %}
+                <div class="table-scroll">
+                    <table id="skill-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User ID</th>
+                                <th>Skill Name</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for skill in skill_searches %}
+                            <tr>
+                                <td class="id-cell">#{{ skill.id }}</td>
+                                <td class="name-cell">{{ skill.user_id }}</td>
+                                <td><span class="badge badge-purple">{{ skill.skill_name }}</span></td>
+                                <td>{{ skill.created_at.strftime('%b %d, %Y') if skill.created_at else '—' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                            stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                        </svg>
+                    </div>
+                    <h3>No skill searches yet</h3>
+                    <p>Skill search history will appear here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- CONTACTS PANEL -->
+        <div id="contacts" class="panel">
+            <div class="panel-card">
+                <div class="panel-head">
+                    <div class="panel-title">
+                        <div class="panel-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                                stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                <polyline points="22 6 12 13 2 6" />
+                            </svg>
+                        </div>
+                        Contact Messages
+                        <span class="panel-count" id="cnt-msgs">{{ contact_messages|length if contact_messages else 0
+                            }}</span>
+                    </div>
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" placeholder="Search messages..."
+                            onkeyup="filterTable(this,'contacts-table')">
+                    </div>
+                </div>
+                {% if contact_messages %}
+                <div class="table-scroll">
+                    <table id="contacts-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for msg in contact_messages %}
+                            <tr>
+                                <td class="id-cell">#{{ msg.id }}</td>
+                                <td class="name-cell">{{ msg.name }}</td>
+                                <td>{{ msg.email }}</td>
+                                <td>{{ msg.subject or '—' }}</td>
+                                <td title="{{ msg.message }}"
+                                    style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                    {{ msg.message[:55] }}{% if msg.message|length > 55 %}...{% endif %}</td>
+                                <td>{{ msg.created_at.strftime('%b %d, %Y') if msg.created_at else '—' }}</td>
+                                <td>{% if msg.is_read %}<span class="badge badge-success">Read</span>{% else %}<span
+                                        class="badge badge-warning">Unread</span>{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                            stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                            <polyline points="22 6 12 13 2 6" />
+                        </svg>
+                    </div>
+                    <h3>No messages yet</h3>
+                    <p>Contact form submissions will appear here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- TASKS PANEL -->
+        <div id="tasks" class="panel">
+            <div class="panel-card">
+                <div class="panel-head">
+                    <div class="panel-title">
+                        <div class="panel-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                                stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                <polyline points="22 4 12 14.01 9 11.01" />
+                            </svg>
+                        </div>
+                        User Tasks
+                        <span class="panel-count" id="cnt-tasks">{{ tasks|length if tasks else 0 }}</span>
+                    </div>
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" placeholder="Search tasks..." onkeyup="filterTable(this,'tasks-table')">
+                    </div>
+                </div>
+                {% if tasks %}
+                <div class="table-scroll">
+                    <table id="tasks-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Task</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tasks %}
+                            <tr>
+                                <td class="id-cell">#{{ task.id }}</td>
+                                <td class="name-cell">{{ task.user.name if task.user else 'Unknown' }}</td>
+                                <td style="font-weight:600;color:var(--text-primary);">{{ task.task_text }}</td>
+                                <td>{% if task.is_completed %}<span class="badge badge-success">Completed</span>{% else
+                                    %}<span class="badge badge-warning">Pending</span>{% endif %}</td>
+                                <td>{{ task.created_at.strftime('%b %d, %Y') if task.created_at else '—' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                            stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                            <polyline points="22 4 12 14.01 9 11.01" />
+                        </svg>
+                    </div>
+                    <h3>No tasks yet</h3>
+                    <p>User tasks will appear here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- REMINDERS PANEL -->
+        <div id="reminders" class="panel">
+            <div class="panel-card">
+                <div class="panel-head">
+                    <div class="panel-title">
+                        <div class="panel-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                                stroke-width="2">
+                                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                <path d="M13.73 21a2 2 0 01-3.46 0" />
+                            </svg>
+                        </div>
+                        User Reminders
+                        <span class="panel-count" id="cnt-reminders">{{ reminders|length if reminders else 0 }}</span>
+                    </div>
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" placeholder="Search reminders..."
+                            onkeyup="filterTable(this,'reminders-table')">
+                    </div>
+                </div>
+                {% if reminders %}
+                <div class="table-scroll">
+                    <table id="reminders-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reminder in reminders %}
+                            <tr>
+                                <td class="id-cell">#{{ reminder.id }}</td>
+                                <td class="name-cell">{{ reminder.user.name if reminder.user else 'Unknown' }}</td>
+                                <td style="font-weight:600;color:var(--text-primary);">{{ reminder.title }}</td>
+                                <td>{{ reminder.description or '—' }}</td>
+                                <td><span class="badge badge-info">{{ reminder.due_date.strftime('%b %d, %Y') if
+                                        reminder.due_date else '—' }}</span></td>
+                                <td>{% if reminder.is_completed %}<span class="badge badge-success">Completed</span>{%
+                                    else %}<span class="badge badge-warning">Pending</span>{% endif %}</td>
+                                <td>{{ reminder.created_at.strftime('%b %d, %Y') if reminder.created_at else '—' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-pink)"
+                            stroke-width="2">
+                            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 01-3.46 0" />
+                        </svg>
+                    </div>
+                    <h3>No reminders yet</h3>
+                    <p>User reminders will appear here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ADD ORGANIZATION MODAL -->
+    <div id="addOrgModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Add New Partner</h3>
+                <p style="color: var(--text-light); font-size: 0.9rem;">Manually register an organization.</p>
+            </div>
+            <form action="/admin/org/add" method="POST" class="modal-form">
+                <div class="field">
+                    <label>Company Name</label>
+                    <input type="text" name="company_name" required placeholder="e.g. Acme Corp">
+                </div>
+                <div class="field">
+                    <label>Email Address</label>
+                    <input type="email" name="email" required placeholder="org@example.com">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="field">
+                        <label>Org Type</label>
+                        <select name="org_type">
+                            <option value="Private">Private</option>
+                            <option value="Public">Public</option>
+                            <option value="NGO">NGO</option>
+                            <option value="Government">Government</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Industry</label>
+                        <input type="text" name="industry" placeholder="e.g. Tech">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Password (Temporary)</label>
+                    <input type="text" name="password" value="MaaSarthi@123">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeAddOrgModal()">Cancel</button>
+                    <button type="submit" class="btn-confirm">Create Organization</button>
+                </div>
+            </form>
         </div>
     </div>
 
-</div>
+    <script>
+        function openAddOrgModal() {
+            document.getElementById('addOrgModal').style.display = 'flex';
+        }
+        function closeAddOrgModal() {
+            document.getElementById('addOrgModal').style.display = 'none';
+        }
+        // Close modal if clicked outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('addOrgModal');
+            if (event.target == modal) {
+                closeAddOrgModal();
+            }
+        }
 
-<script>
-    function showPanel(id, btn) {
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        btn.classList.add('active');
-    }
+        function showPanel(id, btn) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+            
+            // Save state in hash
+            window.location.hash = id;
+        }
 
-    function filterTable(input, tableId) {
-        const filter = input.value.toLowerCase();
-        const table = document.getElementById(tableId);
-        if (!table) return;
-        table.querySelectorAll('tbody tr').forEach(row => {
-            row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        function filterTable(input, tableId) {
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById(tableId);
+            if (!table) return;
+            table.querySelectorAll('tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+            });
+        }
+
+        // Initialize from hash
+        window.addEventListener('load', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const btn = document.querySelector(`[onclick*="showPanel('${hash}'"]`);
+                if (btn) showPanel(hash, btn);
+            }
         });
-    }
-</script>
+    </script>
 </body>
+
 </html>
