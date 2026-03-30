@@ -253,48 +253,119 @@
         <div class="header-section" style="margin-top: 40px; padding: 20px 30px; margin-bottom: 20px;">
             <div>
                 <h2 style="font-size: 1.5rem; color: var(--primary-dark); margin: 0;">Training Programs</h2>
-                <p style="color: #666; margin-top: 5px;">Upload training videos and PDFs for users to learn skills.</p>
+                <p style="color: #666; margin-top: 5px;">Upload structured training content for users to learn skills.</p>
             </div>
         </div>
 
-        <div class="content-grid">
+        <div class="content-grid" style="grid-template-columns: 1fr 1.5fr;">
             
-            <!-- Post New Course Form -->
+            <!-- Post New Course Form (Structured) -->
             <div class="card">
-                <div class="card-header">Add Training Course</div>
-                <form action="{{ url_for('org_add_course') }}" method="POST">
+                <div class="card-header">📚 Add Training Course</div>
+                <form action="{{ url_for('org_add_course') }}" method="POST" enctype="multipart/form-data">
                     
                     <div class="form-group">
                         <label>Course Title *</label>
                         <input type="text" name="title" required placeholder="e.g. Master Data Entry in 5 Days">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Technology">💻 Technology</option>
+                            <option value="Arts & Crafts">🎨 Arts & Crafts</option>
+                            <option value="Business & Finance">📊 Business & Finance</option>
+                            <option value="Healthcare">🏥 Healthcare</option>
+                            <option value="Education">📖 Education</option>
+                            <option value="Languages">🌐 Languages</option>
+                            <option value="Life Skills">🌱 Life Skills</option>
+                            <option value="Marketing">📣 Marketing</option>
+                            <option value="Data & Analytics">📈 Data & Analytics</option>
+                            <option value="Other">📦 Other</option>
+                        </select>
                     </div>
                     
                     <div class="form-group">
                         <label>Target Skill *</label>
                         <input type="text" name="skill_name" required placeholder="e.g. Data Entry, Python, Baking">
                     </div>
-                    
+
                     <div class="form-group">
-                        <label>YouTube Video URL</label>
-                        <input type="url" name="video_url" placeholder="https://www.youtube.com/watch?v=...">
+                        <label>Difficulty Level *</label>
+                        <div style="display: flex; gap: 10px; margin-top: 4px;">
+                            <label style="display: flex; align-items: center; gap: 4px; font-weight: 400; cursor: pointer;">
+                                <input type="radio" name="difficulty_level" value="Beginner" checked> Beginner
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 4px; font-weight: 400; cursor: pointer;">
+                                <input type="radio" name="difficulty_level" value="Intermediate"> Intermediate
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 4px; font-weight: 400; cursor: pointer;">
+                                <input type="radio" name="difficulty_level" value="Advanced"> Advanced
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Duration</label>
+                        <input type="text" name="duration" placeholder="e.g. 2 hours, 5 days, 4 weeks">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Language</label>
+                        <select name="language">
+                            <option value="Hindi">Hindi</option>
+                            <option value="English">English</option>
+                            <option value="Both">Both (Hindi + English)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Prerequisites</label>
+                        <textarea name="prerequisites" rows="2" placeholder="What should the learner already know? (e.g. Basic Computer Skills)"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Learning Outcomes *</label>
+                        <textarea name="learning_outcomes" rows="2" required placeholder="What will learners achieve? (e.g. Ability to type 50 WPM, Create charts in Excel)"></textarea>
                     </div>
                     
-                    <div class="form-group">
-                        <label>PDF / Document Link</label>
-                        <input type="url" name="pdf_url" placeholder="Google Drive link or public PDF URL">
+                    <div class="form-group" style="padding: 10px; border: 1px dashed #eee; border-radius: 8px; margin-bottom: 20px;">
+                        <label style="color: var(--primary-pink); margin-bottom: 10px; display: block;">Media Sources</label>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 0.8rem; color: #777;">Course Thumbnail</label>
+                            <input type="text" name="thumbnail_url" placeholder="Image URL (e.g. https://...)" style="margin-bottom: 8px;">
+                            <span style="font-size: 0.75rem; color: #999; display: block; margin-bottom: 5px;">OR Upload File:</span>
+                            <input type="file" name="thumbnail_file" accept="image/*">
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 0.8rem; color: #777;">Video Lesson</label>
+                            <input type="url" name="video_url" placeholder="YouTube/Vimeo URL" style="margin-bottom: 8px;">
+                            <span style="font-size: 0.75rem; color: #999; display: block; margin-bottom: 5px;">OR Upload Video:</span>
+                            <input type="file" name="video_file" accept="video/*">
+                        </div>
+
+                        <div>
+                            <label style="font-size: 0.8rem; color: #777;">Course PDF/Notes</label>
+                            <input type="url" name="pdf_url" placeholder="Document URL (Google Drive/etc.)" style="margin-bottom: 8px;">
+                            <span style="font-size: 0.75rem; color: #999; display: block; margin-bottom: 5px;">OR Upload PDF:</span>
+                            <input type="file" name="pdf_file" accept=".pdf,.doc,.docx">
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label>Description *</label>
-                        <textarea name="description" rows="3" required placeholder="What will they learn?"></textarea>
+                        <textarea name="description" rows="3" required placeholder="What will they learn? Describe the course content..."></textarea>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 10px; background-color: #553c9a; border-color: #553c9a;">Upload Course</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 10px; background-color: #553c9a; border-color: #553c9a; color: white; border-radius: 8px; font-weight: 600; cursor: pointer;">Upload Course Content</button>
                     
                 </form>
             </div>
             
-            <!-- Existing Courses Table -->
+            <!-- Existing Courses Table (Enhanced) -->
             <div class="card">
                 <div class="card-header">Your Active Courses</div>
                 
@@ -304,7 +375,10 @@
                             <thead>
                                 <tr>
                                     <th>Title</th>
+                                    <th>Category</th>
                                     <th>Skill</th>
+                                    <th>Level</th>
+                                    <th>Duration</th>
                                     <th>Materials</th>
                                     <th>Posted On</th>
                                 </tr>
@@ -313,10 +387,23 @@
                                 {% for course in courses %}
                                 <tr>
                                     <td style="font-weight: 600; color: #333;">{{ course.title }}</td>
+                                    <td><span class="badge" style="background: #f0e6ff; color: #6b21a8;">{{ course.category or '—' }}</span></td>
                                     <td><span class="badge badge-purple">{{ course.skill_name }}</span></td>
                                     <td>
-                                        {% if course.video_url %}<a href="{{ course.video_url }}" target="_blank" style="color: #e52d27; text-decoration: none; font-weight: bold;">[Video]</a>{% endif %}
-                                        {% if course.pdf_url %}<a href="{{ course.pdf_url }}" target="_blank" style="color: #3b5998; text-decoration: none; font-weight: bold; margin-left: 5px;">[PDF]</a>{% endif %}
+                                        {% if course.difficulty_level == 'Beginner' %}
+                                            <span class="badge badge-green">{{ course.difficulty_level }}</span>
+                                        {% elif course.difficulty_level == 'Intermediate' %}
+                                            <span class="badge badge-blue">{{ course.difficulty_level }}</span>
+                                        {% elif course.difficulty_level == 'Advanced' %}
+                                            <span class="badge" style="background: #fed7d7; color: #9b2c2c;">{{ course.difficulty_level }}</span>
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ course.duration or '—' }}</td>
+                                    <td>
+                                        {% if course.video_url %}<a href="{{ course.video_url }}" target="_blank" style="color: #e52d27; text-decoration: none; font-weight: bold;">▶ Video</a>{% endif %}
+                                        {% if course.pdf_url %}<a href="{{ course.pdf_url }}" target="_blank" style="color: #3b5998; text-decoration: none; font-weight: bold; margin-left: 5px;">📄 PDF</a>{% endif %}
                                     </td>
                                     <td>{{ course.created_at.strftime('%d %b %Y') }}</td>
                                 </tr>

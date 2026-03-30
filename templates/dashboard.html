@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Dashboard | MaaSarthi</title>
+    <title>{{ t.get('dashboard_title', 'Dashboard') }} | MaaSarthi</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
@@ -64,8 +64,8 @@
             <!-- Welcome Section -->
             <section class="welcome-section">
                 <div class="welcome-content">
-                    <h1>Welcome back, {{ user_name }}!</h1>
-                    <p>Here's what's happening with your career journey today.</p>
+                    <h1>{{ t.get('welcome_back', 'Welcome back') }}, {{ user_name }}!</h1>
+                    <p>{{ t.get('today_journey', "Here's what's happening with your career journey today.") }}</p>
                 </div>
                 <div class="quick-stats">
                     <div class="quick-stat-item">
@@ -76,7 +76,7 @@
                         </div>
                         <div class="stat-data">
                             <span class="stat-number">{{ job_applications }}</span>
-                            <span class="stat-label">Applications</span>
+                            <span class="stat-label">{{ t.get('apps_label', 'Applications') }}</span>
                         </div>
                     </div>
                     <div class="quick-stat-item">
@@ -89,7 +89,7 @@
                         </div>
                         <div class="stat-data">
                             <span class="stat-number">{{ active_skills }}</span>
-                            <span class="stat-label">Skills</span>
+                            <span class="stat-label">{{ t.get('skills_label', 'Skills') }}</span>
                         </div>
                     </div>
                     <div class="quick-stat-item">
@@ -100,7 +100,7 @@
                         </div>
                         <div class="stat-data">
                             <span class="stat-number">{{ pending_tasks }}</span>
-                            <span class="stat-label">Pending Tasks</span>
+                            <span class="stat-label">{{ t.get('pending_tasks', 'Pending Tasks') }}</span>
                         </div>
                     </div>
                 </div>
@@ -121,8 +121,8 @@
                                 </svg>
                             </div>
                             <div class="action-content">
-                                <h3>Find Jobs</h3>
-                                <p>Browse 500+ opportunities</p>
+                                <h3>{{ t.get('find_jobs', 'Find Jobs') }}</h3>
+                                <p>{{ t.get('browse_opps', 'Browse 500+ opportunities') }}</p>
                             </div>
                             <div class="action-arrow">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -140,8 +140,8 @@
                                 </svg>
                             </div>
                             <div class="action-content">
-                                <h3>Train Skills</h3>
-                                <p>150+ courses available</p>
+                                <h3>{{ t.get('train_skill', 'Train Skills') }}</h3>
+                                <p>{{ t.get('courses_available', '150+ courses available') }}</p>
                             </div>
                             <div class="action-arrow">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -158,8 +158,8 @@
                                 </svg>
                             </div>
                             <div class="action-content">
-                                <h3 style="color: white;">Sahayata (Support)</h3>
-                                <p style="color: rgba(255,255,255,0.9);">Mental Wellness Center</p>
+                                <h3 style="color: white;">{{ t.get('sahayata_title', 'Sahayata') }}</h3>
+                                <p style="color: rgba(255,255,255,0.9);">{{ t.get('wellness_center', 'Mental Wellness Center') }}</p>
                             </div>
                             <div class="action-arrow">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -172,8 +172,8 @@
                     <!-- Recent Activity -->
                     <div class="card">
                         <div class="card-header">
-                            <h2>Recent Activity</h2>
-                            <a href="#" class="card-link">View All</a>
+                            <h2>{{ t.get('recent_activity', 'Recent Activity') }}</h2>
+                            <a href="#" class="card-link">{{ t.get('view_all', 'View All') }}</a>
                         </div>
                         <div class="activity-list">
                             {% if recent_activities %}
@@ -195,7 +195,7 @@
                                 </div>
                                 {% endfor %}
                             {% else %}
-                                <p style="text-align: center; color: #999; padding: 20px;">No recent activity</p>
+                                <p style="text-align: center; color: #999; padding: 20px;">{{ t.get('no_activity', 'No recent activity') }}</p>
                             {% endif %}
                         </div>
                     </div>
@@ -203,7 +203,7 @@
                     <!-- Skills Chart Card -->
                     <div class="card">
                         <div class="card-header">
-                            <h2>Skills Analysis</h2>
+                            <h2>{{ t.get('skills_analysis', 'Skills Analysis') }}</h2>
                         </div>
                         <div class="chart-container">
                             <canvas id="skillsChart"></canvas>
@@ -218,7 +218,7 @@
                     <!-- Progress Card -->
                     <div class="card">
                         <div class="card-header">
-                            <h2>Profile Completion</h2>
+                            <h2>{{ t.get('profile_completion', 'Profile Completion') }}</h2>
                             <span class="progress-percent">{{ completion_rate }}%</span>
                         </div>
                         <div class="progress-bar">
@@ -231,7 +231,7 @@
                                 {% else %}
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/></svg>
                                 {% endif %}
-                                <span>Basic Information</span>
+                                <span>{{ t.get('basic_info', 'Basic Information') }}</span>
                             </div>
                             <div class="task-item {% if has_skills %}completed{% else %}pending{% endif %}">
                                 {% if has_skills %}
@@ -239,7 +239,7 @@
                                 {% else %}
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/></svg>
                                 {% endif %}
-                                <span>Skills Added</span>
+                                <span>{{ t.get('skills_added', 'Skills Added') }}</span>
                             </div>
                             <div class="task-item {% if has_experience %}completed{% else %}pending{% endif %}">
                                 {% if has_experience %}
@@ -247,7 +247,7 @@
                                 {% else %}
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/></svg>
                                 {% endif %}
-                                <span>Add Work Experience</span>
+                                <span>{{ t.get('add_experience', 'Add Work Experience') }}</span>
                             </div>
                             <div class="task-item {% if has_resume %}completed{% else %}pending{% endif %}">
                                 {% if has_resume %}
@@ -255,18 +255,18 @@
                                 {% else %}
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/></svg>
                                 {% endif %}
-                                <span>Upload Resume</span>
+                                <span>{{ t.get('upload_resume', 'Upload Resume') }}</span>
                             </div>
                         </div>
                         <div style="margin-top: 20px;">
-                            <a href="{{ url_for('edit_profile') }}" class="btn btn-outline" style="width: 100%; text-align: center; display: block; padding: 10px; border: 1px solid var(--primary-pink); border-radius: 8px; color: var(--primary-pink); text-decoration: none; font-weight: 600; transition: all 0.3s;">Update Profile</a>
+                            <a href="{{ url_for('edit_profile') }}" class="btn btn-outline" style="width: 100%; text-align: center; display: block; padding: 10px; border: 1px solid var(--primary-pink); border-radius: 8px; color: var(--primary-pink); text-decoration: none; font-weight: 600; transition: all 0.3s;">{{ t.get('update_profile', 'Update Profile') }}</a>
                         </div>
                     </div>
 
                     <!-- Quick Links -->
                     <div class="card">
                         <div class="card-header">
-                            <h2>Quick Access</h2>
+                            <h2>{{ t.get('quick_access', 'Quick Access') }}</h2>
                         </div>
                         <div class="quick-links">
                             <a href="{{ url_for('my_applications') }}" class="quick-link">
@@ -275,7 +275,7 @@
                                         <path d="M16.6667 5H10L8.33333 3.33333H5C4.08333 3.33333 3.34167 4.08333 3.34167 5L3.33333 15C3.33333 15.9167 4.08333 16.6667 5 16.6667H16.6667C17.5833 16.6667 18.3333 15.9167 18.3333 15V6.66667C18.3333 5.75 17.5833 5 16.6667 5Z" fill="currentColor"/>
                                     </svg>
                                 </div>
-                                <span>My Applications</span>
+                                <span>{{ t.get('my_apps', 'My Applications') }}</span>
                             </a>
                             <a href="/my-courses" class="quick-link">
                                 <div class="link-icon">
@@ -283,7 +283,7 @@
                                         <path d="M10 1.66667L1.66667 6.66667L10 11.6667L18.3333 6.66667L10 1.66667Z" fill="currentColor"/>
                                     </svg>
                                 </div>
-                                <span>My Courses</span>
+                                <span>{{ t.get('my_courses', 'My Courses') }}</span>
                             </a>
                             <a href="/achievements" class="quick-link">
                                 <div class="link-icon">
@@ -291,7 +291,7 @@
                                         <path d="M10 15L4.12257 18.0902L5.24493 11.545L0.489435 6.90983L7.06126 5.95492L10 0L12.9387 5.95492L19.5106 6.90983L14.7551 11.545L15.8774 18.0902L10 15Z" fill="currentColor"/>
                                     </svg>
                                 </div>
-                                <span>Achievements</span>
+                                <span>{{ t.get('achievements', 'Achievements') }}</span>
                             </a>
                             <a href="/settings" class="quick-link">
                                 <div class="link-icon">
@@ -299,7 +299,7 @@
                                         <path d="M16.3999 10.7333C16.4332 10.4917 16.4499 10.25 16.4499 10C16.4499 9.75833 16.4332 9.50833 16.3916 9.26667L18.0749 7.93333C18.2166 7.81667 18.2582 7.6 18.1749 7.43333L16.5749 4.56667C16.4832 4.38333 16.2832 4.325 16.0999 4.38333L14.0999 5.175C13.6832 4.85833 13.2416 4.59167 12.7582 4.38333L12.4499 2.28333C12.4166 2.08333 12.2499 1.93333 12.0499 1.93333H8.84988C8.64988 1.93333 8.49155 2.08333 8.45822 2.28333L8.14988 4.38333C7.66655 4.59167 7.21655 4.86667 6.80822 5.175L4.80822 4.38333C4.62488 4.31667 4.42488 4.38333 4.33322 4.56667L2.74155 7.43333C2.64988 7.60833 2.68322 7.81667 2.84155 7.93333L4.52488 9.26667C4.48322 9.50833 4.44988 9.76667 4.44988 10C4.44988 10.2333 4.46655 10.4917 4.50822 10.7333L2.82488 12.0667C2.68322 12.1833 2.64155 12.4 2.72488 12.5667L4.32488 15.4333C4.41655 15.6167 4.61655 15.675 4.79988 15.6167L6.79988 14.825C7.21655 15.1417 7.65822 15.4083 8.14155 15.6167L8.44988 17.7167C8.49155 17.9167 8.64988 18.0667 8.84988 18.0667H12.0499C12.2499 18.0667 12.4166 17.9167 12.4416 17.7167L12.7499 15.6167C13.2332 15.4083 13.6832 15.1417 14.0916 14.825L16.0916 15.6167C16.2749 15.6833 16.4749 15.6167 16.5666 15.4333L18.1666 12.5667C18.2582 12.3833 18.2166 12.1833 18.0666 12.0667L16.3999 10.7333ZM10.4499 13C8.78322 13 7.44988 11.6667 7.44988 10C7.44988 8.33333 8.78322 7 10.4499 7C12.1166 7 13.4499 8.33333 13.4499 10C13.4499 11.6667 12.1166 13 10.4499 13Z" fill="currentColor"/>
                                     </svg>
                                 </div>
-                                <span>Settings</span>
+                                <span>{{ t.get('settings', 'Settings') }}</span>
                             </a>
                         </div>
                     </div>
@@ -307,25 +307,25 @@
                     <!-- Recommendations -->
                     <div class="card">
                         <div class="card-header">
-                            <h2>AI Job Recommendations</h2>
+                            <h2>{{ t.get('ai_recommendations', 'AI Job Recommendations') }}</h2>
                         </div>
                         <div class="recommendation-list">
                             {% if recent_searches %}
                                 {% for res in recent_searches %}
                                 <div class="recommendation-item">
                                     <div class="rec-header">
-                                        <span class="rec-badge">AI Fit</span>
+                                        <span class="rec-badge">{{ t.get('ai_fit', 'AI Fit') }}</span>
                                         <span class="rec-type">{{ res.domain }}</span>
                                     </div>
                                     <h4>{{ res.predicted_job }}</h4>
-                                    <p>Est. Salary: ₹{{ "{:,}".format(res.predicted_salary_low) }} - ₹{{ "{:,}".format(res.predicted_salary_high) }}</p>
-                                    <a href="/jobs" class="rec-link">View Similar Jobs →</a>
+                                    <p>{{ t.get('est_salary', 'Est. Salary') }}: ₹{{ "{:,}".format(res.predicted_salary_low) }} - ₹{{ "{:,}".format(res.predicted_salary_high) }}</p>
+                                    <a href="/jobs" class="rec-link">{{ t.get('view_similar', 'View Similar Jobs →') }}</a>
                                 </div>
                                 {% endfor %}
                             {% else %}
                                 <div style="text-align: center; padding: 20px;">
-                                    <p style="color: #999; font-size: 0.9rem;">Find your first job to get AI recommendations.</p>
-                                    <a href="/jobs" class="btn btn-primary" style="margin-top: 10px; text-decoration: none; padding: 5px 15px; font-size: 0.85rem;">Search Jobs</a>
+                                    <p style="color: #999; font-size: 0.9rem;">{{ t.get('find_first_job', 'Find your first job to get AI recommendations.') }}</p>
+                                    <a href="/jobs" class="btn btn-primary" style="margin-top: 10px; text-decoration: none; padding: 5px 15px; font-size: 0.85rem;">{{ t.get('find_jobs', 'Search Jobs') }}</a>
                                 </div>
                             {% endif %}
                         </div>
@@ -334,25 +334,25 @@
                     <!-- AI Career Roadmap -->
                     <div class="card">
                         <div class="card-header">
-                            <h2>AI Career Roadmap</h2>
+                            <h2>{{ t.get('ai_roadmap', 'AI Career Roadmap') }}</h2>
                         </div>
                         <div class="roadmap-container">
                             <div class="roadmap-item">
                                 <div class="roadmap-content">
-                                    <h4>Complete Profile</h4>
-                                    <p>Fill in all details to get 100% accurate recommendations.</p>
+                                    <h4>{{ t.get('complete_profile_roadmap', 'Complete Profile') }}</h4>
+                                    <p>{{ t.get('roadmap_complete_desc', 'Fill in all details to get 100% accurate recommendations.') }}</p>
                                 </div>
                             </div>
                             <div class="roadmap-item">
                                 <div class="roadmap-content">
-                                    <h4>Skill Up</h4>
-                                    <p>Take suggested courses to bridge your skill gap.</p>
+                                    <h4>{{ t.get('skill_up', 'Skill Up') }}</h4>
+                                    <p>{{ t.get('roadmap_skill_up_desc', 'Take suggested courses to bridge your skill gap.') }}</p>
                                 </div>
                             </div>
                             <div class="roadmap-item">
                                 <div class="roadmap-content">
-                                    <h4>Apply for Jobs</h4>
-                                    <p>Start applying for entry-level positions in your domain.</p>
+                                    <h4>{{ t.get('apply_jobs', 'Apply for Jobs') }}</h4>
+                                    <p>{{ t.get('roadmap_apply_jobs_desc', 'Start applying for entry-level positions in your domain.') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -361,11 +361,11 @@
                     <!-- Employer CTA -->
                     <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-top: 20px;">
                         <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.2); display: flex; justify-content: space-between; align-items: center;">
-                            <h2 style="color: white; margin: 0; font-size: 1.1rem;">Are you an Employer?</h2>
+                            <h2 style="color: white; margin: 0; font-size: 1.1rem;">{{ t.get('is_employer', 'Are you an Employer?') }}</h2>
                         </div>
                         <div style="padding: 15px 0;">
-                            <p style="margin-bottom: 15px; font-size: 0.9rem; opacity: 0.9; line-height: 1.4;">Post jobs and train workers on our platform to grow your business.</p>
-                            <a href="{{ url_for('org_register_page') }}" class="btn" style="background: white; color: #764ba2; border: none; width: 100%; text-align: center; font-weight: 700; text-decoration: none; padding: 12px; border-radius: 8px; display: block;">Register Organization</a>
+                            <p style="margin-bottom: 15px; font-size: 0.9rem; opacity: 0.9; line-height: 1.4;">{{ t.get('employer_cta_desc', 'Post jobs and train workers on our platform to grow your business.') }}</p>
+                            <a href="{{ url_for('org_register_page') }}" class="btn" style="background: white; color: #764ba2; border: none; width: 100%; text-align: center; font-weight: 700; text-decoration: none; padding: 12px; border-radius: 8px; display: block;">{{ t.get('reg_org', 'Register Organization') }}</a>
                         </div>
                     </div>
 

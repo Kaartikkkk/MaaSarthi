@@ -7,70 +7,154 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * { font-family: 'Inter', sans-serif; }
+
         .edit-profile-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 100px auto 40px;
-            padding: 30px;
+            padding: 0 20px;
+        }
+
+        /* Progress Bar */
+        .progress-header {
             background: white;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-        .header {
+            padding: 30px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
             margin-bottom: 30px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 20px;
         }
-        .header h1 { color: var(--primary-dark); font-size: 1.8rem; margin: 0; }
-        .header p { color: #666; margin-top: 5px; }
-        
-        .form-section { margin-bottom: 25px; }
-        .form-section h3 { font-size: 1.1rem; color: #333; margin-bottom: 15px; border-left: 4px solid var(--primary-pink); padding-left: 10px; }
-        
+        .progress-header h1 {
+            font-size: 1.8rem;
+            color: var(--primary-dark, #2c3e50);
+            margin: 0 0 6px;
+        }
+        .progress-header p { color: #777; margin: 0 0 20px; font-size: 0.95rem; }
+        .progress-bar-track {
+            width: 100%;
+            height: 10px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4d6d, #ff8fa3);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #999;
+        }
+        .progress-text .pct { font-weight: 700; color: var(--primary-pink, #ff4d6d); }
+
+        /* Section Cards */
+        .form-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
+            border: 1px solid #f0f0f0;
+            transition: box-shadow 0.3s;
+        }
+        .form-section:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.09); }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f5f5f5;
+        }
+        .section-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        .section-icon.personal { background: #fce4ec; }
+        .section-icon.education { background: #e8f5e9; }
+        .section-icon.skills { background: #e3f2fd; }
+        .section-icon.links { background: #fff3e0; }
+        .section-icon.experience { background: #f3e5f5; }
+        .section-icon.resume { background: #e0f7fa; }
+        .section-icon.bio { background: #fff8e1; }
+
+        .section-header h3 {
+            font-size: 1.15rem;
+            color: #333;
+            margin: 0;
+        }
+        .section-header p {
+            font-size: 0.85rem;
+            color: #999;
+            margin: 2px 0 0;
+        }
+
+        /* Grid */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group.full { grid-column: 1 / span 2; }
-        
-        label { font-weight: 600; color: #555; font-size: 0.9rem; }
-        input, select, textarea {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
         }
-        input:focus, textarea:focus { border-color: var(--primary-pink); outline: none; }
-        
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full { grid-column: 1 / -1; }
+
+        label {
+            font-weight: 600;
+            color: #444;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        label .optional { color: #bbb; font-weight: 400; font-size: 0.78rem; }
+
+        input, select, textarea {
+            padding: 12px 14px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: #fafafa;
+            transition: all 0.3s;
+            color: #333;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-pink, #ff4d6d);
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.08);
+        }
+        textarea { resize: vertical; min-height: 80px; }
+
+        /* File Upload */
         .file-upload {
-            border: 2px dashed #ddd;
-            padding: 20px;
+            border: 2px dashed #d0d0d0;
+            padding: 28px 20px;
             text-align: center;
-            border-radius: 12px;
+            border-radius: 14px;
             background: #fafafa;
             cursor: pointer;
             transition: all 0.3s;
         }
-        .file-upload:hover { border-color: var(--primary-pink); background: #fff0f3; }
-        
-        .btn-save {
-            background: var(--primary-pink);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1.1rem;
-            margin-top: 20px;
-            transition: transform 0.2s;
-        }
-        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3); }
-        
+        .file-upload:hover { border-color: var(--primary-pink, #ff4d6d); background: #fff0f3; }
+        .file-upload svg { margin-bottom: 8px; }
+        .file-upload p { color: #888; margin: 0; font-size: 0.9rem; }
+
         .resume-status {
             margin-top: 10px;
             font-size: 0.85rem;
@@ -79,90 +163,322 @@
             align-items: center;
             gap: 5px;
         }
+
+        /* Submit */
+        .btn-save {
+            background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            transition: all 0.3s;
+            letter-spacing: 0.3px;
+        }
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 77, 109, 0.35);
+        }
     </style>
 </head>
 <body>
     {% include '_navbar.html' %}
 
     <div class="edit-profile-container">
-        <div class="header">
-            <h1>Update Your Profile</h1>
-            <p>Complete your profile to unlock more job opportunities.</p>
+
+        <!-- Progress Header -->
+        <div class="progress-header">
+            <h1>{{ t.get('update_profile', 'Complete Your Profile') }}</h1>
+            <p>{{ t.get('profile_subtitle', 'A detailed profile unlocks better job matches, higher visibility, and premium recommendations.') }}</p>
+            <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progressBar" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text">
+                <span>Profile Completion</span>
+                <span class="pct" id="progressPct">0%</span>
+            </div>
         </div>
 
-        <form action="{{ url_for('edit_profile') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ url_for('edit_profile') }}" method="POST" enctype="multipart/form-data" id="profileForm">
+
+            <!-- Section 1: Personal Info -->
             <div class="form-section">
-                <h3>Basic Information</h3>
+                <div class="section-header">
+                    <div class="section-icon personal">👤</div>
+                    <div>
+                        <h3>{{ t.get('personal_info', 'Personal Information') }}</h3>
+                        <p>Basic details about yourself</p>
+                    </div>
+                </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="age">Age</label>
-                        <input type="number" id="age" name="age" value="{{ profile.age or '' }}" placeholder="e.g., 28">
+                        <label>Name</label>
+                        <input type="text" value="{{ user.name }}" disabled style="background: #f0f0f0; color: #999;">
                     </div>
                     <div class="form-group">
-                        <label for="education">Education</label>
-                        <select id="education" name="education">
-                            <option value="">Select Education</option>
-                            <option value="High School" {% if profile.education == 'High School' %}selected{% endif %}>High School</option>
-                            <option value="Graduate" {% if profile.education == 'Graduate' %}selected{% endif %}>Graduate</option>
-                            <option value="Post Graduate" {% if profile.education == 'Post Graduate' %}selected{% endif %}>Post Graduate</option>
-                            <option value="Diploma" {% if profile.education == 'Diploma' %}selected{% endif %}>Diploma</option>
+                        <label>Phone <span class="optional">(optional)</span></label>
+                        <input type="tel" name="phone" value="{{ profile.phone or '' }}" placeholder="e.g. 9876543210">
+                    </div>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" name="age" value="{{ profile.age or '' }}" placeholder="e.g. 28" min="16" max="80" class="tracked-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Marital Status <span class="optional">(optional)</span></label>
+                        <select name="marital_status">
+                            <option value="">Select</option>
+                            <option value="Single" {% if profile.marital_status == 'Single' %}selected{% endif %}>Single</option>
+                            <option value="Married" {% if profile.marital_status == 'Married' %}selected{% endif %}>Married</option>
+                            <option value="Divorced" {% if profile.marital_status == 'Divorced' %}selected{% endif %}>Divorced</option>
+                            <option value="Widowed" {% if profile.marital_status == 'Widowed' %}selected{% endif %}>Widowed</option>
                         </select>
                     </div>
-                    <div class="form-group full">
-                        <label for="location">Location (City)</label>
-                        <input type="text" id="location" name="location" value="{{ profile.location or '' }}" placeholder="e.g., Mumbai, Maharashtra">
+                    <div class="form-group">
+                        <label>Number of Kids <span class="optional">(optional)</span></label>
+                        <input type="number" name="number_of_kids" value="{{ profile.number_of_kids or '' }}" placeholder="e.g. 2" min="0" max="10">
                     </div>
                 </div>
             </div>
 
+            <!-- Section 2: Education & Location -->
             <div class="form-section">
-                <h3>Work Experience</h3>
-                <div class="form-group full">
-                    <label for="experience">Experience Summary</label>
-                    <textarea id="experience" name="experience" rows="4" placeholder="Briefly describe your past work, internships, or volunteering experience...">{{ profile.experience or '' }}</textarea>
+                <div class="section-header">
+                    <div class="section-icon education">🎓</div>
+                    <div>
+                        <h3>{{ t.get('education_location', 'Education & Location') }}</h3>
+                        <p>Your educational background and where you reside</p>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Education Level</label>
+                        <select name="education" class="tracked-field">
+                            <option value="">Select Education</option>
+                            <option value="Below 10th" {% if profile.education == 'Below 10th' %}selected{% endif %}>Below 10th</option>
+                            <option value="10th Pass" {% if profile.education == '10th Pass' %}selected{% endif %}>10th Pass</option>
+                            <option value="12th Pass" {% if profile.education == '12th Pass' %}selected{% endif %}>12th Pass</option>
+                            <option value="Diploma" {% if profile.education == 'Diploma' %}selected{% endif %}>Diploma</option>
+                            <option value="Graduate (BTech/BA/BCom/BSc)" {% if profile.education == 'Graduate (BTech/BA/BCom/BSc)' %}selected{% endif %}>Graduate (BTech/BA/BCom/BSc)</option>
+                            <option value="Post Graduate" {% if profile.education == 'Post Graduate' %}selected{% endif %}>Post Graduate</option>
+                            <option value="PhD" {% if profile.education == 'PhD' %}selected{% endif %}>PhD</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>City / Location</label>
+                        <input type="text" name="location" value="{{ profile.location or '' }}" placeholder="e.g. Mumbai, Maharashtra" class="tracked-field">
+                    </div>
+                    <div class="form-group">
+                        <label>City Type</label>
+                        <select name="city_type">
+                            <option value="">Select</option>
+                            <option value="Tier-1" {% if profile.city_type == 'Tier-1' %}selected{% endif %}>Tier-1 (Metro)</option>
+                            <option value="Tier-2" {% if profile.city_type == 'Tier-2' %}selected{% endif %}>Tier-2</option>
+                            <option value="Tier-3" {% if profile.city_type == 'Tier-3' %}selected{% endif %}>Tier-3</option>
+                            <option value="Rural" {% if profile.city_type == 'Rural' %}selected{% endif %}>Rural</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Language</label>
+                        <select name="language_preference">
+                            <option value="">Select</option>
+                            <option value="Hindi" {% if profile.language_preference == 'Hindi' %}selected{% endif %}>Hindi</option>
+                            <option value="English" {% if profile.language_preference == 'English' %}selected{% endif %}>English</option>
+                            <option value="Both" {% if profile.language_preference == 'Both' %}selected{% endif %}>Both (Hindi + English)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Device Type <span class="optional">(optional)</span></label>
+                        <select name="device_type">
+                            <option value="">Select</option>
+                            <option value="Mobile" {% if profile.device_type == 'Mobile' %}selected{% endif %}>Mobile Phone</option>
+                            <option value="Desktop" {% if profile.device_type == 'Desktop' %}selected{% endif %}>Desktop / Laptop</option>
+                            <option value="Tablet" {% if profile.device_type == 'Tablet' %}selected{% endif %}>Tablet</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
+            <!-- Section 3: Skills & Domain -->
             <div class="form-section">
-                <h3>Resume Upload</h3>
+                <div class="section-header">
+                    <div class="section-icon skills">💡</div>
+                    <div>
+                        <h3>{{ t.get('skills_domain', 'Skills & Work Preferences') }}</h3>
+                        <p>Tell us about your skills so we can match you with the best jobs</p>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Preferred Domain</label>
+                        <select name="preferred_domain" class="tracked-field">
+                            <option value="">Select Domain</option>
+                            <option value="IT & Technology" {% if profile.preferred_domain == 'IT & Technology' %}selected{% endif %}>IT & Technology</option>
+                            <option value="Education & Teaching" {% if profile.preferred_domain == 'Education & Teaching' %}selected{% endif %}>Education & Teaching</option>
+                            <option value="Healthcare" {% if profile.preferred_domain == 'Healthcare' %}selected{% endif %}>Healthcare</option>
+                            <option value="Arts & Design" {% if profile.preferred_domain == 'Arts & Design' %}selected{% endif %}>Arts & Design</option>
+                            <option value="Marketing & Sales" {% if profile.preferred_domain == 'Marketing & Sales' %}selected{% endif %}>Marketing & Sales</option>
+                            <option value="Finance & Accounting" {% if profile.preferred_domain == 'Finance & Accounting' %}selected{% endif %}>Finance & Accounting</option>
+                            <option value="Content & Writing" {% if profile.preferred_domain == 'Content & Writing' %}selected{% endif %}>Content & Writing</option>
+                            <option value="Data Entry & Admin" {% if profile.preferred_domain == 'Data Entry & Admin' %}selected{% endif %}>Data Entry & Admin</option>
+                            <option value="Handicrafts & Traditional" {% if profile.preferred_domain == 'Handicrafts & Traditional' %}selected{% endif %}>Handicrafts & Traditional</option>
+                            <option value="Customer Support" {% if profile.preferred_domain == 'Customer Support' %}selected{% endif %}>Customer Support</option>
+                            <option value="Other" {% if profile.preferred_domain == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Primary Skill</label>
+                        <input type="text" name="primary_skill" value="{{ profile.primary_skill or '' }}" placeholder="e.g. Data Entry, Python, Tailoring" class="tracked-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Secondary Skill <span class="optional">(optional)</span></label>
+                        <input type="text" name="secondary_skill" value="{{ profile.secondary_skill or '' }}" placeholder="e.g. MS Excel, Photography">
+                    </div>
+                    <div class="form-group">
+                        <label>Work Mode Preference</label>
+                        <select name="work_mode_preference" class="tracked-field">
+                            <option value="">Select</option>
+                            <option value="Work From Home" {% if profile.work_mode_preference == 'Work From Home' %}selected{% endif %}>Work From Home</option>
+                            <option value="Hybrid" {% if profile.work_mode_preference == 'Hybrid' %}selected{% endif %}>Hybrid</option>
+                            <option value="On-site" {% if profile.work_mode_preference == 'On-site' %}selected{% endif %}>On-site</option>
+                            <option value="Any" {% if profile.work_mode_preference == 'Any' %}selected{% endif %}>Any</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Available Hours / Day</label>
+                        <input type="number" name="available_hours" value="{{ profile.available_hours or '' }}" placeholder="e.g. 6" min="1" max="16">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Professional Links -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon links">🔗</div>
+                    <div>
+                        <h3>{{ t.get('professional_links', 'Professional Links') }}</h3>
+                        <p>Add your online presence for better credibility</p>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>LinkedIn Profile <span class="optional">(optional)</span></label>
+                        <input type="url" name="linkedin_url" value="{{ profile.linkedin_url or '' }}" placeholder="https://linkedin.com/in/yourname" class="tracked-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Portfolio / Website <span class="optional">(optional)</span></label>
+                        <input type="url" name="portfolio_url" value="{{ profile.portfolio_url or '' }}" placeholder="https://yourportfolio.com">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Experience -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon experience">💼</div>
+                    <div>
+                        <h3>{{ t.get('work_experience', 'Work Experience') }}</h3>
+                        <p>Describe your past roles, internships, or volunteer work</p>
+                    </div>
+                </div>
                 <div class="form-group full">
-                    <label>Upload Professional Resume (PDF/DOC)</label>
+                    <textarea name="experience" rows="5" placeholder="Briefly describe your past work, internships, volunteering, or freelance experience..." class="tracked-field">{{ profile.experience or '' }}</textarea>
+                </div>
+            </div>
+
+            <!-- Section 6: Resume -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon resume">📄</div>
+                    <div>
+                        <h3>{{ t.get('resume_upload', 'Resume Upload') }}</h3>
+                        <p>Upload your professional resume (PDF, DOC, DOCX)</p>
+                    </div>
+                </div>
+                <div class="form-group full">
                     <div class="file-upload" onclick="document.getElementById('resume').click()">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" style="margin-bottom: 10px;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" style="margin-bottom: 10px;">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
                         </svg>
-                        <p id="fileName">{% if profile.resume_path %}Update existing resume{% else %}Click to upload or drag and drop{% endif %}</p>
-                        <input type="file" id="resume" name="resume" style="display: none;" onchange="updateFileName(this)">
+                        <p id="fileName">{% if profile.resume_path %}Click to update existing resume{% else %}Click to upload or drag and drop{% endif %}</p>
+                        <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" style="display: none;" onchange="updateFileName(this)">
                     </div>
                     {% if profile.resume_path %}
                     <div class="resume-status">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                        Resume already uploaded: {{ profile.resume_path.split('/')[-1] }}
+                        Resume uploaded: {{ profile.resume_path.split('/')[-1] }}
                     </div>
                     {% endif %}
                 </div>
             </div>
 
+            <!-- Section 7: Bio -->
             <div class="form-section">
-                <h3>About You</h3>
+                <div class="section-header">
+                    <div class="section-icon bio">✨</div>
+                    <div>
+                        <h3>{{ t.get('about_you', 'About You') }}</h3>
+                        <p>Write a short professional summary about yourself</p>
+                    </div>
+                </div>
                 <div class="form-group full">
-                    <label for="bio">Bio / Professional Summary</label>
-                    <textarea id="bio" name="bio" rows="3" placeholder="A short intro about yourself...">{{ profile.bio or '' }}</textarea>
+                    <textarea name="bio" rows="4" placeholder="A short intro about yourself — what drives you, your goals, and what you're looking for..." class="tracked-field">{{ profile.bio or '' }}</textarea>
                 </div>
             </div>
 
-            <button type="submit" class="btn-save">Save Profile Changes</button>
+            <button type="submit" class="btn-save">💾 Save Profile Changes</button>
         </form>
     </div>
 
     <script>
         function updateFileName(input) {
-            const fileNameDisplay = document.getElementById('fileName');
+            const el = document.getElementById('fileName');
             if (input.files && input.files.length > 0) {
-                fileNameDisplay.textContent = "Selected: " + input.files[0].name;
-                fileNameDisplay.style.color = "var(--primary-pink)";
+                el.textContent = "Selected: " + input.files[0].name;
+                el.style.color = "var(--primary-pink)";
+                el.style.fontWeight = "600";
+                updateProgress();
             }
         }
+
+        // Live Progress Bar
+        function updateProgress() {
+            const fields = document.querySelectorAll('.tracked-field');
+            let filled = 0;
+            fields.forEach(f => {
+                if (f.tagName === 'SELECT') {
+                    if (f.value && f.value !== '') filled++;
+                } else if (f.tagName === 'TEXTAREA') {
+                    if (f.value.trim().length > 5) filled++;
+                } else {
+                    if (f.value.trim() !== '') filled++;
+                }
+            });
+
+            // Also count resume
+            const resumeStatus = document.querySelector('.resume-status');
+            const resumeInput = document.getElementById('resume');
+            if (resumeStatus || (resumeInput && resumeInput.files && resumeInput.files.length > 0)) {
+                filled++;
+            }
+
+            const total = fields.length + 1; // +1 for resume
+            const pct = Math.round((filled / total) * 100);
+            document.getElementById('progressBar').style.width = pct + '%';
+            document.getElementById('progressPct').textContent = pct + '%';
+        }
+
+        // Attach listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.tracked-field').forEach(f => {
+                f.addEventListener('input', updateProgress);
+                f.addEventListener('change', updateProgress);
+            });
+            updateProgress();
+        });
     </script>
 </body>
 </html>

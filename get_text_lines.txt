@@ -1,0 +1,12 @@
+1668:def get_text():
+1730:    t = get_text()
+1740:    t = get_text()
+1807:    t = get_text()
+1815:    t = get_text()
+1966:    t = get_text()
+2039:    t = get_text()
+2060:    t = get_text()
+3647:    t = get_text()
+3702:    t = get_text()
+3718:    t = get_text()
+3749:    t = get_text()

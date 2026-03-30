@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>My Applications | MaaSarthi</title>
+    <title>{{ t.my_apps }} | {{ t.title }}</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='Images/favicon.png') }}">
@@ -40,15 +40,15 @@
     {% include '_navbar.html' %}
 
     <div class="container">
-        <h1>My Job Applications</h1>
+        <h1>{{ t.get('my_job_apps', 'My Job Applications') }}</h1>
 
         {% if applications %}
             {% for app in applications %}
             <div class="app-card">
                 <div>
                     <h3 style="margin: 0; color: var(--primary-pink);">{{ app.job.title }}</h3>
-                    <p style="margin: 5px 0 0; color: #666; font-size: 0.9rem;">Organization: {{ app.job.organization.company_name }}</p>
-                    <p style="margin: 5px 0 0; color: #999; font-size: 0.8rem;">Applied on: {{ app.applied_at.strftime('%d %b %Y') }}</p>
+                    <p style="margin: 5px 0 0; color: #666; font-size: 0.9rem;">{{ t.get('organization', 'Organization') }}: {{ app.job.organization.company_name }}</p>
+                    <p style="margin: 5px 0 0; color: #999; font-size: 0.8rem;">{{ t.get('applied_on', 'Applied on') }}: {{ app.applied_at.strftime('%d %b %Y') }}</p>
                 </div>
                 <div>
                     <span class="status-badge status-{{ app.status.lower() }}">{{ app.status }}</span>
@@ -57,8 +57,8 @@
             {% endfor %}
         {% else %}
             <div style="text-align: center; padding: 50px; background: white; border-radius: 12px; border: 1px dashed #ddd;">
-                <p style="color: #888;">You haven't applied to any jobs yet.</p>
-                <a href="{{ url_for('jobs') }}" class="btn btn-primary" style="margin-top: 20px; text-decoration: none;">Browse Available Jobs</a>
+                <p style="color: #888;">{{ t.get('no_apps_yet', "You haven't applied to any jobs yet.") }}</p>
+                <a href="{{ url_for('jobs') }}" class="btn btn-primary" style="margin-top: 20px; text-decoration: none;">{{ t.get('browse_jobs', 'Browse Available Jobs') }}</a>
             </div>
         {% endif %}
     </div>

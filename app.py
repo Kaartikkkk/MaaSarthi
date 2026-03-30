@@ -247,10 +247,19 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # Constants for uploads
 UPLOAD_FOLDER = os.path.join(basedir, 'static', 'uploads')
 RESUME_FOLDER = os.path.join(UPLOAD_FOLDER, 'resumes')
+COURSE_UPLOAD_FOLDER = os.path.join(UPLOAD_FOLDER, 'courses')
 ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
+ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'webm', 'mov', 'avi', 'mkv'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def allowed_image(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
+
+def allowed_video(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_VIDEO_EXTENSIONS
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'maasarthi.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -369,17 +378,22 @@ class UserProfile(db.Model):
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    phone = db.Column(db.String(20), nullable=True)
     age = db.Column(db.Integer, nullable=True)
+    marital_status = db.Column(db.String(50), nullable=True)  # Single, Married, Divorced, Widowed
     education = db.Column(db.String(100), nullable=True)
     location = db.Column(db.String(200), nullable=True)
     city_type = db.Column(db.String(50), nullable=True)  # Urban, Semi-Urban, Rural
     preferred_domain = db.Column(db.String(100), nullable=True)
     primary_skill = db.Column(db.String(100), nullable=True)
+    secondary_skill = db.Column(db.String(100), nullable=True)
     work_mode_preference = db.Column(db.String(100), nullable=True)
     available_hours = db.Column(db.Integer, nullable=True)
     number_of_kids = db.Column(db.Integer, nullable=True)
     language_preference = db.Column(db.String(50), nullable=True)
     device_type = db.Column(db.String(50), nullable=True)
+    linkedin_url = db.Column(db.String(300), nullable=True)
+    portfolio_url = db.Column(db.String(300), nullable=True)
     bio = db.Column(db.Text, nullable=True)
     experience = db.Column(db.Text, nullable=True)
     resume_path = db.Column(db.String(255), nullable=True)
@@ -536,9 +550,19 @@ class TrainingCourse(db.Model):
     org_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     skill_name = db.Column(db.String(100), nullable=False)
+    category = db.Column(db.String(100), nullable=True)  # Technology, Arts, Business, etc.
+    difficulty_level = db.Column(db.String(50), nullable=True)  # Beginner, Intermediate, Advanced
+    duration = db.Column(db.String(100), nullable=True)  # e.g. "2 hours", "5 days"
+    language = db.Column(db.String(50), nullable=True)  # Hindi, English, Both
+    prerequisites = db.Column(db.Text, nullable=True)
+    learning_outcomes = db.Column(db.Text, nullable=True)
+    thumbnail_url = db.Column(db.String(500), nullable=True)
+    thumbnail_path = db.Column(db.String(500), nullable=True)  # Uploaded thumbnail image
     description = db.Column(db.Text, nullable=False)
     video_url = db.Column(db.String(500), nullable=True)
+    video_path = db.Column(db.String(500), nullable=True)  # Uploaded video file
     pdf_url = db.Column(db.String(500), nullable=True)
+    pdf_path = db.Column(db.String(500), nullable=True)  # Uploaded PDF file
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.now)
     
@@ -654,6 +678,19 @@ wlb_preprocessor_data = safe_load_model(os.path.join(MODEL_DIR, 'work_life_balan
 
 profile_model = safe_load_model(os.path.join(MODEL_DIR, 'profile_completeness_model.pkl'))
 profile_preprocessor_data = safe_load_model(os.path.join(MODEL_DIR, 'profile_completeness_preprocessor.pkl'))
+
+# ✅ Global Machine Learning Search Models
+search_nn_model = safe_load_model(os.path.join(MODEL_DIR, 'search_nn_model.pkl'))
+search_tfidf_vectorizer = safe_load_model(os.path.join(MODEL_DIR, 'search_tfidf_vectorizer.pkl'))
+
+search_corpus_df = None
+search_corpus_path = os.path.join(MODEL_DIR, 'search_corpus.csv')
+if os.path.exists(search_corpus_path):
+    try:
+        search_corpus_df = pd.read_csv(search_corpus_path)
+        print(f"✅ Search Corpus loaded successfully: {len(search_corpus_df)} rows")
+    except Exception as e:
+        print(f"⚠️ Error loading search corpus: {e}")
 
 print(f"Models loaded: job={job_model is not None}, income={income_model is not None}, "
       f"skill_match={skill_match_model is not None}, mother={mother_model is not None}, "
@@ -973,7 +1010,77 @@ TEXT = {
             "Baking": ["Oven Handling", "Decoration", "Recipe Following", "Food Safety"],
             "Cooking": ["Vegetarian", "Non-Vegetarian", "Desserts", "Kitchen Management"],
             "General": ["Communication", "Time Management", "Basic Computer", "English Speaking"]
-        }
+        },
+        "more": "More",
+        "reg_org": "Register Organization",
+        "search_placeholder": "Search jobs...",
+        "dashboard": "Dashboard",
+        "my_apps": "My Applications",
+        "logout": "Logout",
+        "login_signin": "Login / Sign In",
+        "admin_name": "Admin",
+        "who_we_are": "✨ Who We Are",
+        "empowering_mothers": "Empowering Mothers Across India",
+        "our_mission": "Our Mission",
+        "our_vision": "Our Vision",
+        "what_we_do": "What We Do",
+        "our_impact": "Our Impact",
+        "total_earnings": "Total Earnings",
+        "partner_companies": "Partner Companies",
+        "cities_covered": "Cities Covered",
+        "welcome_back": "Welcome back",
+        "today_journey": "Here's what's happening with your career journey today.",
+        "apps_label": "Applications",
+        "skills_label": "Skills",
+        "pending_tasks": "Pending Tasks",
+        "browse_opps": "Browse 500+ opportunities",
+        "courses_available": "150+ courses available",
+        "wellness_center": "Mental Wellness Center",
+        "recent_activity": "Recent Activity",
+        "view_all": "View All",
+        "no_activity": "No recent activity",
+        "skills_analysis": "Skills Analysis",
+        "profile_completion": "Profile Completion",
+        "basic_info": "Basic Information",
+        "skills_added": "Skills Added",
+        "add_experience": "Add Work Experience",
+        "upload_resume": "Upload Resume",
+        "update_profile": "Update Profile",
+        "quick_access": "Quick Access",
+        "my_courses": "My Courses",
+        "achievements": "Achievements",
+        "settings": "Settings",
+        "ai_recommendations": "AI Job Recommendations",
+        "ai_fit": "AI Fit",
+        "est_salary": "Est. Salary",
+        "view_similar": "View Similar Jobs →",
+        "find_first_job": "Find your first job to get AI recommendations.",
+        "ai_roadmap": "AI Career Roadmap",
+        "complete_profile_roadmap": "Complete Profile",
+        "roadmap_complete_desc": "Fill in all details to get 100% accurate recommendations.",
+        "skill_up": "Skill Up",
+        "roadmap_skill_up_desc": "Take suggested courses to bridge your skill gap.",
+        "apply_jobs": "Apply for Jobs",
+        "roadmap_apply_jobs_desc": "Start applying for entry-level positions in your domain.",
+        "is_employer": "Are you an Employer?",
+        "employer_cta_desc": "Post jobs and train workers on our platform to grow your business.",
+        "sahayata_title": "MaaSarthi Sahayata",
+        "experts_help": "Experts Help 24/7",
+        "expert_consultation": "Expert Consultation",
+        "consult_desc": "Access confidential, virtual counseling with psychiatrists focused on maternal health and workplace wellness.",
+        "specialists_panel": "Panel of 15+ Specialists",
+        "request_callback": "Request Callback",
+        "supportive_resources": "Supportive Resources",
+        "watch_guide": "Watch Learning Guide",
+        "encouragement": "You are doing a great job, even when it feels like you're not.",
+        "our_mission_desc": "MaaSarthi is dedicated to empowering homemakers and mothers by connecting them with flexible work opportunities that fit their lifestyle. We believe every mother deserves the chance to achieve financial independence while caring for her family.",
+        "our_vision_desc": "To create a world where every woman, regardless of her circumstances, has access to meaningful employment opportunities. We envision empowered mothers building stronger families and communities across India.",
+        "what_we_do_desc": "We provide a platform that matches your skills with genuine work opportunities. Whether you're skilled in data entry, content writing, graphic design, or traditional crafts – we help you find work that values your talent.",
+        "why_choose_us_desc_about": "With AI-powered job matching, verified employers, flexible schedules, and multilingual support in Hindi and English, MaaSarthi ensures you find the perfect opportunity that fits your skills and schedule.",
+        "mothers_empowered_num": "10,000+",
+        "partner_companies_num": "500+",
+        "total_earnings_num": "₹5Cr+",
+        "cities_covered_num": "50+"
     },
     "hi": {
         "education_list": {
@@ -1169,10 +1276,6 @@ TEXT = {
         "graphic_design": "ग्राफिक डिजाइन",
         "online_tutoring": "ऑनलाइन ट्यूटोरिंग",
         "freelance_work": "फ्रीलांस काम",
-        "help_center": "सहायता केंद्र",
-        "privacy_policy": "गोपनीयता नीति",
-        "terms_service": "सेवा की शर्तें",
-        "faqs": "अक्सर पूछे जाने वाले प्रश्न",
         "career_guidance": "करियर मार्गदर्शन",
         "back": "वापस",
         "job_heading": "अपने लिए सबसे अच्छा काम चुनें",
@@ -1266,7 +1369,7 @@ TEXT = {
             "सामाजिक कार्य और एनजीओ": ["सामाजिक कार्य", "एनजीओ मैनेजमेंट", "फंड जुटाना", "सामुदायिक विकास", "परामर्श"],
             "सरकारी सेवाएं": ["सरकारी", "सार्वजनिक सुरक्षा", "नगरपालिका सेवाएं", "नीति अनुसंधान", "इन्फ्रास्ट्रक्चर"],
             "डेटा और एनालिटिक्स": ["डेटा एनालिटिक्स", "बिग डेटा", "बिजनेस इंटेलिजेंस", "सांख्यिकीय विश्लेषण"],
-            "विज्ञान और अनुसंधान": ["आर एंड डी", "बायोटेक्नोलॉजी", "पर्यावरण विज्ञान"],
+            "आर एंड डी": ["आर एंड डी", "बायोटेक्नोलॉजी", "पर्यावरण विज्ञान"],
             "दूरसंचार": ["नेटवर्क इंजीनियरिंग", "दूरसंचार संचालन", "ब्रॉडबैंड सेवाएं"],
             "ऊर्जा और पर्यावरण": ["नवीकरणीय ऊर्जा", "अपशिष्ट प्रबंधन", "स्थिरता परामर्श"],
             "सामान्य": ["सामान्य"]
@@ -1286,9 +1389,80 @@ TEXT = {
             "बेकिंग": ["Oven Handling", "Decoration", "Recipe Following", "Food Safety"],
             "कुकिंग": ["Vegetarian", "Non-Vegetarian", "Desserts", "Kitchen Management"],
             "सामान्य": ["Communication", "Time Management", "Basic Computer", "English Speaking"]
-        }
+        },
+        "more": "अधिक",
+        "reg_org": "संस्था रजिस्टर करें",
+        "search_placeholder": "नौकरी खोजें...",
+        "dashboard": "डैशबोर्ड",
+        "my_apps": "मेरे आवेदन",
+        "logout": "लॉगआउट",
+        "login_signin": "लॉगइन / साइन इन",
+        "admin_name": "एडमिन",
+        "who_we_are": "✨ हम कौन हैं",
+        "empowering_mothers": "भारत भर में माताओं को सशक्त बनाना",
+        "our_mission": "हमारा मिशन",
+        "our_vision": "हमारा विजन",
+        "what_we_do": "हम क्या करते हैं",
+        "our_impact": "हमारा प्रभाव",
+        "total_earnings": "कुल कमाई",
+        "partner_companies": "पार्टनर कंपनियां",
+        "cities_covered": "कवर किए गए शहर",
+        "welcome_back": "वापस स्वागत है",
+        "today_journey": "आज आपकी करियर यात्रा में क्या हो रहा है।",
+        "apps_label": "आवेदन",
+        "skills_label": "स्किल",
+        "pending_tasks": "लंबित कार्य",
+        "browse_opps": "500+ अवसरों को ब्राउज़ करें",
+        "courses_available": "150+ पाठ्यक्रम उपलब्ध",
+        "wellness_center": "मानसिक स्वास्थ्य केंद्र",
+        "recent_activity": "हाल की गतिविधि",
+        "view_all": "सभी देखें",
+        "no_activity": "कोई हाल की गतिविधि नहीं",
+        "skills_analysis": "स्किल विश्लेषण",
+        "profile_completion": "प्रोफ़ाइल पूर्णता",
+        "basic_info": "बेसिक जानकारी",
+        "skills_added": "स्किल जुड़ी हुई",
+        "add_experience": "कार्य अनुभव जोड़ें",
+        "upload_resume": "रिज्यूमे अपलोड करें",
+        "update_profile": "प्रोफ़ाइल अपडेट करें",
+        "quick_access": "त्वरित पहुंच",
+        "my_courses": "मेरे पाठ्यक्रम",
+        "achievements": "उपलब्धियां",
+        "settings": "सेटिंग्स",
+        "ai_recommendations": "AI नौकरी सुझाव",
+        "ai_fit": "AI फिट",
+        "est_salary": "अनुमानित वेतन",
+        "view_similar": "समान नौकरियां देखें →",
+        "find_first_job": "AI सुझाव पाने के लिए अपनी पहली नौकरी खोजें।",
+        "ai_roadmap": "AI करियर रोडमैप",
+        "complete_profile_roadmap": "प्रोफ़ाइल पूरी करें",
+        "roadmap_complete_desc": "100% सटीक सुझाव पाने के लिए सभी विवरण भरें।",
+        "skill_up": "स्किल बढ़ाएं",
+        "roadmap_skill_up_desc": "अपने स्किल गैप को पाटने के लिए सुझाए गए पाठ्यक्रम लें।",
+        "apply_jobs": "नौकरियों के लिए आवेदन करें",
+        "roadmap_apply_jobs_desc": "अपने डोमेन में एंट्री-लेवल पदों के लिए आवेदन करना शुरू करें।",
+        "is_employer": "क्या आप एक नियोक्ता हैं?",
+        "employer_cta_desc": "अपने व्यवसाय को बढ़ाने के लिए हमारे प्लेटफॉर्म पर नौकरियां पोस्ट करें और श्रमिकों को प्रशिक्षित करें।",
+        "sahayata_title": "माँसारथी सहायता",
+        "experts_help": "विशेषज्ञ सहायता 24/7",
+        "expert_consultation": "विशेषज्ञ परामर्श",
+        "consult_desc": "मातृ स्वास्थ्य और कार्यस्थल कल्याण पर केंद्रित मनोचिकित्सकों के साथ गोपनीय, वर्चुअल परामर्श प्राप्त करें।",
+        "specialists_panel": "15+ विशेषज्ञों का पैनल",
+        "request_callback": "कॉल बैक का अनुरोध करें",
+        "supportive_resources": "सहायक संसाधन",
+        "watch_guide": "लर्निंग गाइड देखें",
+        "encouragement": "आप बहुत अच्छा काम कर रही हैं, भले ही कभी-कभी ऐसा न लगे।",
+        "our_mission_desc": "माँ सारथी उन महिलाओं और माताओं को सशक्त बनाने के लिए समर्पित है जो अपने जीवन के अनुकूल लचकदार काम के अवसरों की तलाश में हैं। हमारा मानना है कि हर माँ को अपने परिवार की देखभाल करते हुए वित्तीय स्वतंत्रता हासिल करने का मौका मिलना चाहिए।",
+        "our_vision_desc": "एक ऐसी दुनिया बनाना जहाँ हर महिला को, उसकी परिस्थितियों की परवाह किए बिना, सार्थक रोजगार के अवसरों तक पहुँच प्राप्त हो। हम सशक्त माताओं को पूरे भारत में मजबूत परिवार और समुदाय बनाते हुए देखते हैं।",
+        "what_we_do_desc": "हम एक ऐसा प्लेटफॉर्म प्रदान करते हैं जो आपके कौशल को वास्तविक काम के अवसरों के साथ जोड़ता है। चाहे आप डेटा एंट्री, कंटेंट राइटिंग, ग्राफिक डिज़ाइन या पारंपरिक शिल्प में कुशल हों - हम आपको ऐसा काम खोजने में मदद करते हैं जो आपके टैलेंट की कद्र करता है।",
+        "why_choose_us_desc_about": "AI-आधारित जॉब मैचिंग, सत्यापित नियोक्ताओं, लचकदार शेड्यूल और हिंदी और अंग्रेजी में द्विभाषी समर्थन के साथ, माँ सारथी यह सुनिश्चित करता है कि आपको आपकी स्किल्स और शेड्यूल के अनुसार सही अवसर मिले।",
+        "mothers_empowered_num": "10,000+",
+        "partner_companies_num": "500+",
+        "total_earnings_num": "₹5Cr+",
+        "cities_covered_num": "50+"
     }
 }
+
 
 # ============================================
 # 🔐 AUTHENTICATION ROUTES
@@ -1303,6 +1477,7 @@ def login():
     - Password verification
     - Session management
     """
+    t = get_text()
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '').strip()
@@ -1314,19 +1489,19 @@ def login():
         # Check rate limiting
         is_allowed, remaining_time = login_rate_limiter.is_allowed(rate_limit_key)
         if not is_allowed:
-            return render_template('login.html', 
+            return render_template('login.html', t=t, 
                 error=f'Too many failed attempts. Please try again in {remaining_time} seconds.')
         
         # Validate email format
         is_valid, error_msg = Validator.validate_email(email)
         if not is_valid:
             login_rate_limiter.record_attempt(rate_limit_key, False)
-            return render_template('login.html', error=error_msg)
+            return render_template('login.html', t=t, error=error_msg)
         
         # Validate password is not empty
         if not password:
             login_rate_limiter.record_attempt(rate_limit_key, False)
-            return render_template('login.html', error='Password is required')
+            return render_template('login.html', t=t, error='Password is required')
         
         # Check if user exists
         user = User.query.filter_by(email=email).first()
@@ -1337,13 +1512,13 @@ def login():
                 # Verify password for organization
                 if not SecurityUtils.verify_password(password, org.password_hash, org.salt):
                     login_rate_limiter.record_attempt(rate_limit_key, False)
-                    return render_template('login.html', error='Invalid email or password')
+                    return render_template('login.html', t=t, error='Invalid email or password')
                 
                 # Check organization status
                 if org.status == 'Pending':
-                    return render_template('login.html', error='Your account is currently under review. You will be able to log in once an admin approves it.')
+                    return render_template('login.html', t=t, error='Your account is currently under review. You will be able to log in once an admin approves it.')
                 elif org.status == 'Declined':
-                    return render_template('login.html', error='Your organization registration has been declined. Please contact support.')
+                    return render_template('login.html', t=t, error='Your organization registration has been declined. Please contact support.')
                     
                 # Organization login successful
                 login_rate_limiter.record_attempt(rate_limit_key, True)
@@ -1355,12 +1530,12 @@ def login():
 
             login_rate_limiter.record_attempt(rate_limit_key, False)
             # Generic error to prevent email enumeration
-            return render_template('login.html', error='Invalid email or password')
+            return render_template('login.html', t=t, error='Invalid email or password')
         
         # Verify password using secure comparison
         if not SecurityUtils.verify_password(password, user.password_hash, user.salt):
             login_rate_limiter.record_attempt(rate_limit_key, False)
-            return render_template('login.html', error='Invalid email or password')
+            return render_template('login.html', t=t, error='Invalid email or password')
         
         # Successful login - record and create session
         login_rate_limiter.record_attempt(rate_limit_key, True)
@@ -1391,7 +1566,8 @@ def login():
     
     # GET request - show login form
     success_msg = request.args.get('success')
-    return render_template('login.html', success=success_msg)
+    return render_template('login.html', t=t, success=success_msg)
+
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -1402,6 +1578,7 @@ def signup():
     - Password hashing with salt
     - Duplicate email prevention
     """
+    t = get_text()
     if request.method == 'POST':
         # Sanitize and get form data
         fullname = SecurityUtils.sanitize_input(request.form.get('fullname', ''))
@@ -1452,7 +1629,7 @@ def signup():
         
         # If there are validation errors, return them
         if errors:
-            return render_template('signup.html', error=' | '.join(errors))
+            return render_template('signup.html', t=t, error=' | '.join(errors))
         
         # Hash password with salt
         password_hash, salt = SecurityUtils.hash_password(password)
@@ -1511,11 +1688,13 @@ def signup():
         return redirect(url_for('dashboard'))
     
     # GET request - show signup form
-    return render_template('signup.html')
+    return render_template('signup.html', t=t)
+
 
 @app.route('/forgot-password')
 def forgot_password():
-    return render_template('forgot_password.html')
+    t = get_text()
+    return render_template('forgot_password.html', t=t)
 
 
 @app.route('/dashboard')
@@ -1524,6 +1703,7 @@ def dashboard():
     Protected dashboard route with real data
     Validates session and displays user's recommendations, skills, and reminders
     """
+    t = get_text()
     # Check if user is logged in
     if 'user_email' not in session:
         return redirect('/login')
@@ -1545,7 +1725,7 @@ def dashboard():
     
     # Get user's tasks
     user_tasks = Task.query.filter_by(user_id=user.id).all()
-    completed_tasks = [t for t in user_tasks if t.is_completed]
+    completed_tasks = [t_item for t_item in user_tasks if t_item.is_completed]
     
     # Get user's reminders
     user_reminders = Reminder.query.filter_by(user_id=user.id).order_by(Reminder.due_date).all()
@@ -1568,18 +1748,28 @@ def dashboard():
     has_skills = len(user_skills) > 0
     has_experience = False
     has_resume = False
+    has_links = False
+    has_preferences = False
     
     if profile:
         has_basic = all([profile.age, profile.education, profile.location])
         has_experience = bool(profile.experience)
         has_resume = bool(profile.resume_path)
+        has_links = bool(profile.linkedin_url or profile.portfolio_url)
+        has_preferences = all([profile.preferred_domain, profile.work_mode_preference])
         
-        # Calculate percentage (each major section is 25%)
+        # Granular completion: 10 checkpoints × 10% each
         completion_rate = 0
-        if has_basic: completion_rate += 25
-        if has_skills: completion_rate += 25
-        if has_experience: completion_rate += 25
-        if has_resume: completion_rate += 25
+        if profile.age: completion_rate += 10
+        if profile.education: completion_rate += 10
+        if profile.location: completion_rate += 10
+        if profile.primary_skill: completion_rate += 10
+        if profile.preferred_domain: completion_rate += 10
+        if profile.work_mode_preference: completion_rate += 10
+        if profile.experience: completion_rate += 10
+        if profile.bio: completion_rate += 10
+        if profile.resume_path: completion_rate += 10
+        if profile.linkedin_url or profile.portfolio_url: completion_rate += 10
     
     # Get recent activity
     recent_activities = UserActivity.query.filter_by(user_id=user.id).order_by(UserActivity.created_at.desc()).limit(5).all()
@@ -1589,6 +1779,7 @@ def dashboard():
     
     return render_template(
         'dashboard.html',
+        t=t,
         user_name=user_name,
         user=user,
         last_recommendation=last_recommendation,
@@ -1603,9 +1794,10 @@ def dashboard():
         has_experience=has_experience,
         has_resume=has_resume,
         upcoming_reminders=upcoming_reminders[:5],
-        pending_tasks=len([t for t in user_tasks if not t.is_completed]),
+        pending_tasks=len([t_item for t_item in user_tasks if not t_item.is_completed]),
         user_tasks=user_tasks
     )
+
 
 
 @app.route('/logout')
@@ -1625,6 +1817,7 @@ def edit_profile():
     """
     Route for updating user profile and uploading resume
     """
+    t = get_text()
     if 'user_email' not in session:
         return redirect('/login')
         
@@ -1637,9 +1830,31 @@ def edit_profile():
         db.session.commit()
 
     if request.method == 'POST':
-        profile.age = request.form.get('age')
+        # Personal Info
+        profile.phone = request.form.get('phone')
+        profile.age = request.form.get('age') or None
+        profile.marital_status = request.form.get('marital_status')
+        profile.number_of_kids = request.form.get('number_of_kids') or None
+        
+        # Education & Location
         profile.education = request.form.get('education')
         profile.location = request.form.get('location')
+        profile.city_type = request.form.get('city_type')
+        profile.language_preference = request.form.get('language_preference')
+        profile.device_type = request.form.get('device_type')
+        
+        # Skills & Domain
+        profile.preferred_domain = request.form.get('preferred_domain')
+        profile.primary_skill = request.form.get('primary_skill')
+        profile.secondary_skill = request.form.get('secondary_skill')
+        profile.work_mode_preference = request.form.get('work_mode_preference')
+        profile.available_hours = request.form.get('available_hours') or None
+        
+        # Professional Links
+        profile.linkedin_url = request.form.get('linkedin_url')
+        profile.portfolio_url = request.form.get('portfolio_url')
+        
+        # Experience & Bio
         profile.experience = request.form.get('experience')
         profile.bio = request.form.get('bio')
         
@@ -1662,7 +1877,8 @@ def edit_profile():
         flash("Profile updated successfully!", "success")
         return redirect(url_for('dashboard'))
         
-    return render_template('edit_profile.html', profile=profile, user=user)
+    return render_template('edit_profile.html', t=t, profile=profile, user=user)
+
 
 # ✅ Helper function to get language text
 def get_text():
@@ -1717,7 +1933,7 @@ Assistant:
 def set_language(lang):
     if lang in ["en", "hi"]:
         session["lang"] = lang
-    return redirect(url_for("home"))
+    return redirect(request.referrer or url_for("home"))
 
 # ✅ Favicon support
 @app.route("/favicon.ico")
@@ -1965,70 +2181,101 @@ def search_jobs():
         
     t = get_text()
     
-    # Construct mock results for the search query
-    # We'll use a subset of the logic from /predict but simplified
-    confidence_percentage = 85
-    results = {
-        'income': 25000,
-        'income_low': 20000,
-        'income_high': 35000,
-        'profile_grade': 'A',
-        'profile_completeness': 75,
-        'job_predictions': [{'label': query, 'confidence': 0.95}],
-        'mother_suitability': 'Highly Suitable',
-        'mother_suitability_confidence': 0.92,
-        'wlb_score': 8.5
-    }
+    # 1. ML Job Search matching against dataset.csv
+    job_recommendations = []
+    global search_tfidf_vectorizer, search_nn_model, search_corpus_df
     
-    # Generic job recommendations based on query
-    job_recommendations = [
-        {
-            "title": f"Freelance {query}",
-            "company": "Sahaayata Connect",
-            "salary": "₹15,000 - ₹22,000",
-            "type": "Part-time",
-            "location": "Remote / WFH",
-            "work_mode": "Remote",
-            "description": f"Flexible project-based role for {query} professionals. Ideal for mothers needing work-life balance.",
-            "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
-        },
-        {
-            "title": f"Senior {query} Lead",
-            "company": "Metropolitan Services",
-            "salary": "₹35,000 - ₹50,000",
-            "type": "Full-time",
-            "location": "Delhi, NCR",
-            "work_mode": "On-site",
-            "description": f"Lead our {query} division. Require at least 3 years of experience and excellent communication skills.",
-            "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
-        },
-        {
-            "title": f"Junior {query} Associate",
-            "company": "Bright Future Co.",
-            "salary": "₹18,000 - ₹25,000",
-            "type": "Full-time",
-            "location": "Hybrid",
-            "work_mode": "Hybrid",
-            "description": f"Entry-level opening for {query}. We provide full training and mother-friendly work environment.",
-            "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
-        },
-        {
-            "title": f"Independent {query} Consultant",
-            "company": "Global Solutions",
-            "salary": "₹20,000 - ₹30,000",
-            "type": "Contract",
-            "location": "Remote",
-            "work_mode": "Remote",
-            "description": f"Consult on various {query} tasks. Set your own hours and work from the comfort of your home.",
-            "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
-        }
-    ]
+    if search_tfidf_vectorizer and search_nn_model and search_corpus_df is not None:
+        try:
+            # Clean and vectorize query
+            import re
+            clean_query = " ".join(re.sub(r'[^\\w\\s]', ' ', query.lower()).split())
+            query_vec = search_tfidf_vectorizer.transform([clean_query])
+            
+            # Find closest matches 
+            distances, indices = search_nn_model.kneighbors(query_vec, n_neighbors=20)
+            
+            # Map indices back to rows in the search corpus
+            matched_indices = indices[0]
+            matched_rows = search_corpus_df.iloc[matched_indices]
+            
+            # Keep results diverse by removing purely duplicate titles from the same company
+            matched_rows = matched_rows.drop_duplicates(subset=['job_title', 'company']).head(10)
+            
+            for _, row in matched_rows.iterrows():
+                job = {
+                    "title": str(row.get('job_title', query)),
+                    "company": str(row.get('company', 'MaaSarthi Network')),
+                    "salary": str(row.get('salary_bracket', 'Market Standard')),
+                    "type": str(row.get('work_type', 'Full-time')),
+                    "location": f"{row.get('city', 'Remote')}, {row.get('state', '')}",
+                    "work_mode": str(row.get('work_mode', 'Remote')),
+                    "description": str(row.get('job_description', 'Detailed description in portal'))[:250] + '...',
+                    "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
+                }
+                job_recommendations.append(job)
+        except Exception as e:
+            print(f"⚠️ Error during ML search: {e}")
+            
+    # 2. Search for relevant courses from organizations
+    course_recommendations = []
+    try:
+        # Search courses by title, skill name, or category
+        matched_courses = TrainingCourse.query.filter(
+            (TrainingCourse.title.ilike(f"%{query}%")) | 
+            (TrainingCourse.skill_name.ilike(f"%{query}%")) |
+            (TrainingCourse.category.ilike(f"%{query}%"))
+        ).limit(5).all()
+        
+        for course in matched_courses:
+            course_recommendations.append({
+                "id": course.id,
+                "title": course.title,
+                "skill": course.skill_name,
+                "category": course.category,
+                "level": course.difficulty_level,
+                "duration": course.duration,
+                "thumbnail": course.thumbnail_path or course.thumbnail_url or url_for('static', filename='Images/course_placeholder.png'),
+                "description": course.description[:150] + "...",
+                "video_url": course.video_url,
+                "video_path": course.video_path,
+                "pdf_url": course.pdf_url,
+                "pdf_path": course.pdf_path
+            })
+    except Exception as e:
+        print(f"⚠️ Error during course search: {e}")
+
+    # 3. Fallback mechanisms if ML fails or is still loading
+    if not job_recommendations:
+        job_recommendations = [
+            {
+                "title": f"Freelance {query}",
+                "company": "Sahaayata Connect",
+                "salary": "₹15,000 - ₹22,000",
+                "type": "Part-time",
+                "location": "Remote / WFH",
+                "work_mode": "Remote",
+                "description": f"Flexible project-based role for {query} professionals. Ideal for mothers needing work-life balance.",
+                "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
+            },
+            {
+                "title": f"Senior {query} Lead",
+                "company": "Metropolitan Services",
+                "salary": "₹35,000 - ₹50,000",
+                "type": "Full-time",
+                "location": "Delhi, NCR",
+                "work_mode": "On-site",
+                "description": f"Lead our {query} division. Require at least 3 years of experience and excellent communication skills.",
+                "apply_links": {"linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"}
+            }
+        ]
     
     return render_template(
         "search_results.html",
         t=t,
         query=query,
         jobs=job_recommendations,
+        courses=course_recommendations,
         user=get_current_user()
     )
 
@@ -2870,6 +3117,7 @@ def login_google():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
+    t = get_text()
     if request.method == 'POST':
         # Sanitize inputs
         name = SecurityUtils.sanitize_input(request.form.get('name', ''))
@@ -2895,7 +3143,7 @@ def contact():
             errors.append('Message is too long (max 2000 characters)')
         
         if errors:
-            return render_template('contact.html', error=' | '.join(errors), user=get_current_user())
+            return render_template('contact.html', t=t, error=' | '.join(errors), user=get_current_user())
         
         # Save contact message to database
         contact_msg = ContactMessage(
@@ -2911,8 +3159,8 @@ def contact():
         print(f"📧 Contact form submission saved from {name} ({email}): {subject}")
         
         flash('Thank you for contacting us! We will get back to you soon.', 'success')
-        return render_template('contact.html', success=True, name=name, user=get_current_user())
-    return render_template('contact.html', success=False, user=get_current_user())
+        return render_template('contact.html', t=t, success=True, name=name, user=get_current_user())
+    return render_template('contact.html', t=t, success=False, user=get_current_user())
 
 
 # ============================================
@@ -3242,6 +3490,7 @@ ADMIN_PASSWORD = "admin123"
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     """Admin login page"""
+    t = get_text()
     if request.method == 'POST':
         username = request.form.get('admin_username')
         password = request.form.get('admin_password')
@@ -3255,7 +3504,7 @@ def admin_login():
             flash('Invalid admin credentials. Please try again.', 'admin_error')
             return redirect(url_for('admin_login'))
     
-    return render_template('admin_login.html')
+    return render_template('admin_login.html', t=t)
 
 @app.route('/admin-logout')
 def admin_logout():
@@ -3268,6 +3517,7 @@ def admin_logout():
 @app.route('/admin')
 def admin_dashboard():
     """Admin dashboard to view all database information"""
+    t = get_text()
     # Check if admin is logged in
     if not session.get('is_admin'):
         flash('Please login as admin to access the dashboard.', 'admin_error')
@@ -3300,6 +3550,7 @@ def admin_dashboard():
     }
     
     return render_template('admin.html',
+        t=t,
         users=users,
         profiles_dict=profiles_dict,
         job_searches=job_searches,
@@ -3311,6 +3562,7 @@ def admin_dashboard():
         call_requests=call_requests,
         stats=stats
     )
+
 
 
 # ============================================
@@ -3754,7 +4006,7 @@ def my_applications():
 # ✅ Frontend Page Routes
 @app.route('/organizations/register', methods=['GET', 'POST'])
 def org_register_page():
-    t = dict(t=app.jinja_env.globals.get('t', {})) # ensure translation dict is available
+    t = get_text()
     
     if request.method == 'POST':
         password = request.form.get('password', '')
@@ -3786,7 +4038,7 @@ def org_register_page():
                 website=request.form.get('website'),
                 contact_name=request.form.get('contact_name'),
                 designation=request.form.get('designation'),
-                email=request.form.get('email'),
+                email=email,  # Already lowercased above
                 phone_number=request.form.get('phone_number'),
                 address=request.form.get('address'),
                 city=request.form.get('city'),
@@ -3804,7 +4056,7 @@ def org_register_page():
             db.session.rollback()
             flash(f'An error occurred: {str(e)}', 'error')
             
-    return render_template('organizations/register.html', **t)
+    return render_template('organizations/register.html', t=t)
 
 # ✅ Admin Approval Routes
 @app.route('/admin/org/<int:org_id>/approve', methods=['POST'])
@@ -3887,7 +4139,8 @@ def org_login():
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '').strip()
         
-        org = Organization.query.filter_by(email=email).first()
+        # Use the most recently created org with this email (handles duplicates)
+        org = Organization.query.filter(Organization.email.ilike(email)).order_by(Organization.id.desc()).first()
         if not org or not SecurityUtils.verify_password(password, org.password_hash, org.salt):
             flash('Invalid email or password', 'error')
             return render_template('organizations/login.html', **t)
@@ -3965,13 +4218,58 @@ def org_add_course():
         return redirect(url_for('org_login'))
         
     try:
+        # Create directories if they don't exist
+        if not os.path.exists(COURSE_UPLOAD_FOLDER):
+            os.makedirs(COURSE_UPLOAD_FOLDER)
+            
+        thumbnail_path = None
+        video_path = None
+        pdf_path = None
+        
+        # Handle Thumbnail Upload
+        if 'thumbnail_file' in request.files:
+            file = request.files['thumbnail_file']
+            if file and allowed_image(file.filename):
+                filename = secure_filename(f"thumb_{org_id}_{int(time.time())}_{file.filename}")
+                save_path = os.path.join(COURSE_UPLOAD_FOLDER, filename)
+                file.save(save_path)
+                thumbnail_path = os.path.join('uploads', 'courses', filename)
+                
+        # Handle Video Upload
+        if 'video_file' in request.files:
+            file = request.files['video_file']
+            if file and allowed_video(file.filename):
+                filename = secure_filename(f"video_{org_id}_{int(time.time())}_{file.filename}")
+                save_path = os.path.join(COURSE_UPLOAD_FOLDER, filename)
+                file.save(save_path)
+                video_path = os.path.join('uploads', 'courses', filename)
+                
+        # Handle PDF Upload
+        if 'pdf_file' in request.files:
+            file = request.files['pdf_file']
+            if file and allowed_file(file.filename):
+                filename = secure_filename(f"pdf_{org_id}_{int(time.time())}_{file.filename}")
+                save_path = os.path.join(COURSE_UPLOAD_FOLDER, filename)
+                file.save(save_path)
+                pdf_path = os.path.join('uploads', 'courses', filename)
+
         new_course = TrainingCourse(
             org_id=org_id,
             title=request.form.get('title'),
             skill_name=request.form.get('skill_name'),
+            category=request.form.get('category'),
+            difficulty_level=request.form.get('difficulty_level'),
+            duration=request.form.get('duration'),
+            language=request.form.get('language'),
+            prerequisites=request.form.get('prerequisites'),
+            learning_outcomes=request.form.get('learning_outcomes'),
+            thumbnail_url=request.form.get('thumbnail_url'),
+            thumbnail_path=thumbnail_path,
             description=request.form.get('description'),
             video_url=request.form.get('video_url'),
-            pdf_url=request.form.get('pdf_url')
+            video_path=video_path,
+            pdf_url=request.form.get('pdf_url'),
+            pdf_path=pdf_path
         )
         db.session.add(new_course)
         db.session.commit()

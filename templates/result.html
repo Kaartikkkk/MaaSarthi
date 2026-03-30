@@ -39,7 +39,7 @@
                 </div>
 
                 <h1 class="result-title">
-                    Your Best Match:
+                    {{ t.get('your_best_match', 'Your Best Match:') }}
                     <span class="highlight">
                         {% if results.job_predictions %}
                         {{ results.job_predictions[0].label }}
@@ -49,8 +49,7 @@
                     </span>
                 </h1>
 
-                <p class="result-subtitle">AI-powered analysis based on your skills, preferences, and 8 prediction
-                    models</p>
+                <p class="result-subtitle">{{ t.get('ai_powered_analysis', 'AI-powered analysis based on your skills, preferences, and prediction models') }}</p>
 
                 <div class="earnings-card">
                     <div class="earnings-icon">
@@ -60,7 +59,7 @@
                         </svg>
                     </div>
                     <div class="earnings-info">
-                        <span class="earnings-label">Expected Monthly Earnings</span>
+                        <span class="earnings-label">{{ t.get('expected_monthly_earnings', 'Expected Monthly Earnings') }}</span>
                         <span class="earnings-value">₹{{ "{:,}".format(low) }} – ₹{{ "{:,}".format(high) }}</span>
                     </div>
                 </div>
@@ -78,7 +77,7 @@
                     <path
                         d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                 </svg>
-                AI-Powered Insights
+                {{ t.get('ai_powered_insights', 'AI-Powered Insights') }}
             </h2>
 
             <div class="insights-grid">
@@ -221,7 +220,7 @@
                                     <path
                                         d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                 </svg>
-                                Verified Partner Opportunities
+                                {{ t.get('verified_partner_opps', 'Verified Partner Opportunities') }}
                             </h2>
                             <span class="job-count">{{ org_jobs|length }} live opportunities</span>
                         </div>
@@ -340,7 +339,7 @@
                                 <path
                                     d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" />
                             </svg>
-                            AI Recommended Jobs for You
+                            {{ t.get('ai_rec_jobs', 'AI Recommended Jobs for You') }}
                         </h2>
                         <span class="job-count">{{ jobs|length }} AI opportunities</span>
                     </div>

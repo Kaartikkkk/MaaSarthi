@@ -35,8 +35,54 @@
             </div>
         </header>
 
+        {% if courses %}
+        <section class="courses-horizontal">
+            <div class="section-title-area">
+                <span class="section-subtitle">Skill Up</span>
+                <h2>Recommended Learning <span class="badge-new">New</span></h2>
+                <p>Enhance your skills to qualify for more "{{ query }}" opportunities</p>
+            </div>
+            
+            <div class="courses-scroll-container">
+                {% for course in courses %}
+                <div class="course-card-premium" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                    <div class="course-thumb">
+                        <img src="{{ course.thumbnail }}" alt="{{ course.title }}" onerror="this.src='{{ url_for('static', filename='Images/course_placeholder.png') }}'">
+                        <div class="course-category">{{ course.category }}</div>
+                    </div>
+                    <div class="course-info">
+                        <div class="course-meta">
+                            <span class="level-tag {{ course.level|lower }}">{{ course.level }}</span>
+                            <span class="duration-tag"><i class="far fa-clock"></i> {{ course.duration }}</span>
+                        </div>
+                        <h3>{{ course.title }}</h3>
+                        <p class="course-desc">{{ course.description }}</p>
+                        
+                        <div class="course-actions">
+                            {% if course.video_path or course.video_url %}
+                                <a href="{{ url_for('static', filename=course.video_path) if course.video_path else course.video_url }}" target="_blank" class="btn-course-action video">
+                                    <i class="fas fa-play-circle"></i> Watch
+                                </a>
+                            {% endif %}
+                            {% if course.pdf_path or course.pdf_url %}
+                                <a href="{{ url_for('static', filename=course.pdf_path) if course.pdf_path else course.pdf_url }}" target="_blank" class="btn-course-action pdf">
+                                    <i class="fas fa-file-pdf"></i> PDF
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
         <section class="results-grid">
             <div class="jobs-column">
+                <div class="section-title-area left">
+                    <span class="section-subtitle">Nearby Jobs</span>
+                    <h2>Matching Opportunities</h2>
+                </div>
                 {% if jobs %}
                     {% for job in jobs %}
                     <div class="job-card-premium" style="animation-delay: {{ loop.index0 * 0.1 }}s">

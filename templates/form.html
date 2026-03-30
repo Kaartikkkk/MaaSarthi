@@ -40,15 +40,15 @@
         <div class="stepper-container">
             <div class="step-item active" id="step-item-1">
                 <div class="step-num">1</div>
-                <div class="step-label">Basic</div>
+                <div class="step-label">{{ t.get('basic_step', 'Basic') }}</div>
             </div>
             <div class="step-item" id="step-item-2">
                 <div class="step-num">2</div>
-                <div class="step-label">Skills</div>
+                <div class="step-label">{{ t.get('skills_step', 'Skills') }}</div>
             </div>
             <div class="step-item" id="step-item-3">
                 <div class="step-num">3</div>
-                <div class="step-label">Work</div>
+                <div class="step-label">{{ t.get('work_step', 'Work') }}</div>
             </div>
         </div>
 
@@ -59,7 +59,7 @@
             <form action="/predict" method="POST" id="job-form">
                 <!-- Step 1: Personal Info -->
                 <div class="form-step active" id="step-1">
-                    <div class="form-section-label">Personal Information</div>
+                    <div class="form-section-label">{{ t.get('personal_info_step', 'Personal Information') }}</div>
                     <div class="grid-form">
                         <div class="field">
                             <label>{{ t.age }}</label>
@@ -108,13 +108,13 @@
                     </div>
                     <div class="step-nav">
                         <div></div> <!-- empty div for flex spacing -->
-                        <button type="button" class="btn" onclick="nextStep(2)">Next Step &rarr;</button>
+                        <button type="button" class="btn" onclick="nextStep(2)">{{ t.get('next_step', 'Next Step') }} &rarr;</button>
                     </div>
                 </div>
 
                 <!-- Step 2: Skills & Domain -->
                 <div class="form-step" id="step-2">
-                    <div class="form-section-label">Skills &amp; Domain</div>
+                    <div class="form-section-label">{{ t.get('skills_domain_step', 'Skills &amp; Domain') }}</div>
                     <div class="grid-form" style="margin-bottom: 2rem;">
                         <div class="field">
                             <label>{{ t.sector }}</label>
@@ -151,14 +151,14 @@
                         <datalist id="skill-suggestions"></datalist>
                     </div>
                     <div class="step-nav">
-                        <button type="button" class="btn btn-back" onclick="nextStep(1)">&larr; Back</button>
-                        <button type="button" class="btn" onclick="nextStep(3)">Next Step &rarr;</button>
+                        <button type="button" class="btn btn-back" onclick="nextStep(1)">&larr; {{ t.get('back_btn', 'Back') }}</button>
+                        <button type="button" class="btn" onclick="nextStep(3)">{{ t.get('next_step', 'Next Step') }} &rarr;</button>
                     </div>
                 </div>
 
                 <!-- Step 3: Work Preferences -->
                 <div class="form-step" id="step-3">
-                    <div class="form-section-label">Work Preferences</div>
+                    <div class="form-section-label">{{ t.get('work_pref_step', 'Work Preferences') }}</div>
                     <div class="grid-form">
                         <div class="field">
                             <label>{{ t.hours }}</label>
@@ -222,7 +222,7 @@
 
                     </div>
                     <div class="step-nav">
-                        <button type="button" class="btn btn-back" onclick="nextStep(2)">&larr; Back</button>
+                        <button type="button" class="btn btn-back" onclick="nextStep(2)">&larr; {{ t.get('back_btn', 'Back') }}</button>
                         <button type="submit" class="btn">{{ t.get_rec }}</button>
                     </div>
                     <div class="field full" style="text-align: center; margin-top: 1.5rem;">

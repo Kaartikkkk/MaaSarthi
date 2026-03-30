@@ -326,9 +326,9 @@
 
         <div class="container">
             <div class="section-header">
-                <span class="section-badge">✨ Who We Are</span>
+                <span class="section-badge">{{ t.get('who_we_are', '✨ Who We Are') }}</span>
                 <h2 class="section-title">{{ t.about_us }}</h2>
-                <p class="section-subtitle">Empowering Mothers Across India</p>
+                <p class="section-subtitle">{{ t.get('empowering_mothers', 'Empowering Mothers Across India') }}</p>
             </div>
 
             <div class="about-grid">
@@ -341,10 +341,8 @@
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
                     </div>
-                    <h3>Our Mission</h3>
-                    <p>MaaSarthi is dedicated to empowering homemakers and mothers by connecting them with flexible work
-                        opportunities that fit their lifestyle. We believe every mother deserves the chance to achieve
-                        financial independence while caring for her family.</p>
+                    <h3>{{ t.get('our_mission', 'Our Mission') }}</h3>
+                    <p>{{ t.get('our_mission_desc', 'MaaSarthi is dedicated to empowering homemakers and mothers by connecting them with flexible work opportunities that fit their lifestyle. We believe every mother deserves the chance to achieve financial independence while caring for her family.') }}</p>
                 </div>
 
                 <!-- Vision Card -->
@@ -359,10 +357,8 @@
                             </path>
                         </svg>
                     </div>
-                    <h3>Our Vision</h3>
-                    <p>To create a world where every woman, regardless of her circumstances, has access to meaningful
-                        employment opportunities. We envision empowered mothers building stronger families and
-                        communities across India.</p>
+                    <h3>{{ t.get('our_vision', 'Our Vision') }}</h3>
+                    <p>{{ t.get('our_vision_desc', 'To create a world where every woman, regardless of her circumstances, has access to meaningful employment opportunities. We envision empowered mothers building stronger families and communities across India.') }}</p>
                 </div>
 
                 <!-- What We Do Card -->
@@ -375,10 +371,8 @@
                             </path>
                         </svg>
                     </div>
-                    <h3>What We Do</h3>
-                    <p>We provide a platform that matches your skills with genuine work opportunities. Whether you're
-                        skilled in data entry, content writing, graphic design, or traditional crafts – we help you find
-                        work that values your talent.</p>
+                    <h3>{{ t.get('what_we_do', 'What We Do') }}</h3>
+                    <p>{{ t.get('what_we_do_desc', "We provide a platform that matches your skills with genuine work opportunities. Whether you're skilled in data entry, content writing, graphic design, or traditional crafts – we help you find work that values your talent.") }}</p>
                 </div>
 
                 <!-- Why Choose Us Card -->
@@ -391,32 +385,30 @@
                             </path>
                         </svg>
                     </div>
-                    <h3>Why Choose Us</h3>
-                    <p>With AI-powered job matching, verified employers, flexible schedules, and multilingual support in
-                        Hindi and English, MaaSarthi ensures you find the perfect opportunity that fits your skills and
-                        schedule.</p>
+                    <h3>{{ t.why_choose }}</h3>
+                    <p>{{ t.get('why_choose_us_desc_about', 'With AI-powered job matching, verified employers, flexible schedules, and multilingual support in Hindi and English, MaaSarthi ensures you find the perfect opportunity that fits your skills and schedule.') }}</p>
                 </div>
             </div>
 
             <!-- Impact Stats -->
             <div class="about-impact">
-                <h3 class="impact-title">Our Impact</h3>
+                <h3 class="impact-title">{{ t.get('our_impact', 'Our Impact') }}</h3>
                 <div class="about-stats">
                     <div class="about-stat">
-                        <span class="stat-num">10,000+</span>
-                        <span class="stat-text">Mothers Empowered</span>
+                        <span class="stat-num">{{ t.get('mothers_empowered_num', '10,000+') }}</span>
+                        <span class="stat-text">{{ t.get('mothers_empowered', 'Mothers Empowered') }}</span>
                     </div>
                     <div class="about-stat">
-                        <span class="stat-num">500+</span>
-                        <span class="stat-text">Partner Companies</span>
+                        <span class="stat-num">{{ t.get('partner_companies_num', '500+') }}</span>
+                        <span class="stat-text">{{ t.get('partner_companies', 'Partner Companies') }}</span>
                     </div>
                     <div class="about-stat">
-                        <span class="stat-num">₹5Cr+</span>
-                        <span class="stat-text">Total Earnings</span>
+                        <span class="stat-num">{{ t.get('total_earnings_num', '₹5Cr+') }}</span>
+                        <span class="stat-text">{{ t.get('total_earnings', 'Total Earnings') }}</span>
                     </div>
                     <div class="about-stat">
-                        <span class="stat-num">50+</span>
-                        <span class="stat-text">Cities Covered</span>
+                        <span class="stat-num">{{ t.get('cities_covered_num', '50+') }}</span>
+                        <span class="stat-text">{{ t.get('cities_covered', 'Cities Covered') }}</span>
                     </div>
                 </div>
             </div>
