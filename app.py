@@ -586,6 +586,25 @@ class ConsultationRequest(db.Model):
     def __repr__(self):
         return f'<ConsultationRequest {self.id} for User {self.user_id}>'
 
+class SavedJob(db.Model):
+    """Jobs saved by users"""
+    __tablename__ = 'saved_jobs'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    job_title = db.Column(db.String(200), nullable=False)
+    company = db.Column(db.String(200), nullable=True)
+    location = db.Column(db.String(200), nullable=True)
+    salary = db.Column(db.String(100), nullable=True)
+    job_type = db.Column(db.String(100), nullable=True)
+    work_mode = db.Column(db.String(100), nullable=True)
+    is_internal = db.Column(db.Boolean, default=False)
+    internal_job_id = db.Column(db.Integer, db.ForeignKey('organization_jobs.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    
+    def __repr__(self):
+        return f'<SavedJob {self.job_title} for User {self.user_id}>'
+
 with app.app_context():
     db.create_all()
     print("✅ Database tables created successfully!")
@@ -603,6 +622,18 @@ def login_required(f):
                 session['next_url'] = request.url
             flash('Please login to access this feature', 'info')
             return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def org_login_required(f):
+    """Decorator to ensure organization is logged in"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'org_id' not in session:
+            if request.method == 'GET':
+                session['org_next_url'] = request.url
+            flash('Please login as an organization to access this feature', 'info')
+            return redirect(url_for('org_login'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -1543,11 +1574,15 @@ def login():
         # Get the URL user wanted to access before login
         next_url = session.get('next_url')
         
-        # Regenerate session to prevent session fixation
-        session.clear()
+        # Clear only user-specific session data to allow maintaining organization session
+        user_keys = ['user_email', 'user_name', 'user_phone', 'session_token', 'login_time', 'user_id']
+        for key in user_keys:
+            session.pop(key, None)
+            
         session['user_email'] = email
         session['user_name'] = user.name
         session['user_phone'] = user.phone
+        session['user_id'] = user.id
         session['session_token'] = SecurityUtils.generate_session_token()
         session['login_time'] = datetime.now().isoformat()
         session.permanent = True
@@ -1737,6 +1772,9 @@ def dashboard():
     # Get user's skills
     user_skills = UserSkill.query.filter_by(user_id=user.id).all()
     
+    # Get user's saved jobs
+    saved_jobs = SavedJob.query.filter_by(user_id=user.id).order_by(SavedJob.created_at.desc()).limit(5).all()
+    
     # Calculate statistics
     job_applications_count = JobApplication.query.filter_by(user_id=user.id).count()
     completed_courses_count = 0 # Placeholder for now, can be linked to a CourseEnrollment model if added
@@ -1795,7 +1833,8 @@ def dashboard():
         has_resume=has_resume,
         upcoming_reminders=upcoming_reminders[:5],
         pending_tasks=len([t_item for t_item in user_tasks if not t_item.is_completed]),
-        user_tasks=user_tasks
+        user_tasks=user_tasks,
+        saved_jobs=saved_jobs
     )
 
 
@@ -2217,6 +2256,35 @@ def search_jobs():
         except Exception as e:
             print(f"⚠️ Error during ML search: {e}")
             
+    # 1.5. Search for "live" jobs from organizations
+    try:
+        live_jobs = OrganizationJob.query.join(Organization).filter(
+            OrganizationJob.is_active == True,
+            (OrganizationJob.title.ilike(f"%{query}%")) |
+            (OrganizationJob.description.ilike(f"%{query}%")) |
+            (OrganizationJob.location.ilike(f"%{query}%")) |
+            (Organization.company_name.ilike(f"%{query}%"))
+        ).all()
+        
+        for job in live_jobs:
+            job_recommendations.insert(0, { # Put live jobs at the top
+                "id": job.id,
+                "title": job.title,
+                "company": job.organization.company_name,
+                "salary": job.salary_range or "Market Standard",
+                "type": job.job_type,
+                "location": job.location or "Remote",
+                "work_mode": job.work_mode or "Remote",
+                "description": job.description[:250] + '...',
+                "is_internal": True, # Tag to distinguish from dataset jobs
+                "apply_links": {
+                    "internal_url": url_for('apply_job', job_id=job.id),
+                    "linkedin": "#", "naukri": "#", "indeed": "#", "internshala": "#"
+                }
+            })
+    except Exception as e:
+        print(f"⚠️ Error during live job search: {e}")
+            
     # 2. Search for relevant courses from organizations
     course_recommendations = []
     try:
@@ -2285,6 +2353,56 @@ def search_jobs():
 def jobs():
     t = get_text()
     return render_template("form.html", t=t, user=get_current_user())
+
+@app.route('/api/toggle-save', methods=['POST'])
+@login_required
+def toggle_save():
+    """Toggle saving a job for the current user"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'error': 'No data provided'}), 400
+            
+        user_email = session.get('user_email')
+        user = User.query.filter_by(email=user_email).first()
+        
+        job_title = data.get('title')
+        company = data.get('company')
+        
+        if not job_title:
+            return jsonify({'success': False, 'error': 'Job title is required'}), 400
+            
+        # Check if already saved
+        existing = SavedJob.query.filter_by(
+            user_id=user.id,
+            job_title=job_title,
+            company=company
+        ).first()
+        
+        if existing:
+            db.session.delete(existing)
+            db.session.commit()
+            return jsonify({'success': True, 'action': 'removed'})
+        else:
+            new_save = SavedJob(
+                user_id=user.id,
+                job_title=job_title,
+                company=company,
+                location=data.get('location'),
+                salary=data.get('salary'),
+                job_type=data.get('type'),
+                work_mode=data.get('work_mode'),
+                is_internal=data.get('is_internal', False),
+                internal_job_id=data.get('id') if data.get('is_internal') else None
+            )
+            db.session.add(new_save)
+            db.session.commit()
+            return jsonify({'success': True, 'action': 'saved'})
+            
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error toggling save: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 def _clean_job_label(label):
     """Clean up model labels like 'Agriculture_Mid' → 'Agriculture - Mid Level'"""
@@ -3946,6 +4064,7 @@ def apply_job(job_id):
     return render_template('apply_job.html', job=job, user=user, t=t)
 
 @app.route('/org/applications')
+@org_login_required
 def org_applications():
     if 'org_id' not in session:
         flash('Please login as an organization.', 'info')
@@ -3963,6 +4082,7 @@ def org_applications():
     return render_template('organizations/applications.html', org=org, applications=applications, t=t)
 
 @app.route('/org/application/<int:app_id>')
+@org_login_required
 def org_application_detail(app_id):
     if 'org_id' not in session:
         return redirect(url_for('org_login'))
@@ -3978,22 +4098,25 @@ def org_application_detail(app_id):
     return render_template('organizations/application_detail.html', app=application, t=t)
 
 @app.route('/org/application/<int:app_id>/status', methods=['POST'])
+@org_login_required
 def update_application_status(app_id):
-    if 'org_id' not in session:
-        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
-    
+    org_id = session['org_id']
     application = JobApplication.query.get_or_404(app_id)
-    if application.job.org_id != session['org_id']:
-        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+    
+    # Verify this application belongs to the current org's job
+    if application.job.org_id != org_id:
+        flash('Unauthorized access.', 'error')
+        return redirect(url_for('org_applications'))
         
     new_status = request.form.get('status')
     if new_status in ['Pending', 'Reviewed', 'Shortlisted', 'Rejected']:
         application.status = new_status
         db.session.commit()
         flash(f'Application status updated to {new_status}.', 'success')
-        return redirect(url_for('org_application_detail', app_id=app_id))
-    
-    return jsonify({'success': False, 'error': 'Invalid status'}), 400
+    else:
+        flash('Invalid status update requested.', 'error')
+        
+    return redirect(url_for('org_application_detail', app_id=app_id))
 
 @app.route('/my-applications')
 @login_required
@@ -4152,7 +4275,11 @@ def org_login():
             flash('Your organization registration has been declined. Please contact support.', 'error')
             return render_template('organizations/login.html', **t)
             
-        session.clear()
+        # Clear only organization-specific session data to allow maintaining user session
+        org_keys = ['org_id', 'org_name']
+        for key in org_keys:
+            session.pop(key, None)
+            
         session['org_id'] = org.id
         session['org_name'] = org.company_name
         flash('Successfully logged in!', 'success')
@@ -4168,6 +4295,7 @@ def org_logout():
     return redirect(url_for('org_login'))
 
 @app.route('/org/dashboard')
+@org_login_required
 def org_dashboard():
     t = dict(t=app.jinja_env.globals.get('t', {}))
     org_id = session.get('org_id')

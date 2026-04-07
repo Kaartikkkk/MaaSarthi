@@ -4,20 +4,17 @@
    ======================================== */
 
 :root {
-    --primary-pink: #ff4d6d;
-    --primary-pink-light: #ff85a1;
-    --bg-light: #fff5f7;
-    --text-main: #1f2937;
-    --text-muted: #6b7280;
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --border-soft: rgba(255, 77, 109, 0.15);
+    --text-main: var(--text-primary);
+    --text-muted: var(--text-secondary);
+    --glass-bg: var(--bg-card);
+    --border-soft: var(--border-color);
 }
 
 .search-page-bg {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     z-index: -1;
-    background: #fef8ff;
+    background: var(--bg-body);
     overflow: hidden;
 }
 
@@ -328,6 +325,39 @@
     border-color: var(--primary-pink);
 }
 
+/* Internal Organization Job Apply Button */
+.btn-apply-internal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(135deg, #ff4d6d, #ff85a1);
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 77, 109, 0.25);
+}
+
+.btn-apply-internal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 77, 109, 0.4);
+}
+
+.verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.08);
+    padding: 0.35rem 0.8rem;
+    border-radius: 8px;
+}
+
 /* Sidebar */
 .search-sidebar {
     display: flex;
@@ -336,11 +366,11 @@
 }
 
 .sidebar-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 20px;
     padding: 1.75rem;
-    border: 1px solid var(--border-soft);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
 }
 
 .sidebar-card h3 {
@@ -524,11 +554,11 @@
 .course-card-premium {
     min-width: 320px;
     max-width: 320px;
-    background: white;
+    background: var(--bg-card);
     border-radius: 20px;
     overflow: hidden;
-    border: 1.5px solid var(--border-soft);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1.5px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
     transition: all 0.4s ease;
     display: flex;
     flex-direction: column;

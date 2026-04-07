@@ -9,7 +9,7 @@
 .result-hero {
     margin-top: 80px;
     padding: 4rem 2rem 5rem;
-    background: linear-gradient(135deg, #fff0f3 0%, #ffe5ec 100%);
+    background: var(--gradient-section-alt);
     position: relative;
     overflow: hidden;
     text-align: center;
@@ -109,11 +109,11 @@
     display: inline-flex;
     align-items: center;
     gap: 1rem;
-    background: white;
+    background: var(--bg-card);
     padding: 1.25rem 2rem;
     border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(255, 77, 109, 0.15);
-    border: 2px solid rgba(255, 77, 109, 0.1);
+    box-shadow: var(--shadow-md);
+    border: 2px solid var(--border-color);
 }
 
 .earnings-icon {
@@ -152,7 +152,7 @@
    ======================================== */
 .result-content {
     padding: 3rem 2rem;
-    background: #fafafa;
+    background: var(--bg-body);
 }
 
 .result-content .container {
@@ -170,14 +170,13 @@
    JOBS SECTION
    ======================================== */
 .jobs-section {
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--bg-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 20px;
     padding: 2rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.02' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
 }
 
 .section-header {
@@ -221,8 +220,8 @@
 }
 
 .job-card {
-    background: #fafafa;
-    border: 2px solid #eee;
+    background: var(--bg-light);
+    border: 2px solid var(--border-color);
     border-radius: 16px;
     padding: 1.5rem;
     transition: all 0.3s ease;
@@ -493,10 +492,10 @@
 }
 
 .sidebar-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 16px;
     padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-sm);
     border: 2px solid var(--border-color);
 }
 
@@ -744,7 +743,7 @@
    ======================================== */
 .ai-insights {
     padding: 3rem 2rem;
-    background: #fafafa;
+    background: var(--bg-body);
 }
 
 .ai-insights .section-title {
@@ -768,14 +767,14 @@
 }
 
 .insight-card {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 16px;
     padding: 1.5rem;
     display: flex;
     align-items: flex-start;
     gap: 1rem;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f0f0f0;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 

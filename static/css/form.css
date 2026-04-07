@@ -97,22 +97,22 @@
    PREMIUM STEPPER
    ======================================== */
 .stepper-container {
-    max-width: 900px;
-    margin: 0 auto 3rem;
+    max-width: 750px;
+    margin: 0 auto 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: relative;
-    padding: 0 40px;
+    padding: 0 30px;
 }
 
 .stepper-container::before {
     content: '';
     position: absolute;
-    top: 35px;
-    left: 80px;
-    right: 80px;
-    height: 4px;
+    top: 26px;
+    left: 60px;
+    right: 60px;
+    height: 3px;
     background: var(--border-color);
     z-index: 1;
 }
@@ -128,15 +128,15 @@
 }
 
 .step-num {
-    width: 70px;
-    height: 70px;
-    background: white;
-    border: 4px solid var(--border-color);
+    width: 52px;
+    height: 52px;
+    background: var(--bg-white);
+    border: 3px solid var(--border-color);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.15rem;
     font-weight: 900;
     color: var(--text-light);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -158,7 +158,7 @@
 }
 
 .step-label {
-    font-size: 0.9rem;
+    font-size: 0.78rem;
     font-weight: 800;
     color: var(--text-light);
     text-transform: uppercase;
@@ -174,15 +174,15 @@
    FORM CARD GLASSMORPHISM
    ======================================== */
 .form-card {
-    max-width: 900px;
+    max-width: 750px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--bg-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding: 3.5rem;
-    border-radius: 32px;
+    padding: 2.5rem;
+    border-radius: 24px;
     box-shadow: var(--shadow-xl);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
 }
@@ -194,8 +194,21 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 6px;
+    height: 5px;
     background: var(--gradient-primary);
+}
+
+.form-card h2 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.form-card > p {
+    font-size: 0.88rem;
+    color: var(--text-light);
+    margin-bottom: 1.25rem;
 }
 
 /* ========================================
@@ -218,27 +231,45 @@
 .step-nav {
     display: flex;
     justify-content: space-between;
-    margin-top: 3rem;
-    padding-top: 2rem;
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
     border-top: 1px solid var(--border-color);
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
-.step-nav button {
+.step-nav button,
+.step-nav .btn {
     flex: 1;
-    max-width: 250px;
+    max-width: 220px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    background: linear-gradient(135deg, #ff4d6d, #ff85a1);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 77, 109, 0.25);
+}
+
+.step-nav button:hover,
+.step-nav .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 77, 109, 0.35);
 }
 
 .btn-back {
-    background: white;
-    color: var(--primary-pink);
-    border: 2px solid var(--primary-pink);
-    box-shadow: none;
+    background: var(--bg-white) !important;
+    color: var(--primary-pink) !important;
+    border: 1.5px solid var(--primary-pink) !important;
+    box-shadow: none !important;
 }
 
 .btn-back:hover {
-    background: var(--pale-pink);
-    color: var(--primary-pink-dark);
+    background: var(--pale-pink) !important;
+    color: var(--primary-pink-dark) !important;
+    transform: translateY(-2px);
 }
 
 /* ========================================
@@ -247,7 +278,7 @@
 .grid-form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.75rem;
+    gap: 1.25rem;
 }
 
 .field {
@@ -262,21 +293,22 @@
 
 .field label {
     font-weight: 700;
-    margin-bottom: 0.625rem;
+    margin-bottom: 0.4rem;
     color: var(--text-primary);
-    font-size: 0.9375rem;
+    font-size: 0.85rem;
 }
 
 .field input,
 .field select,
 .field textarea {
-    padding: 1.125rem 1.5rem;
-    border: 2px solid var(--border-color);
-    border-radius: 16px;
-    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 0.9rem;
     font-family: inherit;
     transition: all 0.3s;
-    background: white;
+    background: var(--bg-white);
+    color: var(--text-primary);
     font-weight: 500;
 }
 
@@ -290,21 +322,195 @@
 
 /* Form Section Labels - used as card headers now */
 .form-section-label {
-    font-size: 1.375rem;
+    font-size: 1.15rem;
     font-weight: 900;
     color: var(--text-primary);
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.6rem;
 }
 
 .form-section-label::before {
     content: '';
-    width: 12px;
-    height: 24px;
+    width: 8px;
+    height: 20px;
     background: var(--gradient-primary);
-    border-radius: 4px;
+    border-radius: 3px;
+}
+
+/* ========================================
+   SKILL FORM — Progress Steps
+   ======================================== */
+.progress-wrap {
+    margin-bottom: 1.5rem;
+}
+
+.progress-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.progress-steps .step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    opacity: 0.4;
+    transition: all 0.3s ease;
+}
+
+.progress-steps .step.active {
+    opacity: 1;
+}
+
+.progress-steps .dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-light);
+    transition: all 0.3s;
+}
+
+.progress-steps .step.active .dot {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: 0 3px 12px rgba(255, 77, 109, 0.3);
+}
+
+.progress-steps .label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-light);
+}
+
+.progress-steps .step.active .label {
+    color: var(--primary-pink);
+}
+
+.progress-steps .line {
+    flex: 1;
+    height: 2px;
+    background: var(--border-color);
+    margin: 0 0.5rem;
+}
+
+/* ========================================
+   SKILL FORM — Mini Card (Skill Info)
+   ======================================== */
+.mini-card {
+    background: rgba(255, 77, 109, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 1.25rem;
+    margin: 0.75rem 0;
+}
+
+.mini-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.mini-head h4 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.badge {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.mini-card p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+}
+
+.mini-metrics {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.metric-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metric-value {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--primary-pink);
+}
+
+.mini-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.mini-tags .tag {
+    background: var(--pale-pink);
+    color: var(--primary-pink-dark);
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.mini-card h4 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.mini-list {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin: 0;
+}
+
+.mini-list li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-weight: 500;
+}
+
+/* Compact buttons inside skill form */
+.form-card .button-group {
+    margin-top: 0.5rem;
+}
+
+.form-card .button-group .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    border-radius: 12px;
 }
 
 /* ========================================

@@ -225,32 +225,45 @@ document.addEventListener('click', function(e) {
 document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.getElementById('themeToggle');
     const htmlEl = document.documentElement;
-    const sunIcon = document.querySelector('.sun-icon');
-    const moonIcon = document.querySelector('.moon-icon');
+    
+    if (!toggleBtn) return;
+
+    function getIcons() {
+        return {
+            sun: toggleBtn.querySelector('.sun-icon'),
+            moon: toggleBtn.querySelector('.moon-icon')
+        };
+    }
 
     function updateIcons(isDark) {
-        if (isDark) {
-            sunIcon.style.display = 'none';
-            moonIcon.style.display = 'block';
-        } else {
-            sunIcon.style.display = 'block';
-            moonIcon.style.display = 'none';
+        const { sun, moon } = getIcons();
+        if (sun && moon) {
+            if (isDark) {
+                sun.style.display = 'none';
+                moon.style.display = 'block';
+            } else {
+                sun.style.display = 'block';
+                moon.style.display = 'none';
+            }
         }
     }
 
     // Initialize icons based on current theme
-    const currentTheme = htmlEl.getAttribute('data-theme');
+    const currentTheme = htmlEl.getAttribute('data-theme') || localStorage.getItem('theme') || 'light';
     updateIcons(currentTheme === 'dark');
 
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            const isDark = htmlEl.getAttribute('data-theme') === 'dark';
-            const newTheme = isDark ? 'light' : 'dark';
-            htmlEl.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateIcons(!isDark);
-        });
-    }
+    toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isCurrentlyDark = htmlEl.getAttribute('data-theme') === 'dark';
+        const newTheme = isCurrentlyDark ? 'light' : 'dark';
+        
+        htmlEl.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateIcons(newTheme === 'dark');
+        
+        // Dispatch custom event if other components need to know
+        window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
+    });
 });
 </script>
 

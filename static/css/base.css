@@ -24,15 +24,17 @@
     
     /* Supporting Colors */
     --bg-dark: #1a0a0e;
-    --bg-card: #2d1417;
+    --bg-card: #ffffff;
     --bg-light: #fff5f7;
     --bg-white: #ffffff;
+    --bg-body: #fff5f7;
     
     /* Text Colors */
     --text-primary: #1a0a0e;
     --text-secondary: #5a3f47;
     --text-light: #8a6d75;
     --text-white: #ffffff;
+    --text-muted: #8a6d75;
     
     /* Effects */
     --border-color: #ffd4dc;
@@ -45,6 +47,7 @@
     --gradient-primary: linear-gradient(135deg, #ff4d6d 0%, #ff85a1 100%);
     --gradient-soft: linear-gradient(135deg, #ff85a1 0%, #ffb3c1 100%);
     --gradient-overlay: linear-gradient(135deg, rgba(255, 77, 109, 0.1) 0%, rgba(255, 181, 193, 0.1) 100%);
+    --gradient-section-alt: linear-gradient(135deg, #fff0f3 0%, #ffe5ec 50%, #fff0f3 100%);
     
     /* Spacing */
     --container-width: 1200px;
@@ -55,7 +58,7 @@
    DARK THEME VARIABLES
    ======================================== */
 [data-theme="dark"] {
-    /* Keep primary pinks vibrant */
+    /* Keep primary pinks vibrant but adjustments for dark backgrounds */
     --primary-pink: #ff4d6d;
     --primary-pink-dark: #ff2a52;
     --primary-pink-light: #ff7a93;
@@ -67,16 +70,18 @@
     --pale-pink: #2d1417;
     
     /* Invert Supporting Backgrounds */
-    --bg-dark: #fff5f7;
+    --bg-dark: #12070a;
     --bg-card: #1f0b0f;
     --bg-light: #12070a;
     --bg-white: #1a0a0e;
+    --bg-body: #12070a;
     
     /* Invert Text Colors */
     --text-primary: #ffffff;
     --text-secondary: #ffb3c1;
     --text-light: #a38991;
     --text-white: #1a0a0e;
+    --text-muted: #a38991;
     
     /* Adjust Effects */
     --border-color: #3d1b22;
@@ -87,6 +92,7 @@
     
     /* Gradients */
     --gradient-overlay: linear-gradient(135deg, rgba(255, 77, 109, 0.15) 0%, rgba(255, 181, 193, 0.15) 100%);
+    --gradient-section-alt: linear-gradient(135deg, #1a0a0e 0%, #2d1417 50%, #1a0a0e 100%);
 }
 
 body {

@@ -43,8 +43,8 @@
             z-index: 1;
         }
         .roadmap-item:last-child::after { display: none; }
-        .roadmap-content h4 { margin: 0; font-size: 0.95rem; color: #333; }
-        .roadmap-content p { margin: 5px 0 0; font-size: 0.85rem; color: #777; }
+        .roadmap-content h4 { margin: 0; font-size: 0.95rem; color: var(--text-primary); }
+        .roadmap-content p { margin: 5px 0 0; font-size: 0.85rem; color: var(--text-secondary); }
         
         .chart-container {
             margin-top: 20px;
@@ -196,6 +196,46 @@
                                 {% endfor %}
                             {% else %}
                                 <p style="text-align: center; color: #999; padding: 20px;">{{ t.get('no_activity', 'No recent activity') }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Saved Jobs Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>{{ t.get('saved_jobs_title', 'Saved Jobs') }}</h2>
+                            <a href="{{ url_for('edit_profile') }}" class="card-link">{{ t.get('manage_saves', 'Manage All') }}</a>
+                        </div>
+                        <div class="saved-jobs-list">
+                            {% if saved_jobs %}
+                                {% for job in saved_jobs %}
+                                <div class="saved-job-dashboard-item">
+                                    <div class="saved-job-icon">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="saved-job-info">
+                                        <h4>{{ job.job_title }}</h4>
+                                        <p>{{ job.company }}</p>
+                                        <div class="saved-job-meta">
+                                            <span class="saved-job-tag">{{ job.location }}</span>
+                                            <span class="saved-job-tag">{{ job.job_type }}</span>
+                                        </div>
+                                    </div>
+                                    <a href="/search?q={{ job.job_title }}" class="saved-job-action" title="View Details">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14"></path>
+                                            <path d="m12 5 7 7-7 7"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div style="text-align: center; padding: 30px; border-radius: 12px; border: 1px dashed #ddd; background: #fafafa;">
+                                    <p style="color: #999; font-size: 0.875rem;">Your bookmarked jobs will appear here.</p>
+                                    <a href="/jobs" class="card-link" style="display: block; margin-top: 10px;">Explore Jobs →</a>
+                                </div>
                             {% endif %}
                         </div>
                     </div>

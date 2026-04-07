@@ -61,11 +61,14 @@
                 <div class="form-step active" id="step-1">
                     <div class="form-section-label">{{ t.get('personal_info_step', 'Personal Information') }}</div>
                     <div class="grid-form">
+                        {% if not profile or not profile.dob %}
                         <div class="field">
-                            <label>{{ t.age }}</label>
-                            <input type="number" name="age" placeholder="e.g. 28" min="18" max="60" required>
+                            <label>{{ t.dob }}</label>
+                            <input type="date" name="dob" required>
                         </div>
+                        {% endif %}
 
+                        {% if not profile or not profile.marital_status %}
                         <div class="field">
                             <label>{{ t.marital_status }}</label>
                             <select name="marital_status" required>
@@ -75,17 +78,21 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        {% endif %}
 
+                        {% if not profile or profile.number_of_kids is none %}
                         <div class="field">
                             <label>{{ t.kids }}</label>
                             <input type="number" name="kids" placeholder="0 - 5" min="0" max="10" required>
                         </div>
+                        {% endif %}
 
                         <div class="field">
                             <label>{{ t.experience_years }}</label>
                             <input type="number" name="experience_years" placeholder="e.g. 2" min="0" max="40" required>
                         </div>
 
+                        {% if not profile or not profile.education %}
                         <div class="field">
                             <label>{{ t.education }}</label>
                             <select name="education" required>
@@ -95,6 +102,7 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        {% endif %}
 
                         <div class="field">
                             <label>{{ t.language }}</label>
@@ -114,7 +122,7 @@
 
                 <!-- Step 2: Skills & Domain -->
                 <div class="form-step" id="step-2">
-                    <div class="form-section-label">{{ t.get('skills_domain_step', 'Skills &amp; Domain') }}</div>
+                    <div class="form-section-label">{{ t.get('skills_domain_step', 'Skills & Domain') }}</div>
                     <div class="grid-form" style="margin-bottom: 2rem;">
                         <div class="field">
                             <label>{{ t.sector }}</label>

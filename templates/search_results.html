@@ -115,6 +115,12 @@
                             </div>
 
                             <div class="card-footer">
+                                {% if job.is_internal %}
+                                <a href="{{ job.apply_links.internal_url }}" class="btn-apply-internal">
+                                    <i class="fas fa-paper-plane"></i> Apply directly on MaaSarthi
+                                </a>
+                                <span class="verified-badge"><i class="fas fa-check-circle"></i> Verified Employer</span>
+                                {% else %}
                                 <div class="portal-links">
                                     <span class="apply-hint">Apply now on:</span>
                                     <div class="link-icons">
@@ -123,8 +129,14 @@
                                         <a href="{{ job.apply_links.indeed }}" class="portal-icon" title="Indeed"><i class="fas fa-globe"></i></a>
                                     </div>
                                 </div>
-                                <button class="btn-save-job" onclick="toggleSave(this, '{{ loop.index }}')">
+                                {% endif %}
+                                <button class="btn-save-job {% if job.is_saved %}saved{% endif %}" 
+                                        onclick='toggleSave(this, {{ job | tojson | safe }})'>
+                                    {% if job.is_saved %}
+                                    <i class="fas fa-heart"></i> Saved
+                                    {% else %}
                                     <i class="far fa-heart"></i> Save
+                                    {% endif %}
                                 </button>
                             </div>
                         </div>
@@ -174,16 +186,54 @@
     </main>
 
     <script>
-        function toggleSave(btn, id) {
+        function toggleSave(btn, jobData) {
             const icon = btn.querySelector('i');
-            icon.classList.toggle('far');
-            icon.classList.toggle('fas');
-            btn.classList.toggle('saved');
-            if (btn.classList.contains('saved')) {
-                btn.innerHTML = '<i class="fas fa-heart"></i> Saved';
-            } else {
+            
+            // Optimistic UI update
+            const wasSaved = btn.classList.contains('saved');
+            if (wasSaved) {
+                btn.classList.remove('saved');
                 btn.innerHTML = '<i class="far fa-heart"></i> Save';
+            } else {
+                btn.classList.add('saved');
+                btn.innerHTML = '<i class="fas fa-heart"></i> Saved';
             }
+
+            // Sync with backend
+            fetch('/api/toggle-save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jobData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Job ' + data.action + ' successfully');
+                } else {
+                    // Revert if error
+                    alert('Error saving job. Please try again.');
+                    if (wasSaved) {
+                        btn.classList.add('saved');
+                        btn.innerHTML = '<i class="fas fa-heart"></i> Saved';
+                    } else {
+                        btn.classList.remove('saved');
+                        btn.innerHTML = '<i class="far fa-heart"></i> Save';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Revert if error
+                if (wasSaved) {
+                    btn.classList.add('saved');
+                    btn.innerHTML = '<i class="fas fa-heart"></i> Saved';
+                } else {
+                    btn.classList.remove('saved');
+                    btn.innerHTML = '<i class="far fa-heart"></i> Save';
+                }
+            });
         }
     </script>
 </body>

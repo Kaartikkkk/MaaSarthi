@@ -183,6 +183,53 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(255, 77, 109, 0.35);
         }
+
+        /* Saved Jobs Section */
+        .saved-jobs-container {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .job-card-mini {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1.2px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .job-card-mini:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(255,77,109,0.1); border-color: #ffd4dc; }
+        .job-card-mini h4 { margin: 0 0 6px; font-size: 1.05rem; color: #2c3e50; font-weight: 700; line-height: 1.3; padding-right: 25px; }
+        .job-card-mini p.company { margin: 0 0 12px; font-size: 0.88rem; color: var(--primary-pink); font-weight: 600; }
+        .job-card-mini .job-details { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        .job-card-mini .job-tag { background: #f8f9fa; color: #666; font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: 600; }
+        .job-card-mini .actions { display: flex; gap: 10px; margin-top: auto; }
+        .job-card-mini .btn-act { flex: 1; padding: 10px; border-radius: 10px; font-size: 0.85rem; font-weight: 700; text-align: center; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
+        .btn-act.prime { background: linear-gradient(135deg, #ff4d6d, #ff8fa3); color: white; }
+        .btn-act.prime:hover { opacity: 0.9; }
+        .btn-act.sec { background: transparent; color: #999; border: 1.2px solid #eee; }
+        .btn-act.sec:hover { background: #fff0f3; color: var(--primary-pink); border-color: #ffd4dc; }
+        
+        .remove-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+            z-index: 2;
+        }
+        .remove-btn:hover { color: var(--primary-pink); }
+
+        .empty-state { text-align: center; padding: 30px; color: #999; font-style: italic; background: #fafafa; border-radius: 16px; border: 2px dashed #eee; grid-column: 1 / -1; }
     </style>
 </head>
 <body>
@@ -208,7 +255,7 @@
             <!-- Section 1: Personal Info -->
             <div class="form-section">
                 <div class="section-header">
-                    <div class="section-icon personal">👤</div>
+                    <div class="section-icon personal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e91e63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
                     <div>
                         <h3>{{ t.get('personal_info', 'Personal Information') }}</h3>
                         <p>Basic details about yourself</p>
@@ -224,8 +271,8 @@
                         <input type="tel" name="phone" value="{{ profile.phone or '' }}" placeholder="e.g. 9876543210">
                     </div>
                     <div class="form-group">
-                        <label>Age</label>
-                        <input type="number" name="age" value="{{ profile.age or '' }}" placeholder="e.g. 28" min="16" max="80" class="tracked-field">
+                        <label>Date of Birth (DOB)</label>
+                        <input type="date" name="dob" value="{{ profile.dob.strftime('%Y-%m-%d') if profile.dob else '' }}" class="tracked-field">
                     </div>
                     <div class="form-group">
                         <label>Marital Status <span class="optional">(optional)</span></label>
@@ -247,7 +294,7 @@
             <!-- Section 2: Education & Location -->
             <div class="form-section">
                 <div class="section-header">
-                    <div class="section-icon education">🎓</div>
+                    <div class="section-icon education"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
                     <div>
                         <h3>{{ t.get('education_location', 'Education & Location') }}</h3>
                         <p>Your educational background and where you reside</p>
@@ -305,7 +352,7 @@
             <!-- Section 3: Skills & Domain -->
             <div class="form-section">
                 <div class="section-header">
-                    <div class="section-icon skills">💡</div>
+                    <div class="section-icon skills"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2196f3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
                     <div>
                         <h3>{{ t.get('skills_domain', 'Skills & Work Preferences') }}</h3>
                         <p>Tell us about your skills so we can match you with the best jobs</p>
@@ -357,7 +404,7 @@
             <!-- Section 4: Professional Links -->
             <div class="form-section">
                 <div class="section-header">
-                    <div class="section-icon links">🔗</div>
+                    <div class="section-icon links"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff9800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
                     <div>
                         <h3>{{ t.get('professional_links', 'Professional Links') }}</h3>
                         <p>Add your online presence for better credibility</p>
@@ -378,7 +425,7 @@
             <!-- Section 5: Experience -->
             <div class="form-section">
                 <div class="section-header">
-                    <div class="section-icon experience">💼</div>
+                    <div class="section-icon experience"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9c27b0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
                     <div>
                         <h3>{{ t.get('work_experience', 'Work Experience') }}</h3>
                         <p>Describe your past roles, internships, or volunteer work</p>
@@ -392,7 +439,7 @@
             <!-- Section 6: Resume -->
             <div class="form-section">
                 <div class="section-header">
-                    <div class="section-icon resume">📄</div>
+                    <div class="section-icon resume"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00bcd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
                     <div>
                         <h3>{{ t.get('resume_upload', 'Resume Upload') }}</h3>
                         <p>Upload your professional resume (PDF, DOC, DOCX)</p>
@@ -418,7 +465,7 @@
             <!-- Section 7: Bio -->
             <div class="form-section">
                 <div class="section-header">
-                    <div class="section-icon bio">✨</div>
+                    <div class="section-icon bio"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
                     <div>
                         <h3>{{ t.get('about_you', 'About You') }}</h3>
                         <p>Write a short professional summary about yourself</p>
@@ -429,8 +476,47 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-save">💾 Save Profile Changes</button>
+            <button type="submit" class="btn-save"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save Profile Changes</button>
         </form>
+
+        <div class="form-section">
+            <div class="section-header">
+                <div class="section-icon personal" style="background: #fff0f3;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4d6d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></div>
+                <div>
+                    <h3>{{ t.get('my_saves', 'My Saved Jobs') }}</h3>
+                    <p>Positions you've bookmarked to apply for later</p>
+                </div>
+            </div>
+
+            <div class="saved-jobs-container" id="savedJobsGrid">
+                {% if saved_jobs %}
+                    {% for job in saved_jobs %}
+                    <div class="job-card-mini" id="saved-job-{{ job.id }}">
+                        <button class="remove-btn" onclick="removeSave(this, '{{ job.job_title }}', '{{ job.company }}')" title="Remove from saves">×</button>
+                        <div>
+                            <h4>{{ job.job_title }}</h4>
+                            <p class="company">{{ job.company }}</p>
+                            
+                            <div class="job-details">
+                                <span class="job-tag">{{ job.location }}</span>
+                                <span class="job-tag">{{ job.job_type }}</span>
+                                <span class="job-tag">{{ job.salary }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="actions">
+                            <a href="/search?q={{ job.job_title }}" class="btn-act prime">View Similar</a>
+                            <button class="btn-act sec" onclick="removeSave(this, '{{ job.job_title }}', '{{ job.company }}')">Remove</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <p>No jobs saved yet. Start exploring and bookmarking!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     <script>
@@ -470,7 +556,6 @@
             document.getElementById('progressBar').style.width = pct + '%';
             document.getElementById('progressPct').textContent = pct + '%';
         }
-
         // Attach listeners
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.tracked-field').forEach(f => {
@@ -479,6 +564,38 @@
             });
             updateProgress();
         });
+
+        function removeSave(btn, title, company) {
+            const card = btn.closest('.job-card-mini');
+            
+            if (!confirm('Are you sure you want to remove this job from your saves?')) return;
+
+            fetch('/api/toggle-save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: title, company: company })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.action === 'unsaved') {
+                    card.style.opacity = '0';
+                    setTimeout(() => {
+                        card.remove();
+                        // Check if grid is empty
+                        const grid = document.getElementById('savedJobsGrid');
+                        if (grid.children.length === 0) {
+                            grid.innerHTML = '<div class="empty-state"><p>No jobs saved yet. Start exploring and bookmarking!</p></div>';
+                        }
+                    }, 300);
+                } else {
+                    alert('Error removing job. Please try again.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Connection error. Please try again.');
+            });
+        }
     </script>
 </body>
 </html>

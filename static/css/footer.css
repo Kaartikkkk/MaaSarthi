@@ -4,7 +4,7 @@
 
 .footer {
     background: linear-gradient(135deg, #1a0a0e 0%, #2d1417 100%);
-    color: #ffb3c1;
+    color: var(--accent-pink);
     padding: 4.5rem 2rem 2rem;
     position: relative;
     overflow: hidden;
@@ -100,7 +100,7 @@
     text-align: center;
     padding-top: 2.5rem;
     border-top: 2px solid rgba(255, 77, 109, 0.2);
-    color: var(--soft-pink);
+    color: var(--text-muted);
     font-weight: 600;
     position: relative;
     z-index: 1;

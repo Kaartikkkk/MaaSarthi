@@ -1,22 +1,23 @@
 body {
-	background: #fff6fa;
+	background: var(--bg-body);
 	font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-	color: #23272f;
+	color: var(--text-primary);
 	margin: 0;
 	padding: 0;
 	min-height: 100vh;
 }
 
 .admin-dashboard {
-	background: #fff;
+	background: var(--bg-card);
 	border-radius: 18px;
-	box-shadow: 0 8px 32px 0 rgba(255, 77, 109, 0.10);
+	box-shadow: var(--shadow-xl);
 	padding: 2.5rem 2rem;
 	margin: 3rem auto;
 	max-width: 1100px;
 	animation: fadeInBg 1.2s ease;
 	position: relative;
 	z-index: 1;
+	border: 1px solid var(--border-color);
 }
 
 @keyframes fadeInBg {
@@ -27,7 +28,7 @@ body {
 .admin-title {
 	font-size: 2.3rem;
 	font-weight: 700;
-	color: #ff4d6d;
+	color: var(--primary-pink);
 	letter-spacing: 2px;
 	margin-bottom: 1.5rem;
 	text-shadow: 0 2px 8px rgba(255, 77, 109, 0.08);
@@ -36,9 +37,9 @@ body {
 .admin-section {
 	margin-bottom: 2rem;
 	padding: 1.5rem;
-	background: #f8f9fa;
+	background: var(--bg-light);
 	border-radius: 12px;
-	box-shadow: 0 2px 12px 0 rgba(0,0,0,0.04);
+	box-shadow: var(--shadow-sm);
 	transition: box-shadow 0.3s;
 }
 .admin-section:hover {
@@ -49,28 +50,28 @@ body {
 	width: 100%;
 	border-collapse: collapse;
 	margin-top: 1rem;
-	background: #fff;
+	background: var(--bg-card);
 	border-radius: 10px;
 	overflow: hidden;
-	box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+	box-shadow: var(--shadow-sm);
 }
 .admin-table th, .admin-table td {
 	padding: 0.85rem 1.2rem;
 	text-align: left;
 }
 .admin-table th {
-	background: #ff4d6d;
-	color: #fff;
+	background: var(--primary-pink);
+	color: white;
 	font-weight: 700;
 	font-size: 1.1rem;
 }
 .admin-table tr:nth-child(even) {
-	background: #f8f9fa;
+	background: var(--bg-light);
 }
 
 .admin-btn {
-	background: linear-gradient(90deg, #ff4d6d 0%, #ff85a1 100%);
-	color: #fff;
+	background: var(--gradient-primary);
+	color: white;
 	border: none;
 	border-radius: 8px;
 	padding: 0.7rem 2rem;
@@ -83,7 +84,7 @@ body {
 	margin-bottom: 1rem;
 }
 .admin-btn:hover {
-	background: linear-gradient(90deg, #ff85a1 0%, #ff4d6d 100%);
+	background: var(--gradient-primary);
 	transform: translateY(-2px) scale(1.04);
 }
 
